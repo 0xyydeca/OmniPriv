@@ -1,8 +1,8 @@
-# PrivID - LayerZero Best Omnichain Implementation
+# OmniPriv - LayerZero Best Omnichain Implementation
 
 ## Executive Summary
 
-PrivID is a **privacy-preserving cross-chain identity system** that leverages **LayerZero v2** to enable users to verify their credentials once and reuse verification status across any blockchain—without revealing personal data.
+OmniPriv is a **privacy-preserving cross-chain identity system** that leverages **LayerZero v2** to enable users to verify their credentials once and reuse verification status across any blockchain—without revealing personal data.
 
 **Tagline:** *One identity vault, verified everywhere.*
 
@@ -12,7 +12,7 @@ PrivID is a **privacy-preserving cross-chain identity system** that leverages **
 
 ### Prize Requirements
 
-| Requirement | PrivID Implementation | Status |
+| Requirement | OmniPriv Implementation | Status |
 |-------------|----------------------|--------|
 | Uses LayerZero OApp or OFT | `IdentityOApp.sol` extends LayerZero v2 OApp | ✅ |
 | Deployed on 2+ chains | Base Sepolia + Celo Sepolia | ✅ |
@@ -24,13 +24,13 @@ PrivID is a **privacy-preserving cross-chain identity system** that leverages **
 
 ---
 
-## What Makes PrivID Unique?
+## What Makes OmniPriv Unique?
 
 ### 1. Real Problem Solved
 
 **Problem:** Users must re-verify their identity on every chain, leaking PII repeatedly and fragmenting their credentials.
 
-**PrivID Solution:** 
+**OmniPriv Solution:** 
 - Store encrypted credentials once in a client-side vault (Base Sepolia)
 - Generate ZK proofs on Chain A
 - Send verification markers (NOT PII) to Chain B via LayerZero (Celo Sepolia)
@@ -348,7 +348,7 @@ pnpm test:e2e
 
 ## Resources
 
-**GitHub:** https://github.com/yourusername/privid
+**GitHub:** https://github.com/yourusername/omnipriv
 **Demo:** http://localhost:3000 (after `pnpm dev`)
 **Docs:** [docs/LAYERZERO_DEMO.md](docs/LAYERZERO_DEMO.md)
 **Contracts:** [packages/contracts](packages/contracts)
@@ -358,7 +358,7 @@ pnpm test:e2e
 
 ## Team
 
-PrivID Team - Building the future of privacy-preserving identity
+OmniPriv Team - Building the future of privacy-preserving identity
 
 ---
 

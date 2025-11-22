@@ -2,7 +2,7 @@
 
 ## Summary
 
-PrivID has been updated to use **Celo Sepolia (Chain ID: 11142220)** instead of Celo Alfajores, as Celo Sepolia is the current testnet.
+OmniPriv has been updated to use **Celo Sepolia (Chain ID: 11142220)** instead of Celo Alfajores, as Celo Sepolia is the current testnet.
 
 ---
 
