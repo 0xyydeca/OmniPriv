@@ -25,20 +25,21 @@ const config: HardhatUserConfig = {
         ? [process.env.DEPLOYER_PRIVATE_KEY]
         : [],
     },
-    celoAlfajores: {
+    celoSepolia: {
       url:
-        process.env.CELO_ALFAJORES_RPC_URL ||
-        'https://alfajores-forno.celo-testnet.org',
-      chainId: 44787,
+        process.env.CELO_SEPOLIA_RPC_URL ||
+        'https://forno.celo-testnet.org',
+      chainId: 11142220,
       accounts: process.env.DEPLOYER_PRIVATE_KEY
         ? [process.env.DEPLOYER_PRIVATE_KEY]
         : [],
+      timeout: 60000,
     },
   },
   etherscan: {
     apiKey: {
       baseSepolia: process.env.BASESCAN_API_KEY || '',
-      celoAlfajores: process.env.CELOSCAN_API_KEY || '',
+      celoSepolia: process.env.CELOSCAN_API_KEY || '',
     },
     customChains: [
       {
@@ -50,8 +51,8 @@ const config: HardhatUserConfig = {
         },
       },
       {
-        network: 'celoAlfajores',
-        chainId: 44787,
+        network: 'celoSepolia',
+        chainId: 11142220,
         urls: {
           apiURL: 'https://api-alfajores.celoscan.io/api',
           browserURL: 'https://alfajores.celoscan.io',

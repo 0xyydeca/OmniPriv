@@ -12,7 +12,7 @@ interface CrossChainBridgeProps {
 
 const CHAINS = [
   { id: 84532, name: 'Base Sepolia', icon: '🔵' },
-  { id: 44787, name: 'Celo Alfajores', icon: '🟡' },
+  { id: 11142220, name: 'Celo Sepolia', icon: '🟡' },
 ];
 
 // IdentityOApp ABI (minimal for our needs)
@@ -62,7 +62,7 @@ export function CrossChainBridge({ credentials }: CrossChainBridgeProps) {
 
   const [selectedCredential, setSelectedCredential] = useState<string>('');
   const [sourceChain, setSourceChain] = useState(84532);
-  const [targetChain, setTargetChain] = useState(44787);
+  const [targetChain, setTargetChain] = useState(11142220);
   const [loading, setLoading] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<string>('');
   const [result, setResult] = useState<{ success: boolean; txHash?: string; message: string } | null>(null);

@@ -39,7 +39,7 @@ contract VaultAnchor is Ownable, ReentrancyGuard {
     error CommitmentAlreadyExists();
     error CommitmentNotFound();
     error CommitmentExpired();
-    error CommitmentRevoked();
+    error AlreadyRevoked();
     error InvalidExpiry();
     error ZeroCommitment();
 
@@ -79,7 +79,7 @@ contract VaultAnchor is Ownable, ReentrancyGuard {
     function revokeCommitment(bytes32 commitment) external nonReentrant {
         Commitment storage c = commitments[msg.sender][commitment];
         if (c.commitment == bytes32(0)) revert CommitmentNotFound();
-        if (c.revoked) revert CommitmentRevoked();
+        if (c.revoked) revert AlreadyRevoked();
 
         c.revoked = true;
 

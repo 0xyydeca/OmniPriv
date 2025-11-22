@@ -15,10 +15,10 @@ PrivID is a **privacy-preserving cross-chain identity system** that leverages **
 | Requirement | PrivID Implementation | Status |
 |-------------|----------------------|--------|
 | Uses LayerZero OApp or OFT | `IdentityOApp.sol` extends LayerZero v2 OApp | ✅ |
-| Deployed on 2+ chains | Base Sepolia + Celo Alfajores | ✅ |
+| Deployed on 2+ chains | Base Sepolia + Celo Sepolia | ✅ |
 | Custom cross-chain handler | `_lzReceive()` stores verification markers | ✅ |
 | Chain A = home chain | Base Sepolia (credential storage) | ✅ |
-| Chain B = consumption chain | Celo Alfajores (dApp verification) | ✅ |
+| Chain B = consumption chain | Celo Sepolia (dApp verification) | ✅ |
 | Working demo | Frontend + contracts + deployment scripts | ✅ |
 | Clear use case | Cross-chain identity verification | ✅ |
 
@@ -31,9 +31,9 @@ PrivID is a **privacy-preserving cross-chain identity system** that leverages **
 **Problem:** Users must re-verify their identity on every chain, leaking PII repeatedly and fragmenting their credentials.
 
 **PrivID Solution:** 
-- Store encrypted credentials once in a client-side vault
+- Store encrypted credentials once in a client-side vault (Base Sepolia)
 - Generate ZK proofs on Chain A
-- Send verification markers (NOT PII) to Chain B via LayerZero
+- Send verification markers (NOT PII) to Chain B via LayerZero (Celo Sepolia)
 - dApps on Chain B check `isVerified()` without accessing personal data
 
 ### 2. Privacy-First Architecture
@@ -104,7 +104,7 @@ contract IdentityOApp is OApp {
 
 ```
 ┌──────────────────┐                        ┌──────────────────┐
-│   Base Sepolia   │                        │  Celo Alfajores  │
+│   Base Sepolia   │                        │   Celo Sepolia   │
 │                  │                        │                  │
 │  1. User adds    │                        │                  │
 │     credential   │                        │                  │
@@ -137,7 +137,7 @@ contract IdentityOApp is OApp {
   - ProofConsumer: Verifies ZK proofs
   - IdentityOApp: Sends cross-chain messages
 
-- **Celo Alfajores** (Chain ID: 44787, LZ EID: 40125)
+- **Celo Sepolia** (Chain ID: 11142220, LZ EID: 40125)
   - VaultAnchor: Optional local commitments
   - ProofConsumer: Can verify proofs locally
   - IdentityOApp: Receives and stores verification markers
@@ -173,14 +173,14 @@ contract IdentityOApp is OApp {
 **Step 3: Bridge to Celo (40s)**
 - Go to "Cross-Chain Bridge"
 - Source: Base Sepolia
-- Target: Celo Alfajores
+- Target: Celo Sepolia
 - Review: "Only commitment crosses chains, NO PII"
 - Send → Transaction submitted
 - Wait for LayerZero relay (~30s)
 - ✅ Verification marker delivered to Celo
 
 **Step 4: Verify on Celo (20s)**
-- Switch network to Celo Alfajores
+- Switch network to Celo Sepolia
 - Any dApp calls `isVerified(alice, "kyc-basic")`
 - Returns: `true`
 - **No re-proving required!**
@@ -250,8 +250,8 @@ pnpm test:e2e
 - IdentityOApp: `TBD` (deploy with `pnpm deploy:baseSepolia`)
 - Explorer: https://sepolia.basescan.org/
 
-**Celo Alfajores:**
-- IdentityOApp: `TBD` (deploy with `pnpm deploy:celoAlfajores`)
+**Celo Sepolia:**
+- IdentityOApp: `TBD` (deploy with `pnpm deploy:celoSepolia`)
 - Explorer: https://alfajores.celoscan.io/
 
 **Track Messages:**
@@ -302,7 +302,7 @@ pnpm test:e2e
 
 ✅ **Deployed on Multiple Chains**
 - Base Sepolia (home chain)
-- Celo Alfajores (consumption chain)
+- Celo Sepolia (consumption chain)
 - Easily extensible to more chains
 
 ✅ **Custom Cross-Chain Logic**

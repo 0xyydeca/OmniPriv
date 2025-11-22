@@ -21,10 +21,19 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment
+# Environment - CRITICAL: Never commit private keys!
 .env
 .env*.local
 .env.production
+.env.development
+.env.test
+**/.env
+**/.env.local
+**/secrets.json
+**/*private-key*
+**/*privatekey*
+**/*.pem
+**/*.key
 
 # IDE
 .vscode/
@@ -44,6 +53,12 @@ typechain/
 typechain-types/
 deployments/localhost
 deployments/hardhat
+**/cache/
+**/artifacts/
+**/typechain-types/
+contracts-flattened/
+.openzeppelin/
+.openzeppelin/*.json
 
 # Noir
 target/
@@ -56,4 +71,47 @@ Verifier.toml
 .vercel
 playwright-report/
 test-results/
+.eslintcache
+.stylelintcache
+
+# pnpm
+.pnpm-store/
+.pnpm-debug.log
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+.tmp/
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Certificate files (often sensitive)
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+
+# Database files (if any local DBs)
+*.db
+*.sqlite
+*.sqlite3
+
+# MacOS
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
 

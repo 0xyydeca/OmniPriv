@@ -95,7 +95,7 @@ console.log("Native fee:", formatEther(fee.nativeFee));
 | Network | Chain ID | LZ Endpoint ID | RPC URL |
 |---------|----------|----------------|---------|
 | Base Sepolia | 84532 | 40245 | https://sepolia.base.org |
-| Celo Alfajores | 44787 | 40125 | https://alfajores-forno.celo-testnet.org |
+| Celo Sepolia | 11142220 | 40125 | https://alfajores-forno.celo-testnet.org |
 
 ## Deployment Flow
 
@@ -103,19 +103,19 @@ console.log("Native fee:", formatEther(fee.nativeFee));
 # 1. Deploy contracts
 cd packages/contracts
 pnpm deploy:baseSepolia
-pnpm deploy:celoAlfajores
+pnpm deploy:celoSepolia
 
 # 2. Set environment variables
 export IDENTITY_OAPP_BASE_SEPOLIA=0x...
-export IDENTITY_OAPP_CELO_ALFAJORES=0x...
+export IDENTITY_OAPP_CELO_SEPOLIA=0x...
 
 # 3. Configure trusted peers (run on BOTH chains)
 pnpm setPeers:baseSepolia
-pnpm setPeers:celoAlfajores
+pnpm setPeers:celoSepolia
 
 # 4. Update frontend .env.local
 echo "NEXT_PUBLIC_IDENTITY_OAPP_BASE_SEPOLIA=0x..." >> apps/web/.env.local
-echo "NEXT_PUBLIC_IDENTITY_OAPP_CELO_ALFAJORES=0x..." >> apps/web/.env.local
+echo "NEXT_PUBLIC_IDENTITY_OAPP_CELO_SEPOLIA=0x..." >> apps/web/.env.local
 ```
 
 ## Frontend Integration
@@ -132,7 +132,7 @@ const txHash = await walletClient.writeContract({
   abi: IDENTITY_OAPP_ABI,
   functionName: 'sendVerification',
   args: [
-    getLayerZeroEid(44787), // Celo Alfajores
+    getLayerZeroEid(11142220), // Celo Sepolia
     userAddress,
     policyId,
     commitment,

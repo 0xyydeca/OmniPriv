@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 
 const LZ_ENDPOINTS: Record<string, string> = {
   baseSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f',
-  celoAlfajores: '0x6EDCE65403992e310A62460808c4b910D972f10f',
+  celoSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f',
   hardhat: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Mock for local testing
 };
 

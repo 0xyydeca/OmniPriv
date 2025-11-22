@@ -7,9 +7,9 @@
     "test": "hardhat test",
     "deploy": "hardhat deploy",
     "deploy:baseSepolia": "hardhat deploy --network baseSepolia",
-    "deploy:celoAlfajores": "hardhat deploy --network celoAlfajores",
+    "deploy:celoSepolia": "hardhat deploy --network celoSepolia",
     "setPeers:baseSepolia": "hardhat run scripts/setPeers.ts --network baseSepolia",
-    "setPeers:celoAlfajores": "hardhat run scripts/setPeers.ts --network celoAlfajores",
+    "setPeers:celoSepolia": "hardhat run scripts/setPeers.ts --network celoSepolia",
     "verify": "hardhat verify",
     "clean": "hardhat clean && rm -rf cache artifacts typechain-types",
     "format": "prettier --write 'contracts/**/*.sol'"

@@ -8,14 +8,14 @@ PrivID uses LayerZero to enable **one identity, verified everywhere**:
 
 1. User stores credentials on **Chain A** (e.g., Base Sepolia)
 2. User generates a ZK proof
-3. Proof verification marker is sent to **Chain B** (e.g., Celo Alfajores) via LayerZero
+3. Proof verification marker is sent to **Chain B** (e.g., Celo Sepolia) via LayerZero
 4. dApps on Chain B can check verification status **without accessing PII**
 
 ## Architecture
 
 ```
 ┌─────────────────┐                    ┌─────────────────┐
-│  Base Sepolia   │                    │ Celo Alfajores  │
+│  Base Sepolia   │                    │  Celo Sepolia   │
 │                 │                    │                 │
 │  VaultAnchor    │                    │  VaultAnchor    │
 │  (commitments)  │                    │  (commitments)  │
@@ -48,7 +48,7 @@ This is a **verification marker**, not identity data.
 
 1. Two testnet wallets funded with test ETH:
    - Base Sepolia: [Faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet)
-   - Celo Alfajores: [Faucet](https://faucet.celo.org/)
+   - Celo Sepolia: [Faucet](https://faucet.celo.org/) (Chain ID: 11142220)
 
 2. Contract deployment keys in `.env`:
    ```bash
@@ -59,7 +59,7 @@ This is a **verification marker**, not identity data.
 
 3. LayerZero Endpoint Addresses (already configured):
    - Base Sepolia: `0x6EDCE65403992e310A62460808c4b910D972f10f`
-   - Celo Alfajores: `0x6EDCE65403992e310A62460808c4b910D972f10f`
+   - Celo Sepolia: `0x6EDCE65403992e310A62460808c4b910D972f10f`
 
 ## Step-by-Step Demo
 
@@ -89,16 +89,16 @@ IdentityOApp deployed to: 0xABC...
 }
 ```
 
-**2. Deploy on Celo Alfajores**
+**2. Deploy on Celo Sepolia**
 
 ```bash
-pnpm deploy:celoAlfajores
+pnpm deploy:celoSepolia
 ```
 
 Save the address in `deployments.json`:
 ```json
 {
-  "celoAlfajores": {
+  "celoSepolia": {
     "contracts": {
       "IdentityOApp": "0xDEF..."
     }
@@ -114,23 +114,23 @@ LayerZero requires **both chains** to trust each other. This is a security featu
 
 ```bash
 export IDENTITY_OAPP_BASE_SEPOLIA=0xABC...
-export IDENTITY_OAPP_CELO_ALFAJORES=0xDEF...
+export IDENTITY_OAPP_CELO_SEPOLIA=0xDEF...
 
 pnpm setPeers:baseSepolia
 ```
 
 Expected output:
 ```
-Setting peer for celoAlfajores...
+Setting peer for celoSepolia...
    EID: 40125
    Address: 0xDEF...
    ✅ Peer set successfully!
 ```
 
-**2. Set peer on Celo Alfajores**
+**2. Set peer on Celo Sepolia**
 
 ```bash
-pnpm setPeers:celoAlfajores
+pnpm setPeers:celoSepolia
 ```
 
 Expected output:
@@ -146,7 +146,7 @@ Setting peer for baseSepolia...
 Update `.env.local`:
 ```bash
 NEXT_PUBLIC_IDENTITY_OAPP_BASE_SEPOLIA=0xABC...
-NEXT_PUBLIC_IDENTITY_OAPP_CELO_ALFAJORES=0xDEF...
+NEXT_PUBLIC_IDENTITY_OAPP_CELO_SEPOLIA=0xDEF...
 ```
 
 ### Phase 4: Test Cross-Chain Flow
@@ -176,12 +176,12 @@ pnpm dev
 4. Click "Generate Proof"
 5. Status: ✅ Proof verified
 
-**3. Bridge to Celo Alfajores**
+**3. Bridge to Celo Sepolia**
 
 1. Go to "Cross-Chain Bridge" tab
 2. Select credential
 3. Source: Base Sepolia
-4. Target: Celo Alfajores
+4. Target: Celo Sepolia
 5. Review fee: ~0.001 ETH
 6. Click "Send Verification Cross-Chain"
 7. Approve transaction in wallet
@@ -189,14 +189,19 @@ pnpm dev
 
 **4. Verify on destination chain**
 
-Switch wallet to Celo Alfajores and call `isVerified()`:
+Switch wallet to Celo Sepolia and call `isVerified()`:
 
 ```typescript
 import { createPublicClient, http } from 'viem';
-import { celoAlfajores } from 'viem/chains';
 
 const client = createPublicClient({
-  chain: celoAlfajores,
+  chain: {
+    id: 11142220,
+    name: 'Celo Sepolia',
+    rpcUrls: {
+      default: { http: ['https://alfajores-forno.celo-testnet.org'] }
+    }
+  },
   transport: http(),
 });
 
@@ -242,12 +247,12 @@ Track your cross-chain messages:
 
 2. **Bridge to Celo** (60s)
    - "Now I want to use this on Celo without re-verifying"
-   - Select credential → Bridge to Celo Alfajores
+   - Select credential → Bridge to Celo Sepolia
    - "Notice: no personal data is sent, only a cryptographic commitment"
    - Submit transaction → Show LayerZero message in console
 
 3. **Verify on Celo** (30s)
-   - Switch to Celo Alfajores network
+   - Switch to Celo Sepolia network
    - Call `isVerified()` on IdentityOApp
    - Show `true` result
    - "Any dApp on Celo can now check my verification status"
@@ -320,7 +325,7 @@ Update after deployment:
 | Network | Chain ID | LayerZero EID | IdentityOApp |
 |---------|----------|---------------|--------------|
 | Base Sepolia | 84532 | 40245 | TBD |
-| Celo Alfajores | 44787 | 40125 | TBD |
+| Celo Sepolia | 11142220 | 40125 | TBD |
 
 ## Further Reading
 
@@ -334,7 +339,7 @@ Update after deployment:
 For **LayerZero Best Omnichain Implementation** ($20k):
 
 - ✅ Uses LayerZero v2 OApp pattern
-- ✅ Deployed on 2+ chains (Base Sepolia + Celo Alfajores)
+- ✅ Deployed on 2+ chains (Base Sepolia + Celo Sepolia)
 - ✅ Custom `_lzReceive` handler with verification logic
 - ✅ Demonstrates cross-chain state (verification markers)
 - ✅ Working demo with frontend

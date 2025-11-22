@@ -86,15 +86,15 @@ pnpm hardhat:compile
 # Run tests
 pnpm hardhat:test
 
-# Deploy to testnets (Base Sepolia, Celo Alfajores)
+# Deploy to testnets (Base Sepolia, Celo Sepolia)
 pnpm hardhat:deploy --network baseSepolia
-pnpm hardhat:deploy --network celoAlfajores
+pnpm hardhat:deploy --network celoSepolia
 ```
 
 ### Get Testnet Tokens
 
 - **Base Sepolia**: https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet
-- **Celo Alfajores**: https://faucet.celo.org/alfajores
+- **Celo Sepolia**: https://faucet.celo.org/ (Chain ID: 11142220)
 - **Ethereum Sepolia**: https://sepoliafaucet.com/
 
 ## LayerZero Cross-Chain Integration
@@ -113,7 +113,7 @@ PrivID implements **LayerZero v2 OApp** for true omnichain identity verification
 ```
 1. User stores credential on Chain A (Base Sepolia)
 2. Generate ZK proof and anchor commitment
-3. Send verification marker to Chain B (Celo Alfajores) via LayerZero
+3. Send verification marker to Chain B (Celo Sepolia) via LayerZero
 4. dApps on Chain B check isVerified() without accessing PII
 ```
 
@@ -123,13 +123,13 @@ PrivID implements **LayerZero v2 OApp** for true omnichain identity verification
 # Deploy contracts on both chains
 cd packages/contracts
 pnpm deploy:baseSepolia
-pnpm deploy:celoAlfajores
+pnpm deploy:celoSepolia
 
 # Configure trusted peers (required for LayerZero)
 export IDENTITY_OAPP_BASE_SEPOLIA=0x...
-export IDENTITY_OAPP_CELO_ALFAJORES=0x...
+export IDENTITY_OAPP_CELO_SEPOLIA=0x...
 pnpm setPeers:baseSepolia
-pnpm setPeers:celoAlfajores
+pnpm setPeers:celoSepolia
 
 # Test cross-chain flow in frontend
 cd ../../apps/web
@@ -145,7 +145,7 @@ pnpm dev
 ```solidity
 // Send verification cross-chain
 function sendVerification(
-    uint32 dstEid,          // Destination chain (Celo = 40125)
+    uint32 dstEid,          // Destination chain (Celo Sepolia = 40125)
     address user,
     bytes32 policyId,       // e.g., keccak256("kyc-basic")
     bytes32 commitment,
@@ -161,7 +161,7 @@ function isVerified(address user, bytes32 policyId)
 ### Why This Qualifies for LayerZero Prize
 
 - Uses LayerZero v2 OApp with custom `_lzReceive` handler
-- Deployed on 2+ testnets (Base Sepolia + Celo Alfajores)
+- Deployed on 2+ testnets (Base Sepolia + Celo Sepolia)
 - Demonstrates real omnichain use case (cross-chain identity)
 - Privacy-preserving architecture (only commitments cross chains)
 - Working frontend integration with fee quotes

@@ -7,7 +7,7 @@ import { IdentityOApp } from '../typechain-types';
  */
 const ENDPOINT_IDS = {
   baseSepolia: 40245,
-  celoAlfajores: 40125,
+  celoSepolia: 40125, // Celo Sepolia testnet - verify this EID from LayerZero docs
 };
 
 /**
@@ -16,7 +16,7 @@ const ENDPOINT_IDS = {
  */
 const DEPLOYED_CONTRACTS = {
   baseSepolia: process.env.IDENTITY_OAPP_BASE_SEPOLIA || '',
-  celoAlfajores: process.env.IDENTITY_OAPP_CELO_ALFAJORES || '',
+  celoSepolia: process.env.IDENTITY_OAPP_CELO_SEPOLIA || '',
 };
 
 /**
