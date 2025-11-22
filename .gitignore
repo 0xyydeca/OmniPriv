@@ -34,6 +34,8 @@ lerna-debug.log*
 **/*privatekey*
 **/*.pem
 **/*.key
+**/*api_key*.json
+cdp_api_key.json
 
 # IDE
 .vscode/

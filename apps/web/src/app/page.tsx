@@ -131,7 +131,7 @@ export default function Home() {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
           >
-            OmniPriv
+            OmniPriv – Privacy-First Cross-Chain Identity Vault
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
@@ -139,7 +139,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
             className="text-lg sm:text-xl md:text-2xl text-gray-200 font-medium"
           >
-            Privacy-Preserving Cross-Chain Identity
+            Verify age, country, or rep privately across any chain
           </motion.p>
         </header>
 
