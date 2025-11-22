@@ -19,10 +19,10 @@ Complete walkthrough for demonstrating OmniPriv to judges, users, or stakeholder
 ### 2. Onboarding (30 seconds)
 
 **What Happens:**
-- Privy modal appears
+- CDP Embedded Wallet modal appears
 - Enter email (or connect wallet)
 - Embedded wallet created instantly
-- No seed phrase required (secured by Privy)
+- No seed phrase required (secured by CDP)
 
 **Key Points:**
 - "Onboarding takes < 20 seconds"
@@ -183,7 +183,7 @@ Complete walkthrough for demonstrating OmniPriv to judges, users, or stakeholder
 
 **Highlight:**
 - Use of sponsor tech:
-  - Privy (embedded wallets + gas sponsorship)
+  - CDP (Embedded Wallets for users + Server Wallets for agents)
   - LayerZero v2 (cross-chain messaging)
   - Aztec/Noir (ZK circuits)
   - Base + Celo (multi-chain)
@@ -195,7 +195,7 @@ Complete walkthrough for demonstrating OmniPriv to judges, users, or stakeholder
 
 ### "What if the user loses their device?"
 
-**Answer:** "Users can export their encrypted vault and import it on a new device. In production, we'd integrate with Privy's recovery flows or use social recovery."
+**Answer:** "Users can export their encrypted vault and import it on a new device. In production, we'd integrate with CDP's recovery flows or use social recovery."
 
 ### "How do you prevent replay attacks?"
 

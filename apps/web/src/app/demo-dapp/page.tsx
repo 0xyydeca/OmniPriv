@@ -1,6 +1,7 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+// TODO: Replace with CDP SDK import when implemented
+// import { useCDP } from '@coinbase/cdp-sdk';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi';
@@ -22,7 +23,13 @@ const AGE18_POLICY_ID = '0x' + 'AGE18_COUNTRY_ALLOWED'.padEnd(64, '0') as `0x${s
 type ClaimStatus = 'idle' | 'checking' | 'claiming' | 'success' | 'error';
 
 export default function DemoDAppPage() {
-  const { ready, authenticated, user, login } = usePrivy();
+  // TODO: Replace with CDP SDK hooks when implemented
+  // const { ready, authenticated, user, login } = useCDP();
+  const ready = false;
+  const authenticated = false;
+  const user = null;
+  const login = () => console.log('CDP login not yet implemented');
+  
   const router = useRouter();
   const [claimStatus, setClaimStatus] = useState<ClaimStatus>('idle');
   const [userHash, setUserHash] = useState<`0x${string}` | null>(null);

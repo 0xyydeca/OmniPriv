@@ -37,7 +37,7 @@ pnpm setup
 
 ## Step 2: Environment Setup (1 min)
 
-### Option A: Quick Demo (No Privy Account Needed)
+### Option A: Quick Demo (No CDP Account Needed)
 
 Just create an empty `.env.local` file:
 
@@ -45,25 +45,27 @@ Just create an empty `.env.local` file:
 touch .env.local
 ```
 
-The app will run with a placeholder Privy app ID (limited functionality).
+The app will run with mock wallet functionality (limited functionality).
 
 ### Option B: Full Setup (Recommended)
 
-1. **Get Privy API Key** (30 seconds):
-   - Go to https://dashboard.privy.io/
+1. **Get CDP API Keys** (30 seconds):
+   - Go to https://portal.cdp.coinbase.com
    - Sign up / Log in
-   - Click "Create App"
-   - Copy the App ID
+   - Create a new project
+   - Generate API keys
+   - Copy the API Key and Project ID
 
 2. **Create `.env.local`:**
 
 ```bash
 cat > .env.local << 'EOF'
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
+NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key_here
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id_here
 EOF
 ```
 
-Replace `your_privy_app_id_here` with your actual Privy App ID.
+Replace with your actual CDP API Key and Project ID.
 
 ## Step 3: Verify Setup (Optional but Recommended)
 
@@ -93,18 +95,17 @@ You should see the OmniPriv landing page!
 
 ## What to Try
 
-### Without Privy Setup:
+### Without CDP Setup:
 - View landing page
 - Read documentation
-- Wallet login (needs Privy)
+- Wallet login (needs CDP)
 
-### With Privy Setup:
+### With CDP Setup:
 1. Click **"Get Started"**
-2. Enter your email
-3. Create embedded wallet (< 20 seconds)
-4. Add a mock credential
-5. Generate a ZK proof
-6. Try cross-chain bridging
+2. Enter your email (CDP creates embedded wallet < 20 seconds)
+3. Add a mock credential
+4. Generate a ZK proof
+5. Try cross-chain bridging
 
 ## Troubleshooting
 
@@ -124,7 +125,7 @@ lsof -ti:3000 | xargs kill -9
 PORT=3001 pnpm dev
 ```
 
-### "Privy App ID not found"
+### "CDP API Key not found"
 
 Check your `.env.local` file:
 ```bash

@@ -1,6 +1,6 @@
 # OmniPriv 2.0
 
-**Privacy-first omnichain identity router powered by Aztec, LayerZero, Privy, and Coinbase Developer Platform.**
+**Privacy-first omnichain identity router powered by Aztec, LayerZero, and Coinbase Developer Platform.**
 
 > 🎯 **ETHGlobal Buenos Aires 2025 Hackathon Project**
 
@@ -55,7 +55,7 @@ See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
 ```
 User Journey:
 1. Land on omnipriv.app → "Prove you qualify once, reuse privately across chains"
-2. Click "Continue" → Sign in with Privy (embedded wallet + gas sponsorship)
+2. Click "Continue" → Sign in with CDP Embedded Wallet (gasless onboarding)
 3. Add credential → Encrypt & store locally → Anchor commitment on Chain A
 4. Generate proof → Noir circuit proves age ≥ 18 and country ∉ {blocked}
 5. Bridge verification → LayerZero sends flag to Chain B
@@ -90,14 +90,11 @@ User Journey:
 - Genuine LayerZero v2 integration with nonce checks and policy logic
 - Minimal payload design (< 1KB) for gas efficiency
 
-### Privy
-- **Embedded wallets** with gas sponsorship
-- Email/social login → instant wallet creation
-- No MetaMask popups, no seed phrases
-
 ### Coinbase Developer Platform (CDP)
-- **Server wallet** for agent operations
+- **CDP Embedded Wallets** for end-user onboarding and gasless UX
+- **CDP Server Wallets** for agent operations and treasury management
 - **x402-gated endpoints** for automated verification refresh
+- Email/social login → instant wallet creation (no MetaMask, no seed phrases)
 - Pays for identity-related on-chain actions via HTTP API
 
 ## 📂 Project Structure
@@ -142,9 +139,9 @@ omnipriv/
 - ✅ Support for Base Sepolia, Celo Sepolia, and more
 
 ### Developer-Friendly
-- ✅ Gasless onboarding via Privy
+- ✅ Gasless onboarding via CDP Embedded Wallets
 - ✅ Simple `isVerified(userHash, policyId)` API for dApps
-- ✅ CDP agent for automated operations
+- ✅ CDP Server Wallets for automated operations
 
 ## 🧪 Testing
 
@@ -178,8 +175,9 @@ pnpm -F web test:e2e
 Create `.env.local` in `apps/web/`:
 
 ```bash
-# Privy (required)
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+# CDP (required for wallet functionality)
+NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
 
 # Contract addresses
 NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS_BASE_SEPOLIA=0x6DB3992C31AFc84E442621fff00511e9f26335d1
@@ -204,7 +202,7 @@ CELO_SEPOLIA_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
 
 ## 🎭 Demo Flow
 
-1. **Onboard**: Sign in with email → Privy creates embedded wallet (< 20s)
+1. **Onboard**: Sign in with email → CDP creates embedded wallet (< 20s)
 2. **Add Credential**: Mock KYC form (DOB, country) → Encrypted vault → Commitment on-chain
 3. **Prove**: Generate Noir proof (< 7s) → Verify on Chain A
 4. **Bridge**: Send verification flag to Chain B via LayerZero (< 60s)
@@ -222,8 +220,7 @@ CELO_SEPOLIA_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
 ### Sponsor-Specific
 - ✅ **Aztec**: Noir circuit + Devnet integration for proof generation
 - ✅ **LayerZero**: OApp with nonce checks and policy logic
-- ✅ **Privy**: Embedded wallets + gas sponsorship (no MetaMask)
-- ✅ **CDP**: Server wallet + x402 workflow for agent operations
+- ✅ **CDP**: Embedded Wallets for users + Server Wallets for agents + x402 workflow
 
 ### UX
 - ✅ Onboarding ≤ 20 seconds
@@ -252,4 +249,4 @@ MIT License - see [LICENSE](./LICENSE)
 
 **Built with ❤️ for ETHGlobal Buenos Aires 2025**
 
-*Powered by Aztec • LayerZero • Privy • Coinbase Developer Platform*
+*Powered by Aztec • LayerZero • Coinbase Developer Platform*

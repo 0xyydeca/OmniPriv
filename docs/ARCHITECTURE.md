@@ -14,9 +14,9 @@ OmniPriv is a privacy-first omnichain identity router that enables users to prov
        │              │             │               │
        v              v             v               v
 ┌──────────┐   ┌───────────┐  ┌─────────┐  ┌──────────────┐
-│  Privy   │   │   Noir    │  │ wagmi/  │  │  CDP Agent   │
-│ Embedded │   │  Circuit  │  │  viem   │  │  (x402 API)  │
-│  Wallet  │   │ (Aztec)   │  │         │  │              │
+│   CDP    │   │   Noir    │  │ wagmi/  │  │  CDP Server  │
+│ Embedded │   │  Circuit  │  │  viem   │  │   Wallet     │
+│  Wallet  │   │ (Aztec)   │  │         │  │ (x402 API)   │
 └──────────┘   └───────────┘  └────┬────┘  └──────┬───────┘
                                     │              │
                                     v              v
@@ -59,7 +59,7 @@ OmniPriv is a privacy-first omnichain identity router that enables users to prov
 
 **Location**: `apps/web/`
 
-- **Landing Page** (`/`): Onboarding with Privy
+- **Landing Page** (`/`): Onboarding with CDP Embedded Wallets
 - **Dashboard** (`/dashboard`): Vault management, proof generation, bridging
 - **Demo dApp** (`/demo-dapp`): KYC-gated airdrop demonstration
 - **Agent API** (`/api/refresh-claim`): CDP x402-gated endpoint
@@ -67,7 +67,7 @@ OmniPriv is a privacy-first omnichain identity router that enables users to prov
 **Tech Stack**:
 - Next.js 14 (App Router)
 - wagmi 2.x + viem 2.x (EVM interactions)
-- Privy SDK (embedded wallets)
+- CDP SDK (embedded wallets for end-users, server wallets for agents)
 - Framer Motion (animations)
 - TailwindCSS (styling)
 
@@ -281,7 +281,7 @@ interface VaultRecord {
 
 ### Target Metrics
 
-- **Onboarding**: < 20 seconds (Privy wallet creation)
+- **Onboarding**: < 20 seconds (CDP Embedded Wallet creation)
 - **Proof Generation**: < 7 seconds (laptop), < 10 seconds (mobile)
 - **Cross-Chain Delivery**: < 60 seconds (LayerZero message)
 - **Contract Calls**: < 5 seconds (gas-sponsored transactions)
@@ -290,7 +290,7 @@ interface VaultRecord {
 
 1. **Compact Payloads**: LayerZero messages are minimal (< 1KB)
 2. **Indexed Storage**: `bytes32` keys for O(1) lookups
-3. **Gas-Sponsored Txns**: Privy handles gas for user operations
+3. **Gas-Sponsored Txns**: CDP handles gas for user operations
 4. **Circuit Size**: Simple constraints to keep proving time low
 
 ## Deployment Architecture
@@ -330,7 +330,7 @@ Agent:
 |-------|-----------|---------|
 | Frontend | Next.js 14 + React 18 | UI/UX |
 | Web3 | wagmi 2.x + viem 2.x | EVM interactions |
-| Wallet | Privy SDK | Embedded wallets + gas sponsorship |
+| Wallet | CDP SDK | Embedded wallets (users) + Server wallets (agents) |
 | ZK | Noir (Aztec) | Zero-knowledge proofs |
 | Cross-Chain | LayerZero v2 OApp | Omnichain messaging |
 | Agent | CDP SDK + x402 | Automated operations |
@@ -353,6 +353,5 @@ Agent:
 
 - [Aztec Docs](https://docs.aztec.network/)
 - [LayerZero v2 Docs](https://docs.layerzero.network/)
-- [Privy Docs](https://docs.privy.io/)
 - [CDP Docs](https://docs.cdp.coinbase.com/)
 - [ADR-001: LayerZero v2 Integration](./ADR-001-layerzero-v2.md)
