@@ -1,0 +1,25 @@
+{
+  "baseSepolia": {
+    "chainId": 84532,
+    "layerZeroEid": 40245,
+    "contracts": {
+      "VaultAnchor": "",
+      "ProofConsumer": "",
+      "IdentityOApp": ""
+    },
+    "rpcUrl": "https://sepolia.base.org",
+    "blockExplorer": "https://sepolia.basescan.org"
+  },
+  "celoAlfajores": {
+    "chainId": 44787,
+    "layerZeroEid": 40125,
+    "contracts": {
+      "VaultAnchor": "",
+      "ProofConsumer": "",
+      "IdentityOApp": ""
+    },
+    "rpcUrl": "https://alfajores-forno.celo-testnet.org",
+    "blockExplorer": "https://alfajores.celoscan.io"
+  }
+}
+

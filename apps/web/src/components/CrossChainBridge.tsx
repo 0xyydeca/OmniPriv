@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { VaultRecord } from '@privid/sdk';
+import { useAccount, useWalletClient, usePublicClient, useSwitchChain } from 'wagmi';
+import { deployments, getAddresses, getLayerZeroEid } from '@privid/contracts';
+import { encodeFunctionData, parseEther, formatEther } from 'viem';
 
 interface CrossChainBridgeProps {
   credentials: VaultRecord[];
@@ -12,39 +15,170 @@ const CHAINS = [
   { id: 44787, name: 'Celo Alfajores', icon: '🟡' },
 ];
 
+// IdentityOApp ABI (minimal for our needs)
+const IDENTITY_OAPP_ABI = [
+  {
+    inputs: [
+      { name: 'dstEid', type: 'uint32' },
+      { name: 'user', type: 'address' },
+      { name: 'policyId', type: 'bytes32' },
+      { name: 'commitment', type: 'bytes32' },
+      { name: 'expiry', type: 'uint256' },
+      { name: 'options', type: 'bytes' },
+    ],
+    name: 'sendVerification',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'dstEid', type: 'uint32' },
+      { name: 'message', type: 'bytes' },
+      { name: 'options', type: 'bytes' },
+      { name: 'payInLzToken', type: 'bool' },
+    ],
+    name: 'quote',
+    outputs: [
+      {
+        components: [
+          { name: 'nativeFee', type: 'uint256' },
+          { name: 'lzTokenFee', type: 'uint256' },
+        ],
+        name: 'fee',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+
 export function CrossChainBridge({ credentials }: CrossChainBridgeProps) {
+  const { address, chain: currentChain } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
+  const { switchChain } = useSwitchChain();
+
   const [selectedCredential, setSelectedCredential] = useState<string>('');
   const [sourceChain, setSourceChain] = useState(84532);
   const [targetChain, setTargetChain] = useState(44787);
   const [loading, setLoading] = useState(false);
+  const [estimatedFee, setEstimatedFee] = useState<string>('');
   const [result, setResult] = useState<{ success: boolean; txHash?: string; message: string } | null>(null);
 
   const validCredentials = credentials.filter(
     (c) => c.credential.expiry > Date.now() / 1000
   );
 
+  const selectedCred = validCredentials.find((c) => c.id === selectedCredential);
+
+  // Estimate fee when credential or chains change
+  useEffect(() => {
+    const estimateFee = async () => {
+      if (!selectedCred || !address) {
+        setEstimatedFee('');
+        return;
+      }
+
+      try {
+        const addresses = getAddresses(sourceChain);
+        if (!addresses?.IdentityOApp) {
+          setEstimatedFee('Not deployed');
+          return;
+        }
+
+        const targetEid = getLayerZeroEid(targetChain);
+        if (!targetEid) {
+          setEstimatedFee('Invalid chain');
+          return;
+        }
+
+        // For now, show estimated fee (actual quote requires contract deployment)
+        setEstimatedFee('~0.001 ETH');
+      } catch (err) {
+        console.error('Fee estimation failed:', err);
+        setEstimatedFee('~0.001 ETH');
+      }
+    };
+
+    estimateFee();
+  }, [selectedCredential, sourceChain, targetChain, address, selectedCred]);
+
   const handleBridge = async () => {
     try {
       setLoading(true);
       setResult(null);
 
-      if (!selectedCredential) {
+      if (!selectedCred) {
         throw new Error('Please select a credential');
+      }
+
+      if (!address) {
+        throw new Error('Please connect your wallet');
       }
 
       if (sourceChain === targetChain) {
         throw new Error('Source and target chains must be different');
       }
 
-      // Simulate LayerZero cross-chain message
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Check if we need to switch chains
+      if (currentChain?.id !== sourceChain) {
+        console.log(`Switching to chain ${sourceChain}...`);
+        await switchChain?.({ chainId: sourceChain });
+        // Wait for chain switch
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
 
-      const mockTxHash = `0x${Math.random().toString(16).substring(2, 66)}`;
+      const addresses = getAddresses(sourceChain);
+      if (!addresses?.IdentityOApp) {
+        throw new Error(`IdentityOApp not deployed on ${CHAINS.find(c => c.id === sourceChain)?.name}. Deploy contracts first.`);
+      }
+
+      const targetEid = getLayerZeroEid(targetChain);
+      if (!targetEid) {
+        throw new Error('Invalid target chain');
+      }
+
+      if (!walletClient) {
+        throw new Error('Wallet client not available');
+      }
+
+      // Prepare the transaction
+      const policyId = selectedCred.credential.credential_hash; // Using credential hash as policy ID
+      const commitment = selectedCred.credential.credential_hash; // The commitment
+      const expiry = BigInt(Math.floor(selectedCred.credential.expiry));
+
+      // LayerZero options (use defaults for now)
+      const options = '0x';
+
+      // Send the cross-chain verification
+      const txHash = await walletClient.writeContract({
+        address: addresses.IdentityOApp as `0x${string}`,
+        abi: IDENTITY_OAPP_ABI,
+        functionName: 'sendVerification',
+        args: [
+          targetEid,
+          address,
+          policyId as `0x${string}`,
+          commitment as `0x${string}`,
+          expiry,
+          options as `0x${string}`,
+        ],
+        value: parseEther('0.001'), // Fee for LayerZero message
+      });
+
+      console.log('Transaction sent:', txHash);
+
+      // Wait for confirmation
+      if (publicClient) {
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+      }
 
       setResult({
         success: true,
-        txHash: mockTxHash,
-        message: `✅ Verification sent to ${CHAINS.find((c) => c.id === targetChain)?.name}!`,
+        txHash,
+        message: `Verification sent to ${CHAINS.find((c) => c.id === targetChain)?.name}!`,
       });
 
     } catch (err: any) {
@@ -153,12 +287,24 @@ export function CrossChainBridge({ credentials }: CrossChainBridgeProps) {
           <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Estimated Fee</span>
-              <span className="text-lg font-bold">~0.001 ETH</span>
+              <span className="text-lg font-bold">
+                {estimatedFee || 'Calculating...'}
+              </span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
               LayerZero cross-chain message fee (actual cost may vary)
             </p>
           </div>
+
+          {/* Chain Mismatch Warning */}
+          {currentChain && currentChain.id !== sourceChain && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 p-4 rounded-lg">
+              <p className="text-sm text-yellow-900 dark:text-yellow-100">
+                ⚠️ You're connected to <strong>{currentChain.name}</strong>. 
+                You'll be prompted to switch to <strong>{CHAINS.find(c => c.id === sourceChain)?.name}</strong> when bridging.
+              </p>
+            </div>
+          )}
 
           {/* Result */}
           {result && (

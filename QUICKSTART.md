@@ -6,12 +6,12 @@ Get PrivID running locally in 5 minutes!
 
 ```bash
 node --version  # Should be v20.x
-pnpm --version  # Should be >= 8.0
+pnpm --version  # Should be 8.15.0
 ```
 
 Don't have them? Install:
 - **Node.js:** https://nodejs.org/ (download LTS)
-- **pnpm:** `npm install -g pnpm@8`
+- **pnpm:** `npm install -g pnpm@8.15.0`
 
 ## Step 1: Clone & Install (2 min)
 
@@ -20,9 +20,18 @@ Don't have them? Install:
 git clone https://github.com/yourusername/privid.git
 cd privid
 
-# Install dependencies (this takes ~1-2 minutes)
-pnpm install
+# Use correct Node version (if you have nvm)
+nvm use
+
+# Automated setup (installs + builds - takes ~1-2 minutes)
+pnpm setup
 ```
+
+**What `pnpm setup` does:**
+- ✅ Checks Node.js 20+ and pnpm 8+ (blocks npm/yarn)
+- ✅ Installs all dependencies
+- ✅ Builds workspace packages automatically
+- ✅ Ready to use immediately!
 
 ## Step 2: Environment Setup (1 min)
 
@@ -54,7 +63,15 @@ EOF
 
 Replace `your_privy_app_id_here` with your actual Privy App ID.
 
-## Step 3: Start Development Server (30 sec)
+## Step 3: Verify Setup (Optional but Recommended)
+
+```bash
+pnpm verify
+```
+
+This checks that everything is configured correctly.
+
+## Step 4: Start Development Server (30 sec)
 
 ```bash
 pnpm dev
@@ -66,7 +83,7 @@ Wait for:
 ○ Local: http://localhost:3000
 ```
 
-## Step 4: Open in Browser
+## Step 5: Open in Browser
 
 Visit: **http://localhost:3000**
 
@@ -92,8 +109,7 @@ You should see the PrivID landing page!
 ### "Module not found" errors
 
 ```bash
-pnpm install
-pnpm build
+pnpm setup  # Reinstalls and rebuilds everything
 ```
 
 ### Port 3000 already in use
@@ -125,6 +141,15 @@ pnpm build
 ```
 
 This will compile all packages and should resolve most TS issues.
+
+### "Please use pnpm instead of npm"
+
+You tried to use npm or yarn. This project enforces pnpm:
+
+```bash
+npm install -g pnpm@8.15.0  # Install pnpm first
+pnpm setup                  # Then run setup
+```
 
 ## Next Steps
 

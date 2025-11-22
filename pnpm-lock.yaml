@@ -13,6 +13,9 @@ importers:
       '@noble/hashes':
         specifier: ^1.3.3
         version: 1.8.0
+      '@privid/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@privy-io/react-auth':
         specifier: ^1.60.0
         version: 1.99.1(@solana/web3.js@1.98.4)(@types/react@18.3.27)(bs58@6.0.0)(react-dom@18.3.1)(react@18.3.1)(typescript@5.9.3)(zod@3.25.76)
