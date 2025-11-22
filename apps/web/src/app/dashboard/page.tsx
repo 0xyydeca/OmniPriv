@@ -7,6 +7,7 @@ import { CredentialList } from '@/components/CredentialList';
 import { AddCredential } from '@/components/AddCredential';
 import { VerifyProof } from '@/components/VerifyProof';
 import { CrossChainBridge } from '@/components/CrossChainBridge';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { getVault, VaultRecord } from '@privid/sdk';
 
 type Tab = 'credentials' | 'add' | 'verify' | 'bridge';
@@ -67,16 +68,20 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
                 PrivID
               </h1>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-gray-500 dark:text-gray-400" aria-label="Wallet address">
                 {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
               </span>
             </div>
-            <button
-              onClick={logout}
-              className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <button
+                onClick={logout}
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                aria-label="Logout"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
