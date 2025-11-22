@@ -49,23 +49,21 @@ The app will run with mock wallet functionality (limited functionality).
 
 ### Option B: Full Setup (Recommended)
 
-1. **Get CDP API Keys** (30 seconds):
+1. **Get CDP App ID** (30 seconds):
    - Go to https://portal.cdp.coinbase.com
    - Sign up / Log in
    - Create a new project
-   - Generate API keys
-   - Copy the API Key and Project ID
+   - Copy your **App ID** from the dashboard
 
 2. **Create `.env.local`:**
 
 ```bash
 cat > .env.local << 'EOF'
-NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key_here
-NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id_here
+NEXT_PUBLIC_CDP_APP_ID=your_cdp_app_id_here
 EOF
 ```
 
-Replace with your actual CDP API Key and Project ID.
+Replace with your actual CDP App ID.
 
 ## Step 3: Verify Setup (Optional but Recommended)
 
@@ -125,7 +123,7 @@ lsof -ti:3000 | xargs kill -9
 PORT=3001 pnpm dev
 ```
 
-### "CDP API Key not found"
+### "CDP App ID not found"
 
 Check your `.env.local` file:
 ```bash

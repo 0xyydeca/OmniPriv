@@ -41,8 +41,7 @@ nano .env.local
 **Required for local dev:**
 ```env
 # CDP (get from https://portal.cdp.coinbase.com)
-NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key_here
-NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id_here
+NEXT_PUBLIC_CDP_APP_ID=your_cdp_app_id_here
 
 # Optional for full flow
 DEPLOYER_PRIVATE_KEY=your_private_key_for_testnet_deployment
@@ -81,8 +80,8 @@ Visit [http://localhost:3000](http://localhost:3000)
 3. Enable:
    - Embedded Wallets (for end-user onboarding)
    - Server Wallets (for agent operations)
-4. Generate API keys
-5. Copy API Key and Project ID to `.env.local`
+4. Copy your **App ID** (also called Project ID) from the dashboard
+5. Add to `.env.local` as `NEXT_PUBLIC_CDP_APP_ID`
 
 ### Step 3: Deploy Contracts
 
@@ -190,8 +189,8 @@ Add these in Vercel dashboard:
 
 ## Troubleshooting
 
-### "CDP API Key not found"
-- Check `.env.local` has `NEXT_PUBLIC_CDP_API_KEY` and `NEXT_PUBLIC_CDP_PROJECT_ID`
+### "CDP App ID not found"
+- Check `.env.local` has `NEXT_PUBLIC_CDP_APP_ID`
 - Restart dev server after adding env vars
 
 ### "Contract not deployed"

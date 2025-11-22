@@ -53,23 +53,20 @@ class SetupVerifier {
     
     try {
       if (fs.existsSync(envPath)) {
-        // Check if it has the required CDP keys
+        // Check if it has the required CDP App ID
         const envContent = fs.readFileSync(envPath, 'utf8');
         
-        const hasCDPKey = envContent.includes('NEXT_PUBLIC_CDP_API_KEY');
-        const hasProjectId = envContent.includes('NEXT_PUBLIC_CDP_PROJECT_ID');
+        const hasCDPAppId = envContent.includes('NEXT_PUBLIC_CDP_APP_ID');
         
-        if (hasCDPKey && hasProjectId) {
-          const keyValue = envContent.match(/NEXT_PUBLIC_CDP_API_KEY=(.+)/);
-          const projectValue = envContent.match(/NEXT_PUBLIC_CDP_PROJECT_ID=(.+)/);
-          if (keyValue && keyValue[1] && keyValue[1].trim() !== 'your_cdp_api_key_here' &&
-              projectValue && projectValue[1] && projectValue[1].trim() !== 'your_cdp_project_id_here') {
+        if (hasCDPAppId) {
+          const appIdValue = envContent.match(/NEXT_PUBLIC_CDP_APP_ID=(.+)/);
+          if (appIdValue && appIdValue[1] && appIdValue[1].trim() !== 'your_cdp_app_id_here') {
             this.success.push('.env.local configured ✓');
           } else {
-            this.warnings.push('.env.local exists but CDP keys not set');
+            this.warnings.push('.env.local exists but CDP App ID not set');
           }
         } else {
-          this.warnings.push('.env.local exists but missing CDP configuration');
+          this.warnings.push('.env.local exists but missing NEXT_PUBLIC_CDP_APP_ID');
         }
       } else {
         this.warnings.push('.env.local not found (optional for demo mode)');

@@ -178,8 +178,8 @@ Create `.env.local` in `apps/web/`:
 
 ```bash
 # CDP (required for wallet functionality)
-NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key
-NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
+# Get from: https://portal.cdp.coinbase.com
+NEXT_PUBLIC_CDP_APP_ID=your_cdp_app_id
 
 # Contract addresses
 NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS_BASE_SEPOLIA=0x6DB3992C31AFc84E442621fff00511e9f26335d1
