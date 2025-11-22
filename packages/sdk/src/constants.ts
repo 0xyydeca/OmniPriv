@@ -113,7 +113,7 @@ export const BRIDGE_TIMEOUT_MS = 120000; // 2 minutes
  */
 export const BASE_SEPOLIA_CONTRACTS = {
   VaultAnchor: '0x6DB3992C31AFc84E442621fff00511e9f26335d1' as const,
-  ProofConsumer: '0x5BB995757E8Be755967160C256eF2F8e07a3e579' as const,
+  ProofConsumer: '0xdC98b38F092413fedc31ef42667C71907fc5350A' as const,
   IdentityOApp: '0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48' as const,
 } as const;
 
@@ -121,7 +121,7 @@ export const BASE_SEPOLIA_CONTRACTS = {
  * Contract addresses (Optimism Sepolia - Chain B)
  */
 export const OPTIMISM_SEPOLIA_CONTRACTS = {
-  OmniPrivVerifier: '' as const, // To be deployed
+  OmniPrivVerifier: '0xcf1a9522FB166a1E79564b5081940a271ab5A187' as const,
   KycAirdrop: '' as const, // To be deployed
 } as const;
 
