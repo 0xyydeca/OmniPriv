@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { LockClosedIcon, GlobeAltIcon, BoltIcon } from '@heroicons/react/24/outline';
 import { CredentialFlowAnimation } from '@/components/CredentialFlowAnimation';
 
 export default function Home() {
@@ -67,29 +68,71 @@ export default function Home() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
-          <div className="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 p-6 rounded-xl border border-primary-200 dark:border-primary-700">
-            <div className="text-4xl mb-4">🔐</div>
-            <h3 className="text-lg font-semibold mb-2">Zero-Knowledge Proofs</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          {/* Zero-Knowledge Proofs Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            className="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 p-6 rounded-xl border border-primary-200 dark:border-primary-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="mb-4">
+              <LockClosedIcon className="w-12 h-12 text-primary-600 dark:text-primary-400" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+              Zero-Knowledge Proofs
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               Prove attributes without revealing personal data
             </p>
-          </div>
+            <p className="text-xs text-primary-700 dark:text-primary-300 font-medium">
+              Powered by Aztec Noir for unbreakable privacy
+            </p>
+          </motion.div>
 
-          <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 rounded-xl border border-accent-200 dark:border-accent-700">
-            <div className="text-4xl mb-4">🌐</div>
-            <h3 className="text-lg font-semibold mb-2">Cross-Chain Ready</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          {/* Cross-Chain Ready Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            whileHover={{ scale: 1.05 }}
+            className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 rounded-xl border border-accent-200 dark:border-accent-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="mb-4">
+              <GlobeAltIcon className="w-12 h-12 text-accent-600 dark:text-accent-400" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+              Cross-Chain Ready
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               One identity, verified everywhere via LayerZero
             </p>
-          </div>
+            <p className="text-xs text-accent-700 dark:text-accent-300 font-medium">
+              Built with LayerZero v2 OApp for seamless bridging
+            </p>
+          </motion.div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-xl border border-green-200 dark:border-green-700">
-            <div className="text-4xl mb-4">⚡</div>
-            <h3 className="text-lg font-semibold mb-2">Gasless Onboarding</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          {/* Gasless Onboarding Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+            whileHover={{ scale: 1.05 }}
+            className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-xl border border-green-200 dark:border-green-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="mb-4">
+              <BoltIcon className="w-12 h-12 text-green-600 dark:text-green-400" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+              Gasless Onboarding
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               Embedded wallets with sponsored transactions
             </p>
-          </div>
+            <p className="text-xs text-green-700 dark:text-green-300 font-medium">
+              Powered by Privy SDK for instant wallet creation
+            </p>
+          </motion.div>
         </div>
 
         {/* User Journey */}
