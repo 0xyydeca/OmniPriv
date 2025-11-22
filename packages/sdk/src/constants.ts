@@ -122,6 +122,7 @@ export const BASE_SEPOLIA_CONTRACTS = {
  */
 export const OPTIMISM_SEPOLIA_CONTRACTS = {
   OmniPrivVerifier: '0xcf1a9522FB166a1E79564b5081940a271ab5A187' as const,
+  IdentityOApp: '0x5BB995757E8Be755967160C256eF2F8e07a3e579' as const,
   KycAirdrop: '' as const, // To be deployed
 } as const;
 

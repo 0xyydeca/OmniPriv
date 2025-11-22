@@ -16,7 +16,7 @@ const ENDPOINT_IDS = {
  */
 const DEPLOYED_CONTRACTS = {
   baseSepolia: process.env.IDENTITY_OAPP_BASE_SEPOLIA || '',
-  optimismSepolia: process.env.OMNIPRIV_VERIFIER_OPTIMISM_SEPOLIA || '',
+  optimismSepolia: process.env.IDENTITY_OAPP_OPTIMISM_SEPOLIA || '',
 };
 
 /**

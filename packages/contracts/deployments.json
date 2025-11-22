@@ -14,7 +14,8 @@
     "chainId": 11155420,
     "layerZeroEid": 40232,
     "contracts": {
-      "OmniPrivVerifier": "0xcf1a9522FB166a1E79564b5081940a271ab5A187"
+      "OmniPrivVerifier": "0xcf1a9522FB166a1E79564b5081940a271ab5A187",
+      "IdentityOApp": "0x5BB995757E8Be755967160C256eF2F8e07a3e579"
     },
     "rpcUrl": "https://sepolia.optimism.io",
     "blockExplorer": "https://sepolia-optimism.etherscan.io"

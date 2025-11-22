@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { getVault, generateCommitment, generateSalt, encryptCredential, deriveEncryptionKey } from '@omnipriv/sdk';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { VAULT_ANCHOR_ADDRESS, VAULT_ANCHOR_ABI } from '@/contracts/VaultAnchor';
 
 interface AddCredentialProps {
   onCredentialAdded: () => void;
@@ -23,8 +23,8 @@ export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
   const [age, setAge] = useState(25);
   const [country, setCountry] = useState('US');
 
-  const { writeContract, data: hash } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+  const { writeContract, data: hash, isPending: isWritePending } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({ hash });
 
   const handleAddCredential = async () => {
     try {
@@ -81,33 +81,33 @@ export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
       });
 
       // Add to blockchain
-      setStatus('Adding commitment to blockchain...');
-      const vaultAnchorAddress = process.env.NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS_BASE_SEPOLIA;
+      setStatus('Adding commitment to Base Sepolia...');
       
-      if (!vaultAnchorAddress) {
-        console.warn('VaultAnchor address not configured, skipping on-chain transaction');
-        setStatus('✅ Credential added to vault (off-chain only)');
-        setTimeout(() => {
-          onCredentialAdded();
-        }, 1500);
-        return;
-      }
+      // Submit to VaultAnchor contract
+      writeContract({
+        address: VAULT_ANCHOR_ADDRESS,
+        abi: VAULT_ANCHOR_ABI,
+        functionName: 'addCommitment',
+        args: [commitment as `0x${string}`, BigInt(expiry)],
+      });
 
-      // For now, mock the contract write since we don't have ABI
-      // In production, this would be: writeContract({ ... })
-      setStatus('✅ Credential added successfully!');
-      
-      setTimeout(() => {
-        onCredentialAdded();
-      }, 1500);
+      setStatus('⏳ Waiting for transaction confirmation...');
 
     } catch (err: any) {
       console.error('Failed to add credential:', err);
       setError(err.message || 'Failed to add credential');
-    } finally {
       setLoading(false);
     }
   };
+
+  // Handle successful transaction
+  if (isTxSuccess && loading) {
+    setLoading(false);
+    setStatus('✅ Credential added successfully!');
+    setTimeout(() => {
+      onCredentialAdded();
+    }, 1500);
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -220,18 +220,35 @@ export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
       {/* Add Button */}
       <button
         onClick={handleAddCredential}
-        disabled={loading || issuerType === 'self'}
+        disabled={loading || issuerType === 'self' || isWritePending || isConfirming}
         className="w-full py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? (
+        {loading || isWritePending || isConfirming ? (
           <span className="flex items-center justify-center gap-2">
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            Adding Credential...
+            {isWritePending ? 'Sending Transaction...' : isConfirming ? 'Confirming...' : 'Adding Credential...'}
           </span>
         ) : (
-          'Add Credential'
+          'Add Credential to Vault'
         )}
       </button>
+
+      {/* Transaction Status */}
+      {hash && (
+        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+          <p className="text-xs text-blue-900 dark:text-blue-100">
+            Transaction: <span className="font-mono">{hash.slice(0, 10)}...{hash.slice(-8)}</span>
+          </p>
+          <a
+            href={`https://sepolia.basescan.org/tx/${hash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            View on BaseScan →
+          </a>
+        </div>
+      )}
     </div>
   );
 }

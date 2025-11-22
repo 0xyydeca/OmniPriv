@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
-import { VaultRecord, generateProof, evaluatePredicate, type Predicate } from '@omnipriv/sdk';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
+import { VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity } from '@omnipriv/sdk';
+import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
+import { ethers } from 'ethers';
 
 interface VerifyProofProps {
   credentials: VaultRecord[];
@@ -17,6 +19,22 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [proof, setProof] = useState<{ proof: string; publicSignals: string[] } | null>(null);
+  const [policyIdForCheck, setPolicyIdForCheck] = useState<string>('');
+
+  // Contract interactions
+  const { writeContract, data: hash, isPending: isWritePending } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({ hash });
+
+  // Check if user is verified on-chain
+  const { data: isVerifiedOnChain } = useReadContract({
+    address: PROOF_CONSUMER_ADDRESS,
+    abi: PROOF_CONSUMER_ABI,
+    functionName: 'isVerified',
+    args: address && policyIdForCheck ? [address, policyIdForCheck as `0x${string}`] : undefined,
+    query: {
+      enabled: !!address && !!policyIdForCheck,
+    },
+  });
 
   const validCredentials = credentials.filter(
     (c) => c.credential.expiry > Date.now() / 1000
@@ -70,17 +88,18 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       }
 
       // Generate ZK proof
-      const policyId = `0x${policyType}${Date.now()}`;
+      const policyId = ethers.keccak256(ethers.toUtf8Bytes(`${policyType}_policy`));
+      setPolicyIdForCheck(policyId);
       
       // NoirCredential expects: dob_year, country_code, secret_salt
       const noirCredential = {
         dob_year: mockCredentialData.age ? new Date().getFullYear() - mockCredentialData.age : 2000,
-        country_code: 1, // Mock country code
+        country_code: 1, // Mock country code (US)
         secret_salt: 12345n, // Mock salt
       };
       
       const policyConfig = {
-        policy_id: policyId,
+        policy_id: `${policyType}_policy`,
         expiry_days: 30,
       };
       
@@ -90,20 +109,22 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
         Date.now()
       );
 
-      // Convert Uint8Array proof to hex string for storage/display
+      // Convert Uint8Array proof to hex string
       const proofHex = '0x' + Array.from(proofResponse.proof)
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
       
+      // Encode public inputs for Solidity (bytes32[] format)
+      const publicSignalsBytes32 = encodePublicInputsForSolidity(proofResponse.publicInputs);
+      
       setProof({
         proof: proofHex,
-        publicSignals: Object.values(proofResponse.publicInputs).map(String),
+        publicSignals: publicSignalsBytes32,
       });
 
-      // In production, submit proof to ProofConsumer contract
       setResult({
         success: true,
-        message: '✅ Proof generated successfully! (On-chain verification pending)',
+        message: '✅ Proof generated! Click "Submit to Base Sepolia" to verify on-chain.',
       });
 
     } catch (err: any) {
@@ -116,6 +137,46 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       setLoading(false);
     }
   };
+
+  const handleSubmitToChain = async () => {
+    if (!proof || !address) return;
+
+    try {
+      setLoading(true);
+      setResult({
+        success: true,
+        message: '📡 Submitting proof to Base Sepolia...',
+      });
+
+      // Call ProofConsumer.verifyProof()
+      writeContract({
+        address: PROOF_CONSUMER_ADDRESS,
+        abi: PROOF_CONSUMER_ABI,
+        functionName: 'verifyProof',
+        args: [
+          proof.proof as `0x${string}`,
+          proof.publicSignals as `0x${string}`[],
+          policyIdForCheck as `0x${string}`,
+        ],
+      });
+    } catch (err: any) {
+      console.error('Failed to submit proof:', err);
+      setResult({
+        success: false,
+        message: err.message || 'Failed to submit proof to chain',
+      });
+      setLoading(false);
+    }
+  };
+
+  // Update result when transaction confirms
+  if (isTxSuccess && loading) {
+    setLoading(false);
+    setResult({
+      success: true,
+      message: '✅ Proof verified on Base Sepolia! Check status below.',
+    });
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -239,31 +300,87 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
 
           {/* Proof Output */}
           {proof && (
-            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Generated Proof</h3>
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">Proof:</span>
-                  <p className="font-mono text-xs mt-1 break-all bg-white dark:bg-gray-800 p-2 rounded">
-                    {proof.proof.slice(0, 100)}...
-                  </p>
-                </div>
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Public Signals ({proof.publicSignals.length}):
-                  </span>
-                  <div className="mt-1 space-y-1">
-                    {proof.publicSignals.map((signal, i) => (
-                      <p
-                        key={i}
-                        className="font-mono text-xs bg-white dark:bg-gray-800 p-2 rounded"
-                      >
-                        {signal}
-                      </p>
-                    ))}
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">Generated Proof</h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">Proof:</span>
+                    <p className="font-mono text-xs mt-1 break-all bg-white dark:bg-gray-800 p-2 rounded">
+                      {proof.proof.slice(0, 100)}...
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Public Signals ({proof.publicSignals.length}):
+                    </span>
+                    <div className="mt-1 space-y-1">
+                      {proof.publicSignals.slice(0, 3).map((signal, i) => (
+                        <p
+                          key={i}
+                          className="font-mono text-xs bg-white dark:bg-gray-800 p-2 rounded"
+                        >
+                          {signal.slice(0, 20)}...{signal.slice(-10)}
+                        </p>
+                      ))}
+                      {proof.publicSignals.length > 3 && (
+                        <p className="text-xs text-gray-500 italic">
+                          ... and {proof.publicSignals.length - 3} more signals
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Submit to Chain Button */}
+              <button
+                onClick={handleSubmitToChain}
+                disabled={isWritePending || isConfirming || isTxSuccess}
+                className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isWritePending || isConfirming ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {isWritePending ? 'Sending Transaction...' : 'Confirming...'}
+                  </span>
+                ) : isTxSuccess ? (
+                  '✅ Submitted to Base Sepolia'
+                ) : (
+                  '📡 Submit to Base Sepolia'
+                )}
+              </button>
+
+              {/* On-Chain Verification Status */}
+              {address && policyIdForCheck && (
+                <div className={`p-4 rounded-lg ${
+                  isVerifiedOnChain
+                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
+                    : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600'
+                }`}>
+                  <h4 className="font-semibold mb-2">On-Chain Status</h4>
+                  <div className="flex items-center gap-2">
+                    {isVerifiedOnChain ? (
+                      <>
+                        <span className="text-2xl">✅</span>
+                        <span className="text-green-900 dark:text-green-100">
+                          Verified on Base Sepolia!
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-2xl">⏳</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Not yet verified on-chain
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Contract: {PROOF_CONSUMER_ADDRESS.slice(0, 10)}...{PROOF_CONSUMER_ADDRESS.slice(-8)}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

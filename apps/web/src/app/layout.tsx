@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
 import { CDPProvider } from '@/components/CDPProvider';
+import { ModalBackdropFix } from '@/components/ModalBackdropFix';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,7 +24,10 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={inter.className}>
         <CDPProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <ModalBackdropFix />
+            {children}
+          </Providers>
         </CDPProvider>
       </body>
     </html>

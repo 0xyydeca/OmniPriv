@@ -121,7 +121,7 @@ export default function Home() {
     <>
       <ParticleBackground />
       <Navbar />
-      <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-10">
+      <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-[1]">
       <div className="max-w-4xl w-full space-y-6 sm:space-y-8 text-center">
         {/* Hero Section */}
         <header className="space-y-4">

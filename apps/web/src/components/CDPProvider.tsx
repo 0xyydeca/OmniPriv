@@ -12,7 +12,6 @@
 
 import { CDPReactProvider } from '@coinbase/cdp-react';
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
 
 interface CDPProviderProps {
   children: ReactNode;
@@ -25,42 +24,12 @@ export function CDPProvider({ children }: CDPProviderProps) {
   const appId = process.env.NEXT_PUBLIC_CDP_APP_ID;
   const targetChainId = Number(process.env.NEXT_PUBLIC_TARGET_CHAIN) || 84532; // Default to Base Sepolia (84532)
 
-  // Force CDP modals above navbar by injecting styles dynamically
-  // Only run on client side
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const style = document.createElement('style');
-    style.id = 'cdp-modal-z-index-fix';
-    style.textContent = `
-      [data-radix-dialog-content],
-      div[role="dialog"] {
-        z-index: 99999 !important;
-        position: fixed !important;
-      }
-      [data-radix-portal] {
-        z-index: 99999 !important;
-      }
-    `;
-    
-    // Only append if not already added
-    if (!document.getElementById('cdp-modal-z-index-fix')) {
-      document.head.appendChild(style);
-    }
-    
-    return () => {
-      const existingStyle = document.getElementById('cdp-modal-z-index-fix');
-      if (existingStyle) {
-        document.head.removeChild(existingStyle);
-      }
-    };
-  }, []);
-
   // Only initialize CDP if we have a valid app ID
   // Wrong appId blocks auth - must be valid CDP App ID from https://portal.cdp.coinbase.com/
   if (!appId || appId.trim() === '') {
     // If CDP is not configured, just render children without CDP provider
     // This prevents the "Failed to fetch" errors
+    console.warn('CDP_APP_ID not configured. CDP features will be disabled.');
     return <>{children}</>;
   }
 

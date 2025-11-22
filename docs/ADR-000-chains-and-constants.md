@@ -1,7 +1,7 @@
 # ADR-000: Chains and Constants
 
-**Status**: Accepted  
-**Date**: 2025-01-22  
+**Status**: ✅ Fully Implemented & Deployed  
+**Date**: 2025-11-22  
 **Deciders**: OmniPriv Core Team  
 **Context**: ETHGlobal Buenos Aires 2025 Hackathon
 
@@ -23,22 +23,20 @@
 - Fast block times (~2 seconds)
 - Free testnet faucet available
 
-**Destination Chain (Chain B)**: **Celo Sepolia (Alfajores)**
-- **Chain ID**: 11142220
-- **RPC URL**: `https://forno.celo-sepolia.celo-testnet.org`
-- **Block Explorer**: https://celo-sepolia.blockscout.com
-- **LayerZero**: ⚠️ **NOT SUPPORTED** (V2 only on Celo Mainnet)
+**Destination Chain (Chain B)**: **Optimism Sepolia**
+- **Chain ID**: 11155420
+- **RPC URL**: `https://sepolia.optimism.io`
+- **Block Explorer**: https://sepolia-optimism.etherscan.io
+- **LayerZero Endpoint ID**: 40232
+- **LayerZero Endpoint Address**: `0x6EDCE65403992e310A62460808c4b910D972f10f`
 
-**Current Limitation**:
-LayerZero V2 does not support Celo Alfajores testnet. For the hackathon MVP:
-- Core contracts (VaultAnchor, ProofConsumer) deployed on both chains
-- Cross-chain messaging (IdentityOApp) only works on Base Sepolia → Base Sepolia
-- Or Base Sepolia → Ethereum Sepolia (alternative)
+**Rationale**:
+- LayerZero V2 fully supported ✅
+- Fast and reliable testnet
+- Lower gas fees than Ethereum mainnet
+- Good ecosystem for cross-chain demos
 
-**Alternative Destination Chains**:
-- Ethereum Sepolia (11155111) - LayerZero Endpoint ID: 40161 ✅
-- Arbitrum Sepolia (421614) - LayerZero Endpoint ID: 40231 ✅
-- Optimism Sepolia (11155420) - LayerZero Endpoint ID: 40232 ✅
+**Note**: Original plan included Celo Sepolia, but switched to Optimism Sepolia due to LayerZero V2 testnet support
 
 ### Policy Constants
 
@@ -94,17 +92,20 @@ User → Add Credential (DOB, Country)
 #### Base Sepolia (Chain A)
 ```
 VaultAnchor:     0x6DB3992C31AFc84E442621fff00511e9f26335d1
-ProofConsumer:   0x5BB995757E8Be755967160C256eF2F8e07a3e579
+ProofConsumer:   0xdC98b38F092413fedc31ef42667C71907fc5350A
 IdentityOApp:    0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
 ```
 
-#### Celo Sepolia (Chain B)
+#### Optimism Sepolia (Chain B)
 ```
-VaultAnchor:     0xcf1a9522FB166a1E79564b5081940a271ab5A187
-ProofConsumer:   0x6DB3992C31AFc84E442621fff00511e9f26335d1
-OmniPrivVerifier: (to be deployed)
-KycAirdrop:      (to be deployed)
+OmniPrivVerifier: 0xcf1a9522FB166a1E79564b5081940a271ab5A187
+IdentityOApp:     0x5BB995757E8Be755967160C256eF2F8e07a3e579
 ```
+
+**LayerZero Configuration**:
+- ✅ Trusted peers configured bidirectionally
+- ✅ Base Sepolia → Optimism Sepolia messaging enabled
+- ✅ Optimism Sepolia → Base Sepolia messaging enabled
 
 ### Circuit Constants
 
@@ -132,7 +133,7 @@ secret_salt: Field         // Random salt
 
 ### TypeScript Constants
 
-**Location**: `packages/sdk/src/constants.ts` (to be created)
+**Location**: `packages/sdk/src/constants.ts` ✅ (already implemented)
 
 ```typescript
 export const CHAINS = {
@@ -144,13 +145,13 @@ export const CHAINS = {
     layerZeroEid: 40245,
     layerZeroEndpoint: '0x6EDCE65403992e310A62460808c4b910D972f10f',
   },
-  CELO_SEPOLIA: {
-    id: 11142220,
-    name: 'Celo Sepolia',
-    rpcUrl: 'https://forno.celo-sepolia.celo-testnet.org',
-    blockExplorer: 'https://celo-sepolia.blockscout.com',
-    layerZeroEid: 40125, // Not actually supported
-    layerZeroEndpoint: '', // Not deployed
+  OPTIMISM_SEPOLIA: {
+    id: 11155420,
+    name: 'Optimism Sepolia',
+    rpcUrl: 'https://sepolia.optimism.io',
+    blockExplorer: 'https://sepolia-optimism.etherscan.io',
+    layerZeroEid: 40232,
+    layerZeroEndpoint: '0x6EDCE65403992e310A62460808c4b910D972f10f',
   },
 } as const;
 
@@ -188,15 +189,21 @@ export const MAX_AGE = 120;
 
 ## Alternatives Considered
 
-### Alternative 1: Ethereum Sepolia → Optimism Sepolia
-- **Pros**: Both chains have LayerZero V2 support
-- **Cons**: Less sponsor alignment than Base
+### Alternative 1: Base Sepolia → Ethereum Sepolia
+- **Pros**: More popular testnet, larger ecosystem
+- **Cons**: Higher gas fees, slower than Optimism
+- **Decision**: Chose Optimism for lower fees and better UX
 
-### Alternative 2: Country allowlist instead of blocklist
+### Alternative 2: Base Sepolia → Celo Sepolia
+- **Pros**: Good sponsor alignment, mobile-first
+- **Cons**: LayerZero V2 not supported on Celo testnet
+- **Decision**: Not feasible for MVP
+
+### Alternative 3: Country allowlist instead of blocklist
 - **Pros**: More explicit control
 - **Cons**: Larger circuit constraints (need to check N allowed vs 3 blocked)
 
-### Alternative 3: Multiple policies (AGE18, AGE21, KYC_BASIC)
+### Alternative 4: Multiple policies (AGE18, AGE21, KYC_BASIC)
 - **Pros**: More impressive demo
 - **Cons**: Not enough time in hackathon (36-48 hours)
 
@@ -212,6 +219,7 @@ export const MAX_AGE = 120;
 
 ---
 
-**Last Updated**: 2025-01-22  
-**Review Date**: After hackathon deployment
+**Last Updated**: 2025-11-22  
+**Status**: ✅ Fully Deployed  
+**Review Date**: After hackathon judging
 
