@@ -10,21 +10,42 @@ Be respectful, inclusive, and constructive. We're building privacy infrastructur
 
 ### Prerequisites
 
-- Node.js 20.x LTS
-- pnpm 8.x
-- Git
+**Version requirements are enforced automatically:**
+
+- **Node.js 20.x LTS** (locked via `.nvmrc`)
+- **pnpm 8.15.0** (enforced - npm/yarn blocked)
+- **Git**
 - Basic understanding of Ethereum, ZK proofs, and TypeScript
 
 ### Setup
 
 ```bash
-git clone https://github.com/yourusername/privid.git
+# 1. Fork and clone
+git clone https://github.com/YOUR_USERNAME/privid.git
 cd privid
-pnpm install
-pnpm build
+
+# 2. Use correct Node version (with nvm)
+nvm use
+
+# 3. Automated setup (installs + builds)
+pnpm setup
+
+# 4. Verify everything is ready
+pnpm verify
+
+# 5. Configure environment
+cp .env.example .env.local
+# Edit .env.local with your API keys
 ```
 
-See [SETUP.md](./SETUP.md) for detailed instructions.
+**What happens automatically:**
+- ✅ Blocks npm/yarn (enforces pnpm)
+- ✅ Checks Node.js version (must be 20+)
+- ✅ Installs all dependencies
+- ✅ Builds workspace packages
+- ✅ Verifies setup completion
+
+See [INSTALL.md](./INSTALL.md) for detailed instructions and troubleshooting.
 
 ## Development Workflow
 
