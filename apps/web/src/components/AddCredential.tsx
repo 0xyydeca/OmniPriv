@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { getVault, generateCommitment, generateSalt, encryptCredential, deriveEncryptionKey } from '@privid/sdk';
+import { getVault, generateCommitment, generateSalt, encryptCredential, deriveEncryptionKey } from '@omnipriv/sdk';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 
 interface AddCredentialProps {
@@ -39,7 +39,7 @@ export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
       const walletAddress = user.wallet.address;
 
       // Create credential data
-      const issuerDid = issuerType === 'mock' ? 'did:privid:mock_issuer' : process.env.NEXT_PUBLIC_SELF_ISSUER_DID || 'did:self:issuer';
+      const issuerDid = issuerType === 'mock' ? 'did:omnipriv:mock_issuer' : process.env.NEXT_PUBLIC_SELF_ISSUER_DID || 'did:self:issuer';
       const schemaId = 'kyc_v1';
       const fields = {
         kyc_passed: kycPassed,

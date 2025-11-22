@@ -5,7 +5,7 @@ test.describe('Homepage', () => {
     await page.goto('/');
 
     // Check main heading
-    await expect(page.getByText('PrivID')).toBeVisible();
+    await expect(page.getByText('OmniPriv')).toBeVisible();
     await expect(
       page.getByText('Privacy-Preserving Cross-Chain Identity')
     ).toBeVisible();

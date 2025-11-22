@@ -1,15 +1,15 @@
-# PrivID - Privacy-Preserving Cross-Chain Identity
+# OmniPriv - Privacy-Preserving Cross-Chain Identity
 
 > On-chain apps need to verify user attributes (KYC/age/country/reputation) without doxxing users or fragmenting identity across chains.
 
 ## Architecture
 
-PrivID is a Next.js app with embedded wallets (Privy/CDP) and a client-encrypted vault storing credential payloads. Users ingest a credential (e.g., Self on Celo), which we anchor on-chain as a commitment in VaultAnchor. When a dApp asks "does user meet policy X?", PrivID compiles an Aztec/Noir circuit to produce a ZK proof that verifies in ProofConsumer—no PII leaked. To reuse the result across chains, an LZ v2 OApp sends a minimal verified marker (SBT/event) to chain B's CrossChainVerifier, where the consuming dApp reads it. The UI orchestrates onboarding, ingestion, proof, and bridging with gas sponsorship and optional session signers. Contracts are developed with Hardhat 3 (and optionally Foundry), state is fetched via wagmi/viem, and tests include unit/integration/e2e with Playwright. Logs are structured (pino), sanitized, and basic OTEL spans capture proof/bridge timings. Nothing sensitive is logged or stored on-chain.
+OmniPriv is a Next.js app with embedded wallets (Privy/CDP) and a client-encrypted vault storing credential payloads. Users ingest a credential (e.g., Self on Celo), which we anchor on-chain as a commitment in VaultAnchor. When a dApp asks "does user meet policy X?", OmniPriv compiles an Aztec/Noir circuit to produce a ZK proof that verifies in ProofConsumer—no PII leaked. To reuse the result across chains, an LZ v2 OApp sends a minimal verified marker (SBT/event) to chain B's CrossChainVerifier, where the consuming dApp reads it. The UI orchestrates onboarding, ingestion, proof, and bridging with gas sponsorship and optional session signers. Contracts are developed with Hardhat 3 (and optionally Foundry), state is fetched via wagmi/viem, and tests include unit/integration/e2e with Playwright. Logs are structured (pino), sanitized, and basic OTEL spans capture proof/bridge timings. Nothing sensitive is logged or stored on-chain.
 
 ## Project Structure
 
 ```
-privid/
+omnipriv/
 ├── apps/
 │   ├── web/                    # Next.js frontend
 │   └── prover-service/         # Optional server-side prover
@@ -45,8 +45,8 @@ privid/
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # If you have nvm, use the pinned Node version
 nvm use
@@ -72,7 +72,7 @@ pnpm dev
 The automated setup command:
 1. ✅ Checks Node.js 20+ and pnpm 8+ (blocks npm/yarn)
 2. ✅ Installs all dependencies across the monorepo
-3. ✅ Builds workspace packages (`@privid/sdk`, `@privid/contracts`)
+3. ✅ Builds workspace packages (`@omnipriv/sdk`, `@omnipriv/contracts`)
 4. ✅ Verifies environment configuration
 
 This ensures **everyone has the same versions** and prevents common setup issues.
@@ -99,7 +99,7 @@ pnpm hardhat:deploy --network celoAlfajores
 
 ## LayerZero Cross-Chain Integration
 
-PrivID implements **LayerZero v2 OApp** for true omnichain identity verification.
+OmniPriv implements **LayerZero v2 OApp** for true omnichain identity verification.
 
 ### Key Features
 
@@ -169,7 +169,7 @@ function isVerified(address user, bytes32 policyId)
 
 ## User Journey
 
-1. **Onboard**: Visit privid.app → embedded wallet created (Privy)
+1. **Onboard**: Visit omnipriv.app → embedded wallet created (Privy)
 2. **Add Credential**: Choose issuer (Self/mock) → credential encrypted to vault → commitment anchored on-chain
 3. **Prove Privately**: Select dApp → generate ZK proof → verify on-chain → dApp receives yes/no (no PII)
 4. **Cross-Chain**: LayerZero sends verified marker to another chain
@@ -247,9 +247,9 @@ MIT
 
 ## Links
 
-- **Demo**: [privid.app](https://privid.app)
-- **Docs**: [docs.privid.app](https://docs.privid.app)
-- **GitHub**: [github.com/yourusername/privid](https://github.com/yourusername/privid)
+- **Demo**: [omnipriv.app](https://omnipriv.app)
+- **Docs**: [docs.omnipriv.app](https://docs.omnipriv.app)
+- **GitHub**: [github.com/yourusername/omnipriv](https://github.com/yourusername/omnipriv)
 
 ---
 

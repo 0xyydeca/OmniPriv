@@ -7,7 +7,7 @@ import { CredentialList } from '@/components/CredentialList';
 import { AddCredential } from '@/components/AddCredential';
 import { VerifyProof } from '@/components/VerifyProof';
 import { CrossChainBridge } from '@/components/CrossChainBridge';
-import { getVault, VaultRecord } from '@privid/sdk';
+import { getVault, VaultRecord } from '@omnipriv/sdk';
 
 type Tab = 'credentials' | 'add' | 'verify' | 'bridge';
 
@@ -65,7 +65,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
-                PrivID
+                OmniPriv
               </h1>
               <span className="text-sm text-gray-400" aria-label="Wallet address">
                 {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}

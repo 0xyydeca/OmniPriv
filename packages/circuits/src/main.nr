@@ -1,4 +1,4 @@
-// PrivID Age Check Circuit
+// OmniPriv Age Check Circuit
 // Proves that age >= threshold without revealing actual age
 
 fn main(

@@ -79,10 +79,10 @@ pnpm verify
 ### Before (Broken)
 ```bash
 git clone ...
-cd privid
+cd omnipriv
 # Has code and .env.local
 pnpm install          # ✅ Completes
-pnpm dev              # ❌ Error: Cannot find module '@privid/sdk'
+pnpm dev              # ❌ Error: Cannot find module '@omnipriv/sdk'
 ```
 
 **Problems:**
@@ -93,7 +93,7 @@ pnpm dev              # ❌ Error: Cannot find module '@privid/sdk'
 ### After (Works)
 ```bash
 git clone ...
-cd privid
+cd omnipriv
 nvm use               # ✅ Uses Node 20.11.0
 pnpm setup            # ✅ Installs + builds automatically
 pnpm verify           # ✅ Confirms everything ready
@@ -113,8 +113,8 @@ pnpm dev              # ✅ Works perfectly!
 ### Quick Start
 ```bash
 # 1. Clone
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # 2. Use correct Node version
 nvm use
@@ -141,7 +141,7 @@ pnpm dev
 1. **Node Version Check** - Must be 20+
 2. **Package Manager Check** - Blocks npm/yarn
 3. **Dependency Install** - Installs all packages
-4. **Workspace Build** - Builds @privid/sdk and @privid/contracts
+4. **Workspace Build** - Builds @omnipriv/sdk and @omnipriv/contracts
 5. **Environment Check** - Warns if .env.local missing
 
 ## Error Messages (Improved)
@@ -192,7 +192,7 @@ $ pnpm install
 
 # ✅ Verify checks everything
 $ pnpm verify
-🔍 PrivID Setup Verification
+🔍 OmniPriv Setup Verification
 ==================================================
 ✅ Passed:
    Node.js v22.13.1 ✓
@@ -217,7 +217,7 @@ Hey! I've completely overhauled the setup to fix the localhost issue. Here's wha
 
 **Fresh setup (recommended):**
 ```bash
-cd privid
+cd omnipriv
 git pull
 rm -rf node_modules
 
@@ -240,7 +240,7 @@ pnpm dev
 **What changed:**
 - ✅ Automatic version checks (Node 20, pnpm 8.15.0)
 - ✅ Blocks npm/yarn to prevent confusion
-- ✅ Auto-builds workspace packages (no more missing @privid/sdk!)
+- ✅ Auto-builds workspace packages (no more missing @omnipriv/sdk!)
 - ✅ `pnpm verify` command to check your setup
 - ✅ Clear error messages if something's wrong
 
@@ -326,7 +326,7 @@ Prevents: Version mismatch issues for future contributors"
 ✅ **Before:** Partners getting stuck for hours on setup  
 ✅ **After:** Setup works in minutes with clear instructions
 
-✅ **Before:** "Cannot find module @privid/sdk"  
+✅ **Before:** "Cannot find module @omnipriv/sdk"  
 ✅ **After:** Packages built automatically
 
 ✅ **Before:** Different Node/pnpm versions causing issues  

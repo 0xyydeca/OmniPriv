@@ -10,7 +10,7 @@ test.describe('Credential Flow (Visual)', () => {
     // For MVP, we'll just check if tabs exist after mock login
 
     // For now, just verify the homepage structure
-    await expect(page.getByText('PrivID')).toBeVisible();
+    await expect(page.getByText('OmniPriv')).toBeVisible();
 
     // Check that the flow is described
     await expect(page.getByText(/Create your embedded wallet/i)).toBeVisible();

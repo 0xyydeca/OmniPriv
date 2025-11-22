@@ -1,6 +1,6 @@
 'use client';
 
-import { VaultRecord } from '@privid/sdk';
+import { VaultRecord } from '@omnipriv/sdk';
 
 interface CredentialListProps {
   credentials: VaultRecord[];

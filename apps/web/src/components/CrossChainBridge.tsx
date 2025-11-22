@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { VaultRecord } from '@privid/sdk';
+import { VaultRecord } from '@omnipriv/sdk';
 import { useAccount, useWalletClient, usePublicClient, useSwitchChain } from 'wagmi';
-import { deployments, getAddresses, getLayerZeroEid } from '@privid/contracts';
+import { deployments, getAddresses, getLayerZeroEid } from '@omnipriv/contracts';
 import { encodeFunctionData, parseEther, formatEther } from 'viem';
 
 interface CrossChainBridgeProps {

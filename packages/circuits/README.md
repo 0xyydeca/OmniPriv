@@ -1,4 +1,4 @@
-# PrivID Circuits
+# OmniPriv Circuits
 
 Zero-knowledge circuits for privacy-preserving credential verification using Noir.
 

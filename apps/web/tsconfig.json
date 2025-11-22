@@ -21,8 +21,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@privid/contracts": ["../../packages/contracts/src"],
-      "@privid/sdk": ["../../packages/sdk/src"]
+      "@omnipriv/contracts": ["../../packages/contracts/src"],
+      "@omnipriv/sdk": ["../../packages/sdk/src"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
