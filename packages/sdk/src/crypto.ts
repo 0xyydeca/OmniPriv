@@ -64,8 +64,8 @@ export async function decryptCredential(
   iv: string,
   key: CryptoKey
 ): Promise<string> {
-  const ciphertextBytes = hexToBytes(ciphertext);
-  const ivBytes = hexToBytes(iv);
+  const ciphertextBytes = new Uint8Array(hexToBytes(ciphertext));
+  const ivBytes = new Uint8Array(hexToBytes(iv));
 
   const decrypted = await crypto.subtle.decrypt(
     {
@@ -86,8 +86,8 @@ export async function deriveEncryptionKey(
   walletAddress: string,
   signature: string
 ): Promise<CryptoKey> {
-  const keyMaterial = sha256(
-    new TextEncoder().encode(walletAddress + signature)
+  const keyMaterial = new Uint8Array(
+    sha256(new TextEncoder().encode(walletAddress + signature))
   );
 
   return await crypto.subtle.importKey(
