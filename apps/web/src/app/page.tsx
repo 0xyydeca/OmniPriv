@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { CredentialFlowAnimation } from '@/components/CredentialFlowAnimation';
 
 export default function Home() {
   const { ready, authenticated, login } = usePrivy();
@@ -50,45 +51,18 @@ export default function Home() {
           className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700"
         >
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            Verify age, country, or rep privately across chains.
+            Verify age, country, or rep privately across any chain.
           </p>
         </motion.div>
 
-        {/* Credential Flow Demo GIF */}
+        {/* Credential Flow Demo Animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
-          className="flex justify-center"
+          className="flex justify-center w-full"
         >
-          <div className="w-full max-w-2xl rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
-            <img
-              src="/credential-flow-demo.gif"
-              alt="Credential flow demonstration"
-              className="w-full h-auto"
-              onError={(e) => {
-                // Hide image and show placeholder
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const container = target.parentElement;
-                if (container) {
-                  const placeholder = container.querySelector('.gif-placeholder') as HTMLElement;
-                  if (placeholder) placeholder.style.display = 'flex';
-                }
-              }}
-            />
-            <div className="gif-placeholder hidden w-full h-64 items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
-              <div className="text-center space-y-2">
-                <div className="text-4xl mb-2">🎬</div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Credential flow demo GIF
-                </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">
-                  Place /credential-flow-demo.gif in the public folder
-                </p>
-              </div>
-            </div>
-          </div>
+          <CredentialFlowAnimation />
         </motion.div>
 
         {/* Features Grid */}
