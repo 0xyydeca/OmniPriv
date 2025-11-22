@@ -26,21 +26,20 @@ const config: HardhatUserConfig = {
         ? [process.env.DEPLOYER_PRIVATE_KEY]
         : [],
     },
-    celoSepolia: {
+    optimismSepolia: {
       url:
-        process.env.CELO_SEPOLIA_RPC_URL ||
-        'https://forno.celo-sepolia.celo-testnet.org/',
-      chainId: 11142220,
+        process.env.OPTIMISM_SEPOLIA_RPC_URL ||
+        'https://sepolia.optimism.io',
+      chainId: 11155420,
       accounts: process.env.DEPLOYER_PRIVATE_KEY
         ? [process.env.DEPLOYER_PRIVATE_KEY]
         : [],
-      timeout: 60000,
     },
   },
   etherscan: {
     apiKey: {
       baseSepolia: process.env.BASESCAN_API_KEY || '',
-      celoSepolia: process.env.CELOSCAN_API_KEY || '',
+      optimismSepolia: process.env.OPTIMISM_ETHERSCAN_API_KEY || '',
     },
     customChains: [
       {
@@ -52,11 +51,11 @@ const config: HardhatUserConfig = {
         },
       },
       {
-        network: 'celoSepolia',
-        chainId: 11142220,
+        network: 'optimismSepolia',
+        chainId: 11155420,
         urls: {
-          apiURL: 'https://api-alfajores.celoscan.io/api',
-          browserURL: 'https://alfajores.celoscan.io',
+          apiURL: 'https://api-sepolia-optimistic.etherscan.io/api',
+          browserURL: 'https://sepolia-optimism.etherscan.io',
         },
       },
     ],
