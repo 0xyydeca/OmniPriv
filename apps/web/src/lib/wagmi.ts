@@ -12,14 +12,15 @@ const connectors = [
   metaMask(),
 ];
 
+// TODO: Fix WalletConnect connector type mismatch
 // Only add WalletConnect if project ID is provided
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
-  connectors.push(
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    })
-  );
-}
+// if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
+//   connectors.push(
+//     walletConnect({
+//       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+//     })
+//   );
+// }
 
 export const config = createConfig({
   chains: [baseSepolia, celoAlfajores],

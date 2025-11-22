@@ -5,4 +5,5 @@ export * from './validation';
 export * from './constants';
 export * from './publicInputs';
 export * from './proof';
+export * from './predicate';
 

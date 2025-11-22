@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
-import { CDPProvider } from '@/components/CDPProvider';
+// TODO: Enable CDP when wallet integration is ready
+// import { CDPProvider } from '@/components/CDPProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,9 +23,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={inter.className}>
-        <CDPProvider>
-          <Providers>{children}</Providers>
-        </CDPProvider>
+        {/* TODO: Wrap with CDPProvider when wallet integration is ready */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

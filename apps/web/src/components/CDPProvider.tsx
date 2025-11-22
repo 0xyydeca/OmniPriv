@@ -10,7 +10,8 @@
  * which provides the context needed for useEvmAddress, useIsSignedIn, etc.
  */
 
-import { CDPReactProvider } from '@coinbase/cdp-react';
+// TODO: Install @coinbase/cdp-react package
+// import { CDPReactProvider } from '@coinbase/cdp-react';
 import type { ReactNode } from 'react';
 
 interface CDPProviderProps {
@@ -22,21 +23,22 @@ export function CDPProvider({ children }: CDPProviderProps) {
   // This is your CDP App ID from https://portal.cdp.coinbase.com/
   const projectId = process.env.NEXT_PUBLIC_CDP_APP_ID;
 
-  // Always render CDPReactProvider to ensure CDPHooksProvider context is available
-  // CDPReactProvider internally wraps CDPHooksProvider which provides the hooks context
-  // If projectId is missing, it will still initialize but features may not work
-  return (
-    <CDPReactProvider
-      config={{
-        projectId: projectId || 'placeholder', // Required config field
-        ethereum: {
-          createOnLogin: 'eoa', // Create EVM account on login
-        },
-        authMethods: ['email'], // Enable email authentication
-      }}
-    >
-      {children}
-    </CDPReactProvider>
-  );
+  // TODO: Uncomment when @coinbase/cdp-react is installed
+  // return (
+  //   <CDPReactProvider
+  //     config={{
+  //       projectId: projectId || 'placeholder',
+  //       ethereum: {
+  //         createOnLogin: 'eoa',
+  //       },
+  //       authMethods: ['email'],
+  //     }}
+  //   >
+  //     {children}
+  //   </CDPReactProvider>
+  // );
+  
+  // Temporary: Just pass through children
+  return <>{children}</>;
 }
 

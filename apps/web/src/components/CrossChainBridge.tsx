@@ -83,7 +83,8 @@ export function CrossChainBridge({ credentials }: CrossChainBridgeProps) {
 
       try {
         const addresses = getAddresses(sourceChain);
-        if (!addresses?.IdentityOApp) {
+        // Check if this is a Chain A deployment with IdentityOApp
+        if (!addresses || !('IdentityOApp' in addresses)) {
           setEstimatedFee('Not deployed');
           return;
         }
@@ -131,7 +132,8 @@ export function CrossChainBridge({ credentials }: CrossChainBridgeProps) {
       }
 
       const addresses = getAddresses(sourceChain);
-      if (!addresses?.IdentityOApp) {
+      // Check if this is a Chain A deployment with IdentityOApp
+      if (!addresses || !('IdentityOApp' in addresses)) {
         throw new Error(`IdentityOApp not deployed on ${CHAINS.find(c => c.id === sourceChain)?.name}. Deploy contracts first.`);
       }
 

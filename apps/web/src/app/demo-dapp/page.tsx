@@ -27,13 +27,14 @@ export default function DemoDAppPage() {
   // const { ready, authenticated, user, login } = useCDP();
   const ready = false;
   const authenticated = false;
-  const user = null;
+  // Mock user object for type compatibility
+  const user = null as { wallet?: { address?: `0x${string}` } } | null;
   const login = () => console.log('CDP login not yet implemented');
   
   const router = useRouter();
   const [claimStatus, setClaimStatus] = useState<ClaimStatus>('idle');
   const [userHash, setUserHash] = useState<`0x${string}` | null>(null);
-  const [error Message, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Read airdrop status
   const { data: airdropStatus } = useReadContract({
@@ -54,6 +55,7 @@ export default function DemoDAppPage() {
   });
 
   // Read if user can claim
+  const userAddress = user?.wallet?.address;
   const { data: canClaim } = useReadContract({
     address: AIRDROP_CONTRACT_ADDRESS,
     abi: [{
@@ -67,8 +69,8 @@ export default function DemoDAppPage() {
       outputs: [{ name: '', type: 'bool' }]
     }],
     functionName: 'canClaim',
-    args: user?.wallet?.address && userHash ? [
-      user.wallet.address as `0x${string}`,
+    args: userAddress && userHash ? [
+      userAddress as `0x${string}`,
       userHash
     ] : undefined,
   });
