@@ -7,7 +7,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
  */
 const LZ_ENDPOINTS: Record<string, string> = {
   baseSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f',
-  celoSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f',
+  optimismSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f',
   hardhat: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Mock for local testing
 };
 
@@ -23,7 +23,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('Network:', network.name);
 
   const endpoint =
-    LZ_ENDPOINTS[network.name] || LZ_ENDPOINTS.celoSepolia;
+    LZ_ENDPOINTS[network.name] || LZ_ENDPOINTS.optimismSepolia;
 
   console.log('LayerZero Endpoint:', endpoint);
 
@@ -38,13 +38,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('\n📝 Next steps:');
   console.log('1. Set trusted peer from IdentityOApp (Chain A) to this contract');
   console.log('2. Set trusted peer from this contract to IdentityOApp (Chain A)');
-  console.log('3. Run: pnpm hardhat run scripts/setPeers.ts --network celoSepolia');
+  console.log('3. Run: pnpm hardhat run scripts/setPeers.ts --network optimismSepolia');
   console.log('========================================\n');
 };
 
 export default func;
 func.tags = ['OmniPrivVerifier', 'ChainB'];
-// Only deploy on Celo Sepolia (Chain B) by default
+// Only deploy on Optimism Sepolia (Chain B) by default
 func.skip = async (hre) => {
   return hre.network.name === 'baseSepolia'; // Skip on Chain A
 };

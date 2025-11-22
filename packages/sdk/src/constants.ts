@@ -13,21 +13,12 @@ export const CHAINS = {
     layerZeroEid: 40245,
     layerZeroEndpoint: '0x6EDCE65403992e310A62460808c4b910D972f10f' as const,
   },
-  CELO_SEPOLIA: {
-    id: 11142220,
-    name: 'Celo Sepolia (Alfajores)',
-    rpcUrl: 'https://forno.celo-sepolia.celo-testnet.org',
-    blockExplorer: 'https://celo-sepolia.blockscout.com',
-    layerZeroEid: 40125, // Not actually supported on testnet
-    layerZeroEndpoint: '' as const, // Not deployed
-  },
-  // Alternative destination chain if needed
-  ETHEREUM_SEPOLIA: {
-    id: 11155111,
-    name: 'Ethereum Sepolia',
-    rpcUrl: 'https://rpc.sepolia.org',
-    blockExplorer: 'https://sepolia.etherscan.io',
-    layerZeroEid: 40161,
+  OPTIMISM_SEPOLIA: {
+    id: 11155420,
+    name: 'Optimism Sepolia',
+    rpcUrl: 'https://sepolia.optimism.io',
+    blockExplorer: 'https://sepolia-optimism.etherscan.io',
+    layerZeroEid: 40232,
     layerZeroEndpoint: '0x6EDCE65403992e310A62460808c4b910D972f10f' as const,
   },
 } as const;
@@ -127,11 +118,9 @@ export const BASE_SEPOLIA_CONTRACTS = {
 } as const;
 
 /**
- * Contract addresses (Celo Sepolia - Chain B)
+ * Contract addresses (Optimism Sepolia - Chain B)
  */
-export const CELO_SEPOLIA_CONTRACTS = {
-  VaultAnchor: '0xcf1a9522FB166a1E79564b5081940a271ab5A187' as const,
-  ProofConsumer: '0x6DB3992C31AFc84E442621fff00511e9f26335d1' as const,
+export const OPTIMISM_SEPOLIA_CONTRACTS = {
   OmniPrivVerifier: '' as const, // To be deployed
   KycAirdrop: '' as const, // To be deployed
 } as const;
@@ -199,6 +188,6 @@ export const OMNIPRIV_CONSTANTS = {
   PROOF_TIMEOUT_MS,
   BRIDGE_TIMEOUT_MS,
   BASE_SEPOLIA_CONTRACTS,
-  CELO_SEPOLIA_CONTRACTS,
+  OPTIMISM_SEPOLIA_CONTRACTS,
 } as const;
 
