@@ -24,7 +24,7 @@ OmniPriv needs a reliable, secure way to propagate verification markers across c
 **Pros:**
 - Battle-tested (used by major protocols)
 - Excellent documentation and examples
-- OApp/OFT abstractions simplify integration
+- **OApp abstraction** simplifies custom cross-chain logic integration
 - Works on Base Sepolia and Celo Alfajores
 - Active community support
 - Built-in security via DVN (Decentralized Verifier Network)
@@ -130,7 +130,9 @@ contract IdentityOApp is OApp {
 1. Monitor LayerZero v2 mainnet fees and optimize gas usage
 2. Add retry logic for failed messages
 3. Explore batching multiple verifications in one message
-4. Consider using LayerZero's OFT (Omnichain Fungible Token) for reputation scores
+4. Implement advanced gas estimation for cross-chain calls
+
+**Note**: We use OApp (not OFT) because we're sending messages, not tokens. OApp provides the flexibility for custom verification logic with replay protection and per-policy nonces.
 
 ## References
 

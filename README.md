@@ -85,9 +85,11 @@ User Journey:
 - 6 comprehensive circuit tests (all passing ✅)
 - Compiled artifacts: `target/omnipriv_circuits.json`
 
-### LayerZero
-- **OApp pattern** for cross-chain verification propagation
-- Genuine LayerZero v2 integration with nonce checks and policy logic
+### LayerZero (Best Omnichain Implementation)
+- **Integrate LayerZero v2 OApps and Endpoint contracts** to propagate a minimal, privacy-preserving "verified identity marker" across chains
+- **Extend base OApp logic** with custom replay protection, per-policy nonces, and expiry semantics
+- **dApps on any LZ-connected chain** can query `isVerified(user, policyId)` without touching PII
+- **Working cross-chain demo** with detailed feedback on SDK and docs
 - Minimal payload design (< 1KB) for gas efficiency
 
 ### Coinbase Developer Platform (CDP)
@@ -219,7 +221,7 @@ CELO_SEPOLIA_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
 
 ### Sponsor-Specific
 - ✅ **Aztec**: Noir circuit + Devnet integration for proof generation
-- ✅ **LayerZero**: OApp with nonce checks and policy logic
+- ✅ **LayerZero**: Custom OApp with replay protection, per-policy nonces, and cross-chain demo
 - ✅ **CDP**: Embedded Wallets for users + Server Wallets for agents + x402 workflow
 
 ### UX
