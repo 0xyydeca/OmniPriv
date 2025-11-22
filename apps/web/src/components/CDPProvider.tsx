@@ -22,13 +22,20 @@ export function CDPProvider({ children }: CDPProviderProps) {
   // This is your CDP App ID from https://portal.cdp.coinbase.com/
   const projectId = process.env.NEXT_PUBLIC_CDP_APP_ID;
 
-  // Always render CDPReactProvider to ensure CDPHooksProvider context is available
+  // Only initialize CDP if we have a valid project ID
+  // Using 'placeholder' causes API fetch errors because it's not a valid App ID
+  if (!projectId || projectId.trim() === '') {
+    // If CDP is not configured, just render children without CDP provider
+    // This prevents the "Failed to fetch" errors
+    return <>{children}</>;
+  }
+
+  // Render CDPReactProvider with valid projectId
   // CDPReactProvider internally wraps CDPHooksProvider which provides the hooks context
-  // If projectId is missing, it will still initialize but features may not work
   return (
     <CDPReactProvider
       config={{
-        projectId: projectId || 'placeholder', // Required config field
+        projectId: projectId,
         ethereum: {
           createOnLogin: 'eoa', // Create EVM account on login
         },

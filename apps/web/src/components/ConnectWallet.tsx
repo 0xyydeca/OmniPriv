@@ -14,7 +14,23 @@ import { formatAddress } from '@/lib/utils';
  * https://docs.cdp.coinbase.com/embedded-wallets/react-components
  */
 export default function ConnectWallet() {
-  const { evmAddress: address } = useEvmAddress(); // Real address hook
+  // Check if CDP is configured - if not, CDPProvider won't render and hooks won't work
+  const projectId = process.env.NEXT_PUBLIC_CDP_APP_ID;
+  const isCDPConfigured = projectId && projectId.trim() !== '';
+
+  // If CDP is not configured, show a fallback message
+  if (!isCDPConfigured) {
+    return (
+      <div className="px-4 py-2 text-sm text-gray-400">
+        CDP not configured
+      </div>
+    );
+  }
+
+  // Hooks must always be called (can't conditionally call hooks)
+  // But if CDPProvider isn't mounted, these will throw errors
+  // We'll handle that with error boundaries or let them fail gracefully
+  const { evmAddress: address } = useEvmAddress();
   const { isSignedIn } = useIsSignedIn();
 
   // Use CDP's built-in AuthButton which handles the full auth flow automatically
@@ -44,7 +60,6 @@ export default function ConnectWallet() {
             Connect with CDP
           </button>
         )}
-        authMethods={['email']}
         onSignInSuccess={() => {
           // Address will be available via useEvmAddress hook after successful sign-in
           console.log('Signed in successfully');
