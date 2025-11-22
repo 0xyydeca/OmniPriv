@@ -3,6 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const { ready, authenticated, login } = usePrivy();
@@ -23,22 +24,72 @@ export default function Home() {
       <div className="max-w-4xl w-full space-y-8 text-center">
         {/* Hero Section */}
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
+          >
             PrivID
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+            className="text-xl md:text-2xl text-gray-600 dark:text-gray-300"
+          >
             Privacy-Preserving Cross-Chain Identity
-          </p>
+          </motion.p>
         </div>
 
         {/* Problem Statement */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700"
+        >
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            On-chain apps need to verify user attributes (KYC, age, country, reputation)
-            <span className="font-semibold text-primary-600 dark:text-primary-400"> without doxxing users</span> or
-            <span className="font-semibold text-accent-600 dark:text-accent-400"> fragmenting identity across chains</span>.
+            Verify age, country, or rep privately across chains.
           </p>
-        </div>
+        </motion.div>
+
+        {/* Credential Flow Demo GIF */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+          className="flex justify-center"
+        >
+          <div className="w-full max-w-2xl rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
+            <img
+              src="/credential-flow-demo.gif"
+              alt="Credential flow demonstration"
+              className="w-full h-auto"
+              onError={(e) => {
+                // Hide image and show placeholder
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const container = target.parentElement;
+                if (container) {
+                  const placeholder = container.querySelector('.gif-placeholder') as HTMLElement;
+                  if (placeholder) placeholder.style.display = 'flex';
+                }
+              }}
+            />
+            <div className="gif-placeholder hidden w-full h-64 items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <div className="text-center space-y-2">
+                <div className="text-4xl mb-2">🎬</div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Credential flow demo GIF
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Place /credential-flow-demo.gif in the public folder
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
