@@ -39,53 +39,31 @@ export default function ConnectWallet() {
   const { evmAddress: address } = useEvmAddress(); // REAL hook for wallet address
   const { isSignedIn } = useIsSignedIn(); // REAL hook for auth status
 
-  // Use CDP's built-in AuthButton which handles the full auth flow automatically
+  // Use CDP's built-in AuthButton following the official docs pattern
   return (
     <div className="flex items-center gap-3">
-      {isSignedIn && address && (
-        <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-sm font-medium text-gray-200">
-            {formatAddress(address)}
-          </span>
-        </div>
+      {isSignedIn && address ? (
+        <>
+          {/* Show connected wallet address */}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-sm font-medium text-gray-200">
+              {formatAddress(address)}
+            </span>
+          </div>
+          {/* Use default AuthButton - it automatically shows "Sign Out" when signed in */}
+          <div className="cdp-auth-button-wrapper">
+            <AuthButton />
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Not signed in - show sign in prompt and button */}
+          <div className="cdp-auth-button-wrapper">
+            <AuthButton />
+          </div>
+        </>
       )}
-      <AuthButton
-        signOutButton={({ onSuccess }) => (
-          <button
-            onClick={() => {
-              console.log('Disconnecting CDP wallet...');
-              onSuccess();
-              console.log('CDP wallet disconnected');
-            }}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-          >
-            Disconnect
-          </button>
-        )}
-        placeholder={({ className }) => (
-          <button
-            className={`px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${className || ''}`}
-          >
-            Connect with CDP
-          </button>
-        )}
-        onSignInSuccess={(address) => {
-          console.log('✅ CDP Sign-in successful!');
-          console.log('Address:', address);
-          // Optionally show a toast
-          if (typeof window !== 'undefined') {
-            console.log('Wallet connected:', address);
-          }
-        }}
-        onSignOutSuccess={() => {
-          console.log('✅ CDP Sign-out successful!');
-          // Optionally show a toast
-          if (typeof window !== 'undefined') {
-            console.log('Wallet disconnected');
-          }
-        }}
-      />
     </div>
   );
 }

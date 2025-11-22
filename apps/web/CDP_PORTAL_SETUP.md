@@ -1,6 +1,6 @@
 # CDP Portal Domain Configuration Guide
 
-## 🚨 CRITICAL: Domain Whitelist Configuration
+## CRITICAL: Domain Whitelist Configuration
 
 **This is the #1 cause of network errors with CDP!** If your domain isn't whitelisted in the CDP Portal, all API requests will be blocked by CORS, causing:
 - `Failed to fetch` errors
@@ -10,19 +10,19 @@
 
 ## Prerequisites Checklist
 
-✅ **CDP Portal Account**
+**CDP Portal Account**
 - Free account at https://portal.cdp.coinbase.com/
 - Project created with Client API Key obtained
 
-✅ **Node.js 22+**
+**Node.js 22+**
 - Check version: `node --version`
 - Must be 22 or higher
 
-✅ **Package Manager**
+**Package Manager**
 - pnpm (recommended for this monorepo)
 - npm or yarn also work
 
-✅ **Basic React/TypeScript Knowledge**
+**Basic React/TypeScript Knowledge**
 - Using Next.js 14 with App Router
 - TypeScript enabled
 
@@ -43,10 +43,10 @@ http://localhost:3000
 ```
 
 **Important Notes:**
-- ✅ Must be **exact match** - including protocol (`http://`)
-- ✅ Must include **port number** (`:3000`)
-- ✅ No trailing slash
-- ✅ Takes effect **immediately** (no need to wait)
+- Must be **exact match** - including protocol (`http://`)
+- Must include **port number** (`:3000`)
+- No trailing slash
+- Takes effect **immediately** (no need to wait)
 
 ### Step 3: Add Production Domain (When Ready)
 
@@ -56,9 +56,9 @@ https://your-production-domain.com
 ```
 
 **Security Warning:**
-- ❌ **Never add** `localhost` to production whitelist
-- ❌ **Never add** `http://` URLs to production (use HTTPS only)
-- ✅ Only add your actual production domain
+- **Never add** `localhost` to production whitelist
+- **Never add** `http://` URLs to production (use HTTPS only)
+- Only add your actual production domain
 
 ### Step 4: Save Changes
 
@@ -87,9 +87,9 @@ After adding the domain:
 1. **Open Browser Console** (F12)
 2. **Navigate to** `http://localhost:3000`
 3. **Look for:**
-   - ✅ No CORS errors
-   - ✅ No "Failed to fetch" errors related to CDP
-   - ✅ Sign-in modal appears when clicking "Connect with CDP"
+   - No CORS errors
+   - No "Failed to fetch" errors related to CDP
+   - Sign-in modal appears when clicking "Connect with CDP"
 
 ### 3. Common Error Messages
 
@@ -125,20 +125,20 @@ Failed to fetch (check network tab for details)
 ## Troubleshooting
 
 ### Error: "Failed to fetch"
-1. ✅ Check domain is whitelisted in CDP Portal
-2. ✅ Verify exact URL matches (including `http://` and port)
-3. ✅ Check browser console for CORS errors
-4. ✅ Verify `NEXT_PUBLIC_CDP_APP_ID` is correct in `.env.local`
+1. Check domain is whitelisted in CDP Portal
+2. Verify exact URL matches (including `http://` and port)
+3. Check browser console for CORS errors
+4. Verify `NEXT_PUBLIC_CDP_APP_ID` is correct in `.env.local`
 
 ### Error: "CORS policy blocked"
-1. ✅ Domain definitely not whitelisted - add it now!
-2. ✅ Check you're using the correct URL (no typos)
-3. ✅ Verify port number matches (3000)
+1. Domain definitely not whitelisted - add it now!
+2. Check you're using the correct URL (no typos)
+3. Verify port number matches (3000)
 
 ### Sign-in Not Working
-1. ✅ Domain must be whitelisted first
-2. ✅ Check CDP Provider is initialized with correct APP_ID
-3. ✅ Verify CSP headers allow CDP domains (already configured)
+1. Domain must be whitelisted first
+2. Check CDP Provider is initialized with correct APP_ID
+3. Verify CSP headers allow CDP domains (already configured)
 
 ## Quick Reference
 
@@ -159,10 +159,10 @@ http://localhost:3001  (if you're using port 3001)
 
 ## Next Steps
 
-1. ✅ **Add** `http://localhost:3000` to CDP Portal now
-2. ✅ **Save** the configuration
-3. ✅ **Test** your app immediately (changes take effect instantly)
-4. ✅ **Verify** no CORS errors in browser console
+1. **Add** `http://localhost:3000` to CDP Portal now
+2. **Save** the configuration
+3. **Test** your app immediately (changes take effect instantly)
+4. **Verify** no CORS errors in browser console
 
 After configuring, restart your dev server and test again!
 

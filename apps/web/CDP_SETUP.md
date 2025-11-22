@@ -22,11 +22,11 @@ Complete guide for setting up Coinbase Developer Platform (CDP) Embedded Wallets
 CDP Embedded Wallets enable **gasless, self-custodial wallet creation** via email/social authentication. Users can connect without MetaMask, seed phrases, or any crypto knowledge.
 
 **What you'll get:**
-- ✅ Email/OTP authentication flow
-- ✅ Automatic EVM wallet creation on sign-in
-- ✅ Gasless onboarding experience
-- ✅ Wallet address accessible via React hooks
-- ✅ No seed phrase management required
+- Email/OTP authentication flow
+- Automatic EVM wallet creation on sign-in
+- Gasless onboarding experience
+- Wallet address accessible via React hooks
+- No seed phrase management required
 
 ---
 
@@ -64,7 +64,7 @@ CDP Embedded Wallets enable **gasless, self-custodial wallet creation** via emai
    - **Network**: Select "Base Sepolia" (or your target testnet)
    - **Auto-create wallet**: Enabled (creates EVM account on first login)
 
-### 1.4 ⚠️ CRITICAL: Configure Allowed Domains (Fixes CORS Error)
+### 1.4 CRITICAL: Configure Allowed Domains (Fixes CORS Error)
 
 **This step is REQUIRED to fix "Network Error" / CORS issues!**
 
@@ -417,9 +417,9 @@ After connecting, verify:
    - **Wallet methods**: Should show `CreateEndUserEvmAccount` with count ≥ 1
 
 **This confirms:**
-- ✅ CDP integration is working
-- ✅ Wallet was successfully created
-- ✅ Email/OTP flow completed
+- CDP integration is working
+- Wallet was successfully created
+- Email/OTP flow completed
 
 ### 6.2 Code Verification Checklist
 
@@ -433,10 +433,10 @@ ls apps/web/src/components/CDPProvider.tsx
 ls apps/web/src/components/ConnectWallet.tsx
 
 # Check layout includes CDPProvider
-grep -q "CDPProvider" apps/web/src/app/layout.tsx && echo "✅ CDPProvider enabled" || echo "❌ CDPProvider not found"
+grep -q "CDPProvider" apps/web/src/app/layout.tsx && echo "CDPProvider enabled" || echo "CDPProvider not found"
 
 # Check environment variable
-grep -q "NEXT_PUBLIC_CDP_APP_ID" apps/web/.env.local && echo "✅ App ID configured" || echo "❌ App ID missing"
+grep -q "NEXT_PUBLIC_CDP_APP_ID" apps/web/.env.local && echo "App ID configured" || echo "App ID missing"
 ```
 
 ### 6.3 Build Verification
@@ -588,11 +588,11 @@ pnpm build
 
 You've successfully set up CDP Embedded Wallets! Users can now:
 
-1. ✅ Click "Connect with CDP"
-2. ✅ Enter email and receive OTP
-3. ✅ Get instant wallet creation (no seed phrases)
-4. ✅ See their wallet address in the UI
-5. ✅ Use the wallet for transactions (gasless via CDP)
+1. Click "Connect with CDP"
+2. Enter email and receive OTP
+3. Get instant wallet creation (no seed phrases)
+4. See their wallet address in the UI
+5. Use the wallet for transactions (gasless via CDP)
 
 **Next Steps:**
 - Integrate wallet with your dApp features
