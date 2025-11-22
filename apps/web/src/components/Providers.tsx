@@ -20,7 +20,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
   // If no valid Privy App ID, show a simple message
-  if (!privyAppId || privyAppId === 'placeholder-app-id') {
+  if (!privyAppId || privyAppId === 'placeholder-app-id' || privyAppId === 'your_privy_app_id_here') {
     return (
       <QueryClientProvider client={queryClient}>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -44,7 +44,7 @@ export function Providers({ children }: { children: ReactNode }) {
               </div>
 
               <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
-                <div># Edit /Users/kyaryeh/Documents/git/PrivID/.env.local</div>
+                <div># Edit apps/web/.env.local</div>
                 <div className="mt-2">NEXT_PUBLIC_PRIVY_APP_ID=your_actual_app_id</div>
               </div>
 
