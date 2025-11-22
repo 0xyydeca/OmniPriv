@@ -115,7 +115,9 @@ Failed to fetch (check network tab for details)
 ### Expected Whitelisted Origins
 
 **Development (REQUIRED):**
-- `http://localhost:3000`
+- `http://localhost:3000` (if using default Next.js port)
+- `http://localhost:3001` (if using port 3001)
+- **IMPORTANT:** Add BOTH ports to be safe, or match your actual dev server port
 
 **Production (when deployed):**
 - `https://your-production-domain.com` (replace with actual domain)
@@ -149,7 +151,8 @@ Failed to fetch (check network tab for details)
 
 **Your Dev Domain:**
 ```
-http://localhost:3000
+http://localhost:3000  (default Next.js port)
+http://localhost:3001  (if you're using port 3001)
 ```
 
 **Portal Login:** Use your Coinbase Developer Platform account
