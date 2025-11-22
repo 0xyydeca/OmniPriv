@@ -20,7 +20,7 @@ export function Navbar() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-700 shadow-sm"
+      className="fixed top-0 left-0 right-0 z-40 bg-gray-900/80 backdrop-blur-md border-b border-gray-700 shadow-sm"
       role="navigation"
       aria-label="Main navigation"
     >

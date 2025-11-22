@@ -86,39 +86,88 @@ body {
   animation: gentle-pulse 2s ease-in-out infinite;
 }
 
-/* Ensure CDP modals appear above all content */
+/* ============================================
+   CDP Modal Z-Index Fix - Ensure above navbar
+   ============================================ */
 /* CDP React uses Radix UI Dialog components with portals */
-/* The modal portal needs to be above everything, including navbar (z-50) and main content (z-10) */
+/* Navbar is at z-40, modal must be above it */
 
-/* Radix Portal container */
-[data-radix-portal] {
+/* ALL Radix portals - catch everything */
+[data-radix-portal],
+div[data-radix-portal],
+body > [data-radix-portal],
+body > div:has([data-radix-dialog-content]) {
   z-index: 99999 !important;
+  position: static !important;
+  isolation: isolate !important;
 }
 
-/* Radix Dialog Overlay (backdrop) - behind modal content */
-[data-radix-portal] [data-radix-dialog-overlay] {
+/* Radix Dialog Overlay (backdrop) */
+[data-radix-dialog-overlay],
+[data-radix-portal] [data-radix-dialog-overlay],
+div[data-radix-dialog-overlay] {
   z-index: 99998 !important;
   position: fixed !important;
   inset: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Radix Dialog Content (modal) - above overlay */
+/* Radix Dialog Content (the actual modal) - THIS IS KEY */
+[data-radix-dialog-content],
 [data-radix-portal] [data-radix-dialog-content],
-[data-radix-portal] [data-radix-dialog-content] > * {
+div[data-radix-dialog-content],
+div[role="dialog"] {
   z-index: 99999 !important;
-  position: relative !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
 }
 
-/* CDP modal classes - fallback */
+/* Force any dialog-like element above navbar */
+div[role="dialog"] {
+  z-index: 99999 !important;
+  position: fixed !important;
+}
+
+/* CDP-specific selectors */
 [data-cdp-modal],
 [data-cdp-sign-in],
 .cdp-modal,
-.cdp-sign-in-modal {
+.cdp-sign-in-modal,
+[class*="cdp"],
+[class*="CDP"],
+[data-cdp] {
+  z-index: 99999 !important;
+  position: fixed !important;
+}
+
+/* Catch any white modal-like containers */
+div[style*="background"]:has(input[type="email"]),
+div[style*="background"]:has(form),
+div:has(> input[type="email"]) {
+  z-index: 99999 !important;
+  position: fixed !important;
+}
+
+/* Nuclear option - target by structure */
+body > div:last-child:has([data-radix-dialog-content]),
+body > div:last-child:has(div[role="dialog"]) {
   z-index: 99999 !important;
 }
 
-/* Dialog role elements */
-div[role="dialog"] {
+/* Ensure all children of portal are in correct stacking context */
+/* But don't override the dialog content itself */
+[data-radix-portal] > *:not([data-radix-dialog-content]),
+[data-radix-dialog-content] > * {
+  position: relative;
+  z-index: auto;
+}
+
+/* The dialog content itself must be above everything */
+[data-radix-dialog-content] {
   z-index: 99999 !important;
 }
 

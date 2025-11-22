@@ -28,7 +28,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.sepolia.base.org https://*.celo-testnet.org https://sepolia.base.org https://alfajores-forno.celo-testnet.org https://*.walletconnect.org wss://*.walletconnect.org",
+              "connect-src 'self' https://*.sepolia.base.org https://*.celo-testnet.org https://sepolia.base.org https://alfajores-forno.celo-testnet.org https://*.walletconnect.org wss://*.walletconnect.org https://api.developer.coinbase.com https://*.coinbase.com https://*.cbwallet.com https://*.cdp.coinbase.com https://*.metamask.io https://*.cx.metamask.io https://mm-sdk-analytics.api.cx.metamask.io",
               "frame-ancestors 'none'",
             ].join('; '),
           },
