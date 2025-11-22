@@ -159,7 +159,7 @@ export function getCountryCode(isoCode: string): number {
  */
 export function isCountryBlocked(isoCode: string): boolean {
   const code = getCountryCode(isoCode);
-  return Object.values(BLOCKED_COUNTRIES).includes(code);
+  return (Object.values(BLOCKED_COUNTRIES) as number[]).includes(code);
 }
 
 /**
