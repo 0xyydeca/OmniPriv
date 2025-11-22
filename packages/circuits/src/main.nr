@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // OmniPriv 2.0 Identity Claim Circuit
-// Per spec section 1 & 3: Proves age ≥ 18 and country ∉ {blocked} without revealing PII
+// Per spec section 1 & 3: Proves age >= 18 and country NOT IN {blocked} without revealing PII
 
 /**
  * @notice Main identity claim circuit
- * @dev Implements: "Age ≥ 18 and not from blocked country"
+ * @dev Implements: "Age >= 18 and not from blocked country"
  * 
  * Private inputs (hidden from verifier):
  * - dob_year: User's birth year
@@ -23,19 +23,19 @@
  */
 fn main(
     // Private inputs (PII - never revealed)
-    dob_year: Field,
-    country_code: Field,
-    secret_salt: Field,
+    dob_year: u32,
+    country_code: u32,
+    secret_salt: u64,
     
     // Public inputs (verification parameters)
-    pub commitment: Field,
-    pub policy_id: Field,
-    pub current_year: Field,
-    pub expiry: Field,
-    pub nonce: Field,
-    pub blocked_country_1: Field,
-    pub blocked_country_2: Field,
-    pub blocked_country_3: Field
+    commitment: Field,
+    policy_id: u64,
+    current_year: u32,
+    expiry: u64,
+    nonce: u64,
+    blocked_country_1: u32,
+    blocked_country_2: u32,
+    blocked_country_3: u32
 ) {
     // 1. Verify commitment matches private inputs
     // commitment = Poseidon(dob_year, country_code, secret_salt)
@@ -43,7 +43,7 @@ fn main(
     let computed_commitment = hash_credential(dob_year, country_code, secret_salt);
     assert(commitment == computed_commitment, "Invalid commitment");
     
-    // 2. Check age ≥ 18
+    // 2. Check age >= 18
     let age = current_year - dob_year;
     assert(age >= 18, "Age must be at least 18");
     assert(age <= 120, "Invalid age"); // Sanity check
@@ -69,13 +69,13 @@ fn main(
  * @dev In production, replace with Poseidon hash
  */
 fn hash_credential(
-    dob_year: Field,
-    country_code: Field,
-    salt: Field
+    dob_year: u32,
+    country_code: u32,
+    salt: u64
 ) -> Field {
     // Simplified hash for MVP
     // In production: use std::hash::poseidon
-    dob_year + country_code * 1000 + salt * 1000000
+    (dob_year as Field) + (country_code as Field) * 1000 + (salt as Field) * 1000000
 }
 
 // ============================================================================
@@ -85,9 +85,9 @@ fn hash_credential(
 #[test]
 fn test_valid_claim() {
     // Valid: 25 years old, country AR (Argentina, not blocked)
-    let dob_year = 2000;
-    let country_code = 1; // AR = 1 (example)
-    let secret_salt = 12345;
+    let dob_year: u32 = 2000;
+    let country_code: u32 = 1; // AR = 1 (example)
+    let secret_salt: u64 = 12345;
     let commitment = hash_credential(dob_year, country_code, secret_salt);
     
     main(
@@ -108,9 +108,9 @@ fn test_valid_claim() {
 #[test]
 fn test_age_18_boundary() {
     // Valid: Exactly 18 years old
-    let dob_year = 2007;
-    let country_code = 1;
-    let secret_salt = 12345;
+    let dob_year: u32 = 2007;
+    let country_code: u32 = 1;
+    let secret_salt: u64 = 12345;
     let commitment = hash_credential(dob_year, country_code, secret_salt);
     
     main(
@@ -126,12 +126,12 @@ fn test_age_18_boundary() {
     );
 }
 
-#[test(should_fail)]
+#[test(should_fail_with = "Age must be at least 18")]
 fn test_underage_fails() {
     // Invalid: 17 years old (too young)
-    let dob_year = 2008;
-    let country_code = 1;
-    let secret_salt = 12345;
+    let dob_year: u32 = 2008;
+    let country_code: u32 = 1;
+    let secret_salt: u64 = 12345;
     let commitment = hash_credential(dob_year, country_code, secret_salt);
     
     main(
@@ -147,12 +147,12 @@ fn test_underage_fails() {
     );
 }
 
-#[test(should_fail)]
+#[test(should_fail_with = "Country blocked")]
 fn test_blocked_country_fails() {
     // Invalid: Country is in blocked list
-    let dob_year = 2000;
-    let country_code = 10; // Matches blocked_country_1
-    let secret_salt = 12345;
+    let dob_year: u32 = 2000;
+    let country_code: u32 = 10; // Matches blocked_country_1
+    let secret_salt: u64 = 12345;
     let commitment = hash_credential(dob_year, country_code, secret_salt);
     
     main(
@@ -170,13 +170,13 @@ fn test_blocked_country_fails() {
     );
 }
 
-#[test(should_fail)]
+#[test(should_fail_with = "Invalid commitment")]
 fn test_invalid_commitment_fails() {
     // Invalid: Commitment doesn't match private inputs
-    let dob_year = 2000;
-    let country_code = 1;
-    let secret_salt = 12345;
-    let wrong_commitment = 99999; // Not the correct hash
+    let dob_year: u32 = 2000;
+    let country_code: u32 = 1;
+    let secret_salt: u64 = 12345;
+    let wrong_commitment: Field = 99999; // Not the correct hash
     
     main(
         dob_year,
@@ -191,12 +191,12 @@ fn test_invalid_commitment_fails() {
     );
 }
 
-#[test(should_fail)]
+#[test(should_fail_with = "Invalid age")]
 fn test_age_too_old_fails() {
     // Invalid: Age > 120 (sanity check)
-    let dob_year = 1900;
-    let country_code = 1;
-    let secret_salt = 12345;
+    let dob_year: u32 = 1900;
+    let country_code: u32 = 1;
+    let secret_salt: u64 = 12345;
     let commitment = hash_credential(dob_year, country_code, secret_salt);
     
     main(
