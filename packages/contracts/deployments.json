@@ -14,12 +14,12 @@
     "chainId": 11142220,
     "layerZeroEid": 40125,
     "contracts": {
-      "VaultAnchor": "",
-      "ProofConsumer": "",
+      "VaultAnchor": "0xcf1a9522FB166a1E79564b5081940a271ab5A187",
+      "ProofConsumer": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
       "IdentityOApp": ""
     },
-    "rpcUrl": "https://alfajores-forno.celo-testnet.org",
-    "blockExplorer": "https://alfajores.celoscan.io"
+    "rpcUrl": "https://forno.celo-sepolia.celo-testnet.org",
+    "blockExplorer": "https://celo-sepolia.blockscout.com"
   }
 }
 

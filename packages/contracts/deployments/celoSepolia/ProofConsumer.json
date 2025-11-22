@@ -1,0 +1,691 @@
+{
+  "address": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_vaultAnchor",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "CommitmentInvalid",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidProof",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NonceAlreadyUsed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyInactive",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotFound",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "schemaId",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address[]",
+          "name": "allowedIssuers",
+          "type": "address[]"
+        }
+      ],
+      "name": "PolicyAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProofVerified",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "schemaId",
+          "type": "string"
+        },
+        {
+          "internalType": "address[]",
+          "name": "allowedIssuers",
+          "type": "address[]"
+        }
+      ],
+      "name": "addPolicy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isVerified",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "mockVerificationEnabled",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "nonces",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "policies",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "schemaId",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "setMockVerificationEnabled",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_vaultAnchor",
+          "type": "address"
+        }
+      ],
+      "name": "setVaultAnchor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "vaultAnchor",
+      "outputs": [
+        {
+          "internalType": "contract IVaultAnchor",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "verifications",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "verified",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "proof",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "publicSignals",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "policyId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "verifyProof",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x6cd041c167abf5411c2c3374b5285f30513e438c913de2e7f750873f23ab2f6f",
+  "receipt": {
+    "to": null,
+    "from": "0x2F63A7A9Bb198CdCd7f2cA4364eEfAb32253D9D3",
+    "contractAddress": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+    "transactionIndex": 1,
+    "gasUsed": "843174",
+    "logsBloom": "0x00000400000000000000000000000000000000000000000000800000000000000400000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000020000000000000000000000000100000000000000000000000000000000000000000",
+    "blockHash": "0x330faabab4c07bb593f9390adda6983e2c58b4e5e58f40e0f7526f97d977dd34",
+    "transactionHash": "0x6cd041c167abf5411c2c3374b5285f30513e438c913de2e7f750873f23ab2f6f",
+    "logs": [
+      {
+        "transactionIndex": 1,
+        "blockNumber": 10501926,
+        "transactionHash": "0x6cd041c167abf5411c2c3374b5285f30513e438c913de2e7f750873f23ab2f6f",
+        "address": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000002f63a7a9bb198cdcd7f2ca4364eefab32253d9d3"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0x330faabab4c07bb593f9390adda6983e2c58b4e5e58f40e0f7526f97d977dd34"
+      }
+    ],
+    "blockNumber": 10501926,
+    "cumulativeGasUsed": "889222",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xcf1a9522FB166a1E79564b5081940a271ab5A187"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "dd51e8dc02176ed32b2c2063e029919e",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_vaultAnchor\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"CommitmentInvalid\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidProof\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NonceAlreadyUsed\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyInactive\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotFound\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"schemaId\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address[]\",\"name\":\"allowedIssuers\",\"type\":\"address[]\"}],\"name\":\"PolicyAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"ProofVerified\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"schemaId\",\"type\":\"string\"},{\"internalType\":\"address[]\",\"name\":\"allowedIssuers\",\"type\":\"address[]\"}],\"name\":\"addPolicy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"}],\"name\":\"isVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mockVerificationEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"nonces\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"policies\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"schemaId\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"setMockVerificationEnabled\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_vaultAnchor\",\"type\":\"address\"}],\"name\":\"setVaultAnchor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"vaultAnchor\",\"outputs\":[{\"internalType\":\"contract IVaultAnchor\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"verifications\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"verified\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"},{\"internalType\":\"bytes32[]\",\"name\":\"publicSignals\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes32\",\"name\":\"policyId\",\"type\":\"bytes32\"}],\"name\":\"verifyProof\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"In MVP, uses a simplified verification; production would use Noir verifier\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"addPolicy(bytes32,string,address[])\":{\"params\":{\"allowedIssuers\":\"Array of allowed issuer addresses\",\"policyId\":\"Unique policy identifier\",\"schemaId\":\"The credential schema (e.g., \\\"kyc_v1\\\", \\\"age_check\\\")\"}},\"isVerified(address,bytes32)\":{\"params\":{\"policyId\":\"The policy identifier\",\"user\":\"The user address\"},\"returns\":{\"_0\":\"bool True if verified and not expired\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"verifyProof(bytes,bytes32[],bytes32)\":{\"params\":{\"policyId\":\"The policy to verify against\",\"proof\":\"The ZK proof bytes (Noir proof in production)\",\"publicSignals\":\"Public signals: [commitment, policyId, nonce, ...]\"},\"returns\":{\"_0\":\"bool True if proof is valid\"}}},\"title\":\"ProofConsumer\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"addPolicy(bytes32,string,address[])\":{\"notice\":\"Add a verification policy\"},\"isVerified(address,bytes32)\":{\"notice\":\"Check if user has valid verification for a policy\"},\"setMockVerificationEnabled(bool)\":{\"notice\":\"Toggle mock verification mode (owner only)\"},\"setVaultAnchor(address)\":{\"notice\":\"Update vault anchor reference\"},\"verifyProof(bytes,bytes32[],bytes32)\":{\"notice\":\"Verify a ZK proof for a given policy\"}},\"notice\":\"Verifies ZK proofs for credential predicates (e.g., age >= 18, KYC passed)\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ProofConsumer.sol\":\"ProofConsumer\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/ProofConsumer.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"./interfaces/IVaultAnchor.sol\\\";\\n\\n/**\\n * @title ProofConsumer\\n * @notice Verifies ZK proofs for credential predicates (e.g., age >= 18, KYC passed)\\n * @dev In MVP, uses a simplified verification; production would use Noir verifier\\n */\\ncontract ProofConsumer is Ownable {\\n    // Events\\n    event ProofVerified(\\n        address indexed user,\\n        bytes32 indexed policyId,\\n        bytes32 commitment,\\n        bool success,\\n        uint256 timestamp\\n    );\\n    event PolicyAdded(\\n        bytes32 indexed policyId,\\n        string schemaId,\\n        address[] allowedIssuers\\n    );\\n\\n    // Structs\\n    struct Policy {\\n        string schemaId;\\n        address[] allowedIssuers;\\n        bool active;\\n    }\\n\\n    struct VerificationResult {\\n        bool verified;\\n        uint256 timestamp;\\n        bytes32 commitment;\\n        bytes32 policyId;\\n    }\\n\\n    // State\\n    IVaultAnchor public vaultAnchor;\\n    mapping(bytes32 => Policy) public policies;\\n    mapping(address => mapping(bytes32 => VerificationResult))\\n        public verifications;\\n    mapping(address => uint256) public nonces;\\n\\n    // Feature flags for MVP\\n    bool public mockVerificationEnabled = true;\\n\\n    // Errors\\n    error InvalidProof();\\n    error PolicyNotFound();\\n    error PolicyInactive();\\n    error NonceAlreadyUsed();\\n    error CommitmentInvalid();\\n\\n    constructor(address _vaultAnchor) Ownable(msg.sender) {\\n        vaultAnchor = IVaultAnchor(_vaultAnchor);\\n    }\\n\\n    /**\\n     * @notice Add a verification policy\\n     * @param policyId Unique policy identifier\\n     * @param schemaId The credential schema (e.g., \\\"kyc_v1\\\", \\\"age_check\\\")\\n     * @param allowedIssuers Array of allowed issuer addresses\\n     */\\n    function addPolicy(\\n        bytes32 policyId,\\n        string memory schemaId,\\n        address[] memory allowedIssuers\\n    ) external onlyOwner {\\n        policies[policyId] = Policy({\\n            schemaId: schemaId,\\n            allowedIssuers: allowedIssuers,\\n            active: true\\n        });\\n\\n        emit PolicyAdded(policyId, schemaId, allowedIssuers);\\n    }\\n\\n    /**\\n     * @notice Verify a ZK proof for a given policy\\n     * @param proof The ZK proof bytes (Noir proof in production)\\n     * @param publicSignals Public signals: [commitment, policyId, nonce, ...]\\n     * @param policyId The policy to verify against\\n     * @return bool True if proof is valid\\n     */\\n    function verifyProof(\\n        bytes calldata proof,\\n        bytes32[] calldata publicSignals,\\n        bytes32 policyId\\n    ) external returns (bool) {\\n        Policy memory policy = policies[policyId];\\n        if (!policy.active) revert PolicyInactive();\\n\\n        // Extract public signals\\n        bytes32 commitment = publicSignals[0];\\n        uint256 nonce = uint256(publicSignals[2]);\\n\\n        // Check nonce (prevent replay)\\n        if (nonce <= nonces[msg.sender]) revert NonceAlreadyUsed();\\n        nonces[msg.sender] = nonce;\\n\\n        // Check commitment validity in VaultAnchor\\n        if (!vaultAnchor.isCommitmentValid(msg.sender, commitment)) {\\n            revert CommitmentInvalid();\\n        }\\n\\n        // Verify proof (simplified for MVP)\\n        bool verified = _verifyProofInternal(proof, publicSignals, policy);\\n\\n        if (verified) {\\n            verifications[msg.sender][policyId] = VerificationResult({\\n                verified: true,\\n                timestamp: block.timestamp,\\n                commitment: commitment,\\n                policyId: policyId\\n            });\\n        }\\n\\n        emit ProofVerified(\\n            msg.sender,\\n            policyId,\\n            commitment,\\n            verified,\\n            block.timestamp\\n        );\\n\\n        return verified;\\n    }\\n\\n    /**\\n     * @notice Internal proof verification logic\\n     * @dev For MVP with mockVerificationEnabled, always returns true\\n     * @dev In production, this would call Noir/Aztec verifier contract\\n     */\\n    function _verifyProofInternal(\\n        bytes calldata proof,\\n        bytes32[] calldata publicSignals,\\n        Policy memory policy\\n    ) internal view returns (bool) {\\n        if (mockVerificationEnabled) {\\n            // Mock verification for demo\\n            return proof.length > 0 && publicSignals.length >= 3;\\n        }\\n\\n        // TODO: Call Noir verifier contract\\n        // return noirVerifier.verify(proof, publicSignals);\\n        revert(\\\"Production verifier not implemented\\\");\\n    }\\n\\n    /**\\n     * @notice Check if user has valid verification for a policy\\n     * @param user The user address\\n     * @param policyId The policy identifier\\n     * @return bool True if verified and not expired\\n     */\\n    function isVerified(address user, bytes32 policyId)\\n        external\\n        view\\n        returns (bool)\\n    {\\n        VerificationResult memory result = verifications[user][policyId];\\n        return result.verified && result.timestamp > 0;\\n    }\\n\\n    /**\\n     * @notice Toggle mock verification mode (owner only)\\n     */\\n    function setMockVerificationEnabled(bool enabled) external onlyOwner {\\n        mockVerificationEnabled = enabled;\\n    }\\n\\n    /**\\n     * @notice Update vault anchor reference\\n     */\\n    function setVaultAnchor(address _vaultAnchor) external onlyOwner {\\n        vaultAnchor = IVaultAnchor(_vaultAnchor);\\n    }\\n}\\n\\n\",\"keccak256\":\"0xfe75b8957c90b2a2ddce1c7ebc76422d19727da3c2fc3971681976d16f38f6ea\",\"license\":\"MIT\"},\"contracts/interfaces/IVaultAnchor.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\ninterface IVaultAnchor {\\n    struct Commitment {\\n        bytes32 commitment;\\n        uint256 expiry;\\n        uint256 timestamp;\\n        bool revoked;\\n    }\\n\\n    function addCommitment(bytes32 commitment, uint256 expiry) external;\\n\\n    function revokeCommitment(bytes32 commitment) external;\\n\\n    function isCommitmentValid(address user, bytes32 commitment)\\n        external\\n        view\\n        returns (bool);\\n\\n    function getUserCommitments(address user)\\n        external\\n        view\\n        returns (bytes32[] memory);\\n\\n    function getCommitment(address user, bytes32 commitment)\\n        external\\n        view\\n        returns (Commitment memory);\\n}\\n\\n\",\"keccak256\":\"0x380880ec5df8add31e342ab3fa9504a81d3ab08cb301d29f79de34aa7671d6fc\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080346100d357601f610dec38819003918201601f19168301916001600160401b038311848410176100d8578084926020946040528339810103126100d357516001600160a01b0390818116908190036100d35733156100ba5760005460018060a01b0319903382821617600055604051933391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3600160ff1960055416176005556001541617600155610cfd90816100ef8239f35b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080604052600436101561001257600080fd5b60003560e01c8063013779e314610a4c57806303b00e0714610a2357806319c9d9ba146109b45780631b440615146106c957806344d83e7d14610345578063715018a6146102ec5780637ecebe00146102b25780638da5cb5b146102895780639b79997e14610246578063ba03e205146101b6578063ddbfd8ef14610161578063f008bd531461013e5763f2fde38b146100ab57600080fd5b34610139576020366003190112610139576100c4610a85565b6100cc610c2b565b6001600160a01b0390811690811561012057600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b3461013957600036600319011261013957602060ff600554166040519015158152f35b346101395760203660031901126101395760043560005260026020526101aa604060002060ff600261019283610b2f565b92015416604051928392604084526040840190610bd4565b90151560208301520390f35b34610139576040366003190112610139576001600160a01b036101d7610a85565b1660005260036020526040600020602435600052602052602060406000206040519061020282610ab7565b60ff8154161515918281526060600360018401549384878501526002810154604085015201549101528161023c575b506040519015158152f35b9050151582610231565b346101395760203660031901126101395761025f610a85565b610267610c2b565b600180546001600160a01b0319166001600160a01b0392909216919091179055005b34610139576000366003190112610139576000546040516001600160a01b039091168152602090f35b34610139576020366003190112610139576001600160a01b036102d3610a85565b1660005260046020526020604060002054604051908152f35b3461013957600036600319011261013957610305610c2b565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101395760603660031901126101395760243567ffffffffffffffff811161013957366023820112156101395780600401359067ffffffffffffffff82116105e657601f1991604051916103a2602085601f8501160184610ad3565b8183523660248383010111610139578160009260246020930183860137830101526044359167ffffffffffffffff831161013957366023840112156101395782600401359067ffffffffffffffff82116105e6578160051b936040519261040c6020870185610ad3565b83526020830190602482968201019036821161013957602401915b8183106106a957505050610439610c2b565b60405161044581610a9b565b838152826020820152600160408201526004356000526002602052604060002091815180519167ffffffffffffffff83116105e65782916104868654610af5565b601f811161066c575b50602091601f841160011461060757506000926105fc575b50508160011b916000199060031b1c19161782555b6001820160208201519081519167ffffffffffffffff83116105e6576801000000000000000083116105e65760209082548484558085106105c9575b500190600052602060002060005b8381106105ac57505050509060026040610531930151151591019060ff801983541691151516179055565b602061054860405193604085526040850190610bd4565b9183830382850152519182815201929060005b81811061058d576004357fdafcc5a09cc801d50d134a97e0e798722b9feea93f1cc8c2ec0c2309dabbcf0685870386a2005b82516001600160a01b031685526020948501949092019160010161055b565b82516001600160a01b031681830155602090920191600101610506565b6105e0908460005285846000209182019101610c14565b896104f8565b634e487b7160e01b600052604160045260246000fd5b0151905087806104a7565b909216918560005260206000209260005b818110610654575090846001959493921061063b575b505050811b0182556104bc565b015160001960f88460031b161c1916905587808061062e565b92936020600181928786015181550195019301610618565b61069990876000526020600020601f860160051c8101916020871061069f575b601f0160051c0190610c14565b8961048f565b909150819061068c565b82356001600160a01b038116810361013957815260209283019201610427565b346101395760603660031901126101395760043567ffffffffffffffff80821161013957366023830112156101395781600401359080821161013957602492838336920101116101395782359181831161013957366023840112156101395782600401359182116101395736848360051b850101116101395760443591826000526020946002865260406000206040519061076382610a9b565b61076c81610b2f565b82526001810160405190818a82549182815201916000528a6000209060005b8c828210610997575050505091816107a960029360ff950382610ad3565b8a850152015416159060408215910152610985578115610971578085013594826002101561095c5760640135336000526004875260406000205481111561094b5733600052600487526040600020558585604460018060a01b0360015416936040519485938492634cef7fcf60e11b84523360048501528301525afa90811561093f57600091610909575b50156108f75761084391610c57565b8061088b575b60405192835215159182848201524260408201527fd7573d4327aee73d4dd6727314deb13613b8f9a9af2bc3e6f7737b9ae838123960603392a3604051908152f35b60405161089781610ab7565b6001815260038582014281526040830186815260608401918683523360005283895260406000208760005289526108e2604060002095511515869060ff801983541691151516179055565b51600185015551600284015551910155610849565b6040516351d49ff760e11b8152600490fd5b90508581813d8311610938575b6109208183610ad3565b81010312610139575180151581036101395786610834565b503d610916565b6040513d6000823e3d90fd5b604051623f613760e71b8152600490fd5b50634e487b7160e01b60009081526032600452fd5b634e487b7160e01b60009081526032600452fd5b604051631ea4813d60e21b8152600490fd5b83546001600160a01b03168552909301926001928301920161078b565b34610139576040366003190112610139576001600160a01b036109d5610a85565b16600052600360205260406000206024356000526020526080604060002060ff8154169060018101549060036002820154910154916040519315158452602084015260408301526060820152f35b34610139576000366003190112610139576001546040516001600160a01b039091168152602090f35b346101395760203660031901126101395760043580151580910361013957610a72610c2b565b60ff801960055416911617600555600080f35b600435906001600160a01b038216820361013957565b6060810190811067ffffffffffffffff8211176105e657604052565b6080810190811067ffffffffffffffff8211176105e657604052565b90601f8019910116810190811067ffffffffffffffff8211176105e657604052565b90600182811c92168015610b25575b6020831014610b0f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610b04565b90604051918260008254610b4281610af5565b90818452602094600191600181169081600014610bb25750600114610b73575b505050610b7192500383610ad3565b565b600090815285812095935091905b818310610b9a575050610b719350820101388080610b62565b85548884018501529485019487945091830191610b81565b92505050610b7194925060ff191682840152151560051b820101388080610b62565b919082519283825260005b848110610c00575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201610bdf565b818110610c1f575050565b60008155600101610c14565b6000546001600160a01b03163303610c3f57565b60405163118cdaa760e01b8152336004820152602490fd5b60ff60055416610cb25760405162461bcd60e51b815260206004820152602360248201527f50726f64756374696f6e207665726966696572206e6f7420696d706c656d656e6044820152621d195960ea1b6064820152608490fd5b15159081610cbe575090565b6003915010159056fea2646970667358221220260eb3e36123cb1b23808f1156a175d6643ecc68061eb395c2014592a2e4d17b64736f6c63430008180033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c8063013779e314610a4c57806303b00e0714610a2357806319c9d9ba146109b45780631b440615146106c957806344d83e7d14610345578063715018a6146102ec5780637ecebe00146102b25780638da5cb5b146102895780639b79997e14610246578063ba03e205146101b6578063ddbfd8ef14610161578063f008bd531461013e5763f2fde38b146100ab57600080fd5b34610139576020366003190112610139576100c4610a85565b6100cc610c2b565b6001600160a01b0390811690811561012057600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b3461013957600036600319011261013957602060ff600554166040519015158152f35b346101395760203660031901126101395760043560005260026020526101aa604060002060ff600261019283610b2f565b92015416604051928392604084526040840190610bd4565b90151560208301520390f35b34610139576040366003190112610139576001600160a01b036101d7610a85565b1660005260036020526040600020602435600052602052602060406000206040519061020282610ab7565b60ff8154161515918281526060600360018401549384878501526002810154604085015201549101528161023c575b506040519015158152f35b9050151582610231565b346101395760203660031901126101395761025f610a85565b610267610c2b565b600180546001600160a01b0319166001600160a01b0392909216919091179055005b34610139576000366003190112610139576000546040516001600160a01b039091168152602090f35b34610139576020366003190112610139576001600160a01b036102d3610a85565b1660005260046020526020604060002054604051908152f35b3461013957600036600319011261013957610305610c2b565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101395760603660031901126101395760243567ffffffffffffffff811161013957366023820112156101395780600401359067ffffffffffffffff82116105e657601f1991604051916103a2602085601f8501160184610ad3565b8183523660248383010111610139578160009260246020930183860137830101526044359167ffffffffffffffff831161013957366023840112156101395782600401359067ffffffffffffffff82116105e6578160051b936040519261040c6020870185610ad3565b83526020830190602482968201019036821161013957602401915b8183106106a957505050610439610c2b565b60405161044581610a9b565b838152826020820152600160408201526004356000526002602052604060002091815180519167ffffffffffffffff83116105e65782916104868654610af5565b601f811161066c575b50602091601f841160011461060757506000926105fc575b50508160011b916000199060031b1c19161782555b6001820160208201519081519167ffffffffffffffff83116105e6576801000000000000000083116105e65760209082548484558085106105c9575b500190600052602060002060005b8381106105ac57505050509060026040610531930151151591019060ff801983541691151516179055565b602061054860405193604085526040850190610bd4565b9183830382850152519182815201929060005b81811061058d576004357fdafcc5a09cc801d50d134a97e0e798722b9feea93f1cc8c2ec0c2309dabbcf0685870386a2005b82516001600160a01b031685526020948501949092019160010161055b565b82516001600160a01b031681830155602090920191600101610506565b6105e0908460005285846000209182019101610c14565b896104f8565b634e487b7160e01b600052604160045260246000fd5b0151905087806104a7565b909216918560005260206000209260005b818110610654575090846001959493921061063b575b505050811b0182556104bc565b015160001960f88460031b161c1916905587808061062e565b92936020600181928786015181550195019301610618565b61069990876000526020600020601f860160051c8101916020871061069f575b601f0160051c0190610c14565b8961048f565b909150819061068c565b82356001600160a01b038116810361013957815260209283019201610427565b346101395760603660031901126101395760043567ffffffffffffffff80821161013957366023830112156101395781600401359080821161013957602492838336920101116101395782359181831161013957366023840112156101395782600401359182116101395736848360051b850101116101395760443591826000526020946002865260406000206040519061076382610a9b565b61076c81610b2f565b82526001810160405190818a82549182815201916000528a6000209060005b8c828210610997575050505091816107a960029360ff950382610ad3565b8a850152015416159060408215910152610985578115610971578085013594826002101561095c5760640135336000526004875260406000205481111561094b5733600052600487526040600020558585604460018060a01b0360015416936040519485938492634cef7fcf60e11b84523360048501528301525afa90811561093f57600091610909575b50156108f75761084391610c57565b8061088b575b60405192835215159182848201524260408201527fd7573d4327aee73d4dd6727314deb13613b8f9a9af2bc3e6f7737b9ae838123960603392a3604051908152f35b60405161089781610ab7565b6001815260038582014281526040830186815260608401918683523360005283895260406000208760005289526108e2604060002095511515869060ff801983541691151516179055565b51600185015551600284015551910155610849565b6040516351d49ff760e11b8152600490fd5b90508581813d8311610938575b6109208183610ad3565b81010312610139575180151581036101395786610834565b503d610916565b6040513d6000823e3d90fd5b604051623f613760e71b8152600490fd5b50634e487b7160e01b60009081526032600452fd5b634e487b7160e01b60009081526032600452fd5b604051631ea4813d60e21b8152600490fd5b83546001600160a01b03168552909301926001928301920161078b565b34610139576040366003190112610139576001600160a01b036109d5610a85565b16600052600360205260406000206024356000526020526080604060002060ff8154169060018101549060036002820154910154916040519315158452602084015260408301526060820152f35b34610139576000366003190112610139576001546040516001600160a01b039091168152602090f35b346101395760203660031901126101395760043580151580910361013957610a72610c2b565b60ff801960055416911617600555600080f35b600435906001600160a01b038216820361013957565b6060810190811067ffffffffffffffff8211176105e657604052565b6080810190811067ffffffffffffffff8211176105e657604052565b90601f8019910116810190811067ffffffffffffffff8211176105e657604052565b90600182811c92168015610b25575b6020831014610b0f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610b04565b90604051918260008254610b4281610af5565b90818452602094600191600181169081600014610bb25750600114610b73575b505050610b7192500383610ad3565b565b600090815285812095935091905b818310610b9a575050610b719350820101388080610b62565b85548884018501529485019487945091830191610b81565b92505050610b7194925060ff191682840152151560051b820101388080610b62565b919082519283825260005b848110610c00575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201610bdf565b818110610c1f575050565b60008155600101610c14565b6000546001600160a01b03163303610c3f57565b60405163118cdaa760e01b8152336004820152602490fd5b60ff60055416610cb25760405162461bcd60e51b815260206004820152602360248201527f50726f64756374696f6e207665726966696572206e6f7420696d706c656d656e6044820152621d195960ea1b6064820152608490fd5b15159081610cbe575090565b6003915010159056fea2646970667358221220260eb3e36123cb1b23808f1156a175d6643ecc68061eb395c2014592a2e4d17b64736f6c63430008180033",
+  "devdoc": {
+    "details": "In MVP, uses a simplified verification; production would use Noir verifier",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "addPolicy(bytes32,string,address[])": {
+        "params": {
+          "allowedIssuers": "Array of allowed issuer addresses",
+          "policyId": "Unique policy identifier",
+          "schemaId": "The credential schema (e.g., \"kyc_v1\", \"age_check\")"
+        }
+      },
+      "isVerified(address,bytes32)": {
+        "params": {
+          "policyId": "The policy identifier",
+          "user": "The user address"
+        },
+        "returns": {
+          "_0": "bool True if verified and not expired"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "verifyProof(bytes,bytes32[],bytes32)": {
+        "params": {
+          "policyId": "The policy to verify against",
+          "proof": "The ZK proof bytes (Noir proof in production)",
+          "publicSignals": "Public signals: [commitment, policyId, nonce, ...]"
+        },
+        "returns": {
+          "_0": "bool True if proof is valid"
+        }
+      }
+    },
+    "title": "ProofConsumer",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "addPolicy(bytes32,string,address[])": {
+        "notice": "Add a verification policy"
+      },
+      "isVerified(address,bytes32)": {
+        "notice": "Check if user has valid verification for a policy"
+      },
+      "setMockVerificationEnabled(bool)": {
+        "notice": "Toggle mock verification mode (owner only)"
+      },
+      "setVaultAnchor(address)": {
+        "notice": "Update vault anchor reference"
+      },
+      "verifyProof(bytes,bytes32[],bytes32)": {
+        "notice": "Verify a ZK proof for a given policy"
+      }
+    },
+    "notice": "Verifies ZK proofs for credential predicates (e.g., age >= 18, KYC passed)",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1327,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 2564,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "vaultAnchor",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IVaultAnchor)3156"
+      },
+      {
+        "astId": 2569,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "policies",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_bytes32,t_struct(Policy)2552_storage)"
+      },
+      {
+        "astId": 2576,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "verifications",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_mapping(t_bytes32,t_struct(VerificationResult)2561_storage))"
+      },
+      {
+        "astId": 2580,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "nonces",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 2583,
+        "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+        "label": "mockVerificationEnabled",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_bool"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IVaultAnchor)3156": {
+        "encoding": "inplace",
+        "label": "contract IVaultAnchor",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_mapping(t_bytes32,t_struct(VerificationResult)2561_storage))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(bytes32 => struct ProofConsumer.VerificationResult))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_bytes32,t_struct(VerificationResult)2561_storage)"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_bytes32,t_struct(Policy)2552_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct ProofConsumer.Policy)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Policy)2552_storage"
+      },
+      "t_mapping(t_bytes32,t_struct(VerificationResult)2561_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct ProofConsumer.VerificationResult)",
+        "numberOfBytes": "32",
+        "value": "t_struct(VerificationResult)2561_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Policy)2552_storage": {
+        "encoding": "inplace",
+        "label": "struct ProofConsumer.Policy",
+        "members": [
+          {
+            "astId": 2546,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "schemaId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2549,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "allowedIssuers",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_address)dyn_storage"
+          },
+          {
+            "astId": 2551,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "active",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_struct(VerificationResult)2561_storage": {
+        "encoding": "inplace",
+        "label": "struct ProofConsumer.VerificationResult",
+        "members": [
+          {
+            "astId": 2554,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "verified",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2556,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2558,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "commitment",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 2560,
+            "contract": "contracts/ProofConsumer.sol:ProofConsumer",
+            "label": "policyId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

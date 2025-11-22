@@ -2,6 +2,7 @@ import { HardhatUserConfig } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-viem';
 import 'hardhat-deploy';
+import 'dotenv/config';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -28,7 +29,7 @@ const config: HardhatUserConfig = {
     celoSepolia: {
       url:
         process.env.CELO_SEPOLIA_RPC_URL ||
-        'https://forno.celo-testnet.org',
+        'https://forno.celo-sepolia.celo-testnet.org/',
       chainId: 11142220,
       accounts: process.env.DEPLOYER_PRIVATE_KEY
         ? [process.env.DEPLOYER_PRIVATE_KEY]
