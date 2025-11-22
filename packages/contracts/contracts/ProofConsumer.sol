@@ -4,6 +4,17 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IVaultAnchor.sol";
 
+interface IIdentityOApp {
+    function sendVerification(
+        uint32 dstEid,
+        address user,
+        bytes32 policyId,
+        bytes32 commitment,
+        uint256 expiry,
+        bytes calldata options
+    ) external payable;
+}
+
 /**
  * @title ProofConsumer
  * @notice Verifies ZK proofs for credential predicates (e.g., age >= 18, KYC passed)
@@ -23,6 +34,13 @@ contract ProofConsumer is Ownable {
         string schemaId,
         address[] allowedIssuers
     );
+    event ProofVerifiedAndBridged(
+        address indexed user,
+        bytes32 indexed policyId,
+        bytes32 commitment,
+        uint32 dstEid,
+        uint256 expiry
+    );
 
     // Structs
     struct Policy {
@@ -40,6 +58,7 @@ contract ProofConsumer is Ownable {
 
     // State
     IVaultAnchor public vaultAnchor;
+    IIdentityOApp public identityOApp;
     mapping(bytes32 => Policy) public policies;
     mapping(address => mapping(bytes32 => VerificationResult))
         public verifications;
@@ -54,6 +73,7 @@ contract ProofConsumer is Ownable {
     error PolicyInactive();
     error NonceAlreadyUsed();
     error CommitmentInvalid();
+    error IdentityOAppNotSet();
 
     constructor(address _vaultAnchor) Ownable(msg.sender) {
         vaultAnchor = IVaultAnchor(_vaultAnchor);
@@ -90,7 +110,7 @@ contract ProofConsumer is Ownable {
         bytes calldata proof,
         bytes32[] calldata publicSignals,
         bytes32 policyId
-    ) external returns (bool) {
+    ) public returns (bool) {
         Policy memory policy = policies[policyId];
         if (!policy.active) revert PolicyInactive();
 
@@ -166,6 +186,56 @@ contract ProofConsumer is Ownable {
     }
 
     /**
+     * @notice Verify proof and bridge verification to another chain via LayerZero
+     * @dev Combines verifyProof with cross-chain bridging in one transaction
+     * @param proof The ZK proof bytes
+     * @param publicSignals Public signals from proof
+     * @param policyId The policy to verify against
+     * @param dstEid Destination LayerZero endpoint ID (Chain B)
+     * @param options LayerZero execution options
+     * @return bool True if proof verified successfully
+     */
+    function submitProofAndBridge(
+        bytes calldata proof,
+        bytes32[] calldata publicSignals,
+        bytes32 policyId,
+        uint32 dstEid,
+        bytes calldata options
+    ) external payable returns (bool) {
+        if (address(identityOApp) == address(0)) revert IdentityOAppNotSet();
+
+        // 1. Verify proof locally (stores result on Chain A)
+        bool verified = verifyProof(proof, publicSignals, policyId);
+        if (!verified) revert InvalidProof();
+
+        // 2. Extract data from public signals
+        bytes32 commitment = publicSignals[0];
+        
+        // 3. Calculate expiry (30 days from now)
+        uint256 expiry = block.timestamp + 30 days;
+
+        // 4. Send verification to Chain B via LayerZero
+        identityOApp.sendVerification{value: msg.value}(
+            dstEid,
+            msg.sender,
+            policyId,
+            commitment,
+            expiry,
+            options
+        );
+
+        emit ProofVerifiedAndBridged(
+            msg.sender,
+            policyId,
+            commitment,
+            dstEid,
+            expiry
+        );
+
+        return true;
+    }
+
+    /**
      * @notice Toggle mock verification mode (owner only)
      */
     function setMockVerificationEnabled(bool enabled) external onlyOwner {
@@ -177,6 +247,14 @@ contract ProofConsumer is Ownable {
      */
     function setVaultAnchor(address _vaultAnchor) external onlyOwner {
         vaultAnchor = IVaultAnchor(_vaultAnchor);
+    }
+
+    /**
+     * @notice Set IdentityOApp address for cross-chain bridging
+     * @param _identityOApp Address of the IdentityOApp contract
+     */
+    function setIdentityOApp(address _identityOApp) external onlyOwner {
+        identityOApp = IIdentityOApp(_identityOApp);
     }
 }
 

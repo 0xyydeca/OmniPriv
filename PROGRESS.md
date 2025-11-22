@@ -1,7 +1,7 @@
 # OmniPriv 2.0 - Implementation Progress
 
 **Last Updated**: 2024-11-22  
-**Status**: 🟢 On Track for ETHGlobal Buenos Aires 2025
+**Status**:  On Track for ETHGlobal Buenos Aires 2025
 
 ---
 
@@ -11,9 +11,9 @@ This document tracks our progress against the master spec's 26 sections and impl
 
 ---
 
-## ✅ Completed Steps
+## Completed Steps
 
-### Step 0: Chains & Constants ✅
+### Step 0: Chains & Constants 
 **Status**: COMPLETE  
 **Files**:
 - `packages/sdk/src/constants.ts` - Centralized constants
@@ -27,7 +27,7 @@ This document tracks our progress against the master spec's 26 sections and impl
 
 ---
 
-### Step 1: Monorepo Scaffolding ✅
+### Step 1: Monorepo Scaffolding 
 **Status**: COMPLETE  
 **Structure**:
 ```
@@ -43,16 +43,16 @@ omnipriv/
 ```
 
 **Tooling**:
-- ✅ pnpm 8.15.0 workspaces
-- ✅ Node.js 20.11.0 (enforced)
-- ✅ TypeScript 5.4+
-- ✅ Hardhat 3.x
-- ✅ Next.js 14
-- ✅ Version enforcement scripts
+- pnpm 8.15.0 workspaces
+- Node.js 20.11.0 (enforced)
+- TypeScript 5.4+
+- Hardhat 3.x
+- Next.js 14
+- Version enforcement scripts
 
 ---
 
-### Step 2: Noir Circuit + TypeScript Types ✅
+### Step 2: Noir Circuit + TypeScript Types 
 **Status**: COMPLETE  
 **Files**:
 - `packages/circuits/src/main.nr` - Identity claim circuit
@@ -60,20 +60,20 @@ omnipriv/
 - `packages/sdk/src/constants.ts` - Circuit constants
 
 **Circuit Implementation**:
-- ✅ Proves age >= 18
-- ✅ Proves country NOT in blocked list
-- ✅ Verifies credential commitment
-- ✅ 6/6 tests passing
-- ✅ Compiled with nargo 1.0.0-beta.15
+- Proves age >= 18
+- Proves country NOT in blocked list
+- Verifies credential commitment
+- 6/6 tests passing
+- Compiled with nargo 1.0.0-beta.15
 
 **Test Results**:
 ```
-✅ test_valid_claim
-✅ test_age_18_boundary
-✅ test_underage_fails
-✅ test_blocked_country_fails
-✅ test_invalid_commitment_fails
-✅ test_age_too_old_fails
+test_valid_claim
+test_age_18_boundary
+test_underage_fails
+test_blocked_country_fails
+test_invalid_commitment_fails
+test_age_too_old_fails
 ```
 
 **Artifacts**:
@@ -81,7 +81,7 @@ omnipriv/
 
 ---
 
-### Step 3: Core Contracts (Single Chain) ✅
+### Step 3: Core Contracts (Single Chain) 
 **Status**: COMPLETE (with improvements)  
 **Files**:
 - `packages/contracts/contracts/VaultAnchor.sol` - Commitment storage
@@ -91,12 +91,12 @@ omnipriv/
 - `docs/ADR-001-contract-architecture.md` - Architecture decisions
 
 **Implementation**:
-- ✅ `isVerified(user, policyId)` - Exactly as Step 3 spec
-- ✅ Proof verification with mock mode
-- ✅ Nonce-based replay protection
-- ✅ Policy management system
-- ✅ Commitment anchoring (bonus feature)
-- ✅ 30+ unit tests passing
+- `isVerified(user, policyId)` - Exactly as Step 3 spec
+- Proof verification with mock mode
+- Nonce-based replay protection
+- Policy management system
+- Commitment anchoring (bonus feature)
+- 30+ unit tests passing
 
 **Deployed Contracts**:
 - Base Sepolia VaultAnchor: `0x6DB3992C31AFc84E442621fff00511e9f26335d1`
@@ -117,10 +117,10 @@ omnipriv/
 **Target**: 3-4 hours remaining
 
 **Completed**:
-- ✅ `IdentityOApp.sol` created
-- ✅ Base Sepolia deployment: `0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48`
-- ✅ LayerZero v2 OApp pattern implemented
-- ✅ Basic tests in `IdentityOApp.test.ts`
+- `IdentityOApp.sol` created
+- Base Sepolia deployment: `0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48`
+- LayerZero v2 OApp pattern implemented
+- Basic tests in `IdentityOApp.test.ts`
 
 **TODO**:
 - [ ] Deploy to Celo Sepolia (blocked by LZ v2 testnet support)
@@ -245,11 +245,11 @@ omnipriv/
 
 ## 🏆 Sponsor Integration Status
 
-### Aztec Network ✅
-- ✅ Noir circuit implemented
-- ✅ 6 tests passing
-- ✅ Circuit compiled and artifacts generated
-- ⏳ Browser proving integration (upcoming)
+### Aztec Network 
+- Noir circuit implemented
+- 6 tests passing
+- Circuit compiled and artifacts generated
+- Browser proving integration (upcoming)
 
 ### LayerZero 🚧
 - ✅ OApp pattern implemented
@@ -284,14 +284,14 @@ omnipriv/
 
 ## 📝 Documentation Status
 
-- ✅ README.md - Updated with architecture and setup
-- ✅ QUICKSTART.md - 5-minute setup guide
-- ✅ VERSION_REQUIREMENTS.md - All versions documented
-- ✅ ARCHITECTURE.md - Technical architecture
-- ✅ ADR-000 - Chains and constants decision
-- ✅ ADR-001 - Contract architecture decision
-- ⏳ DEMO.md - Demo script (TODO)
-- ⏳ API.md - API documentation (TODO)
+- README.md - Updated with architecture and setup
+- QUICKSTART.md - 5-minute setup guide
+- VERSION_REQUIREMENTS.md - All versions documented
+- ARCHITECTURE.md - Technical architecture
+- ADR-000 - Chains and constants decision
+- ADR-001 - Contract architecture decision
+- DEMO.md - Demo script (TODO)
+- API.md - API documentation (TODO)
 
 ---
 
