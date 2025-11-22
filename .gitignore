@@ -24,6 +24,7 @@ lerna-debug.log*
 # Environment
 .env
 .env*.local
+.env.local.bak
 .env.production
 
 # IDE
