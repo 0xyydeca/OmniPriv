@@ -1,10 +1,10 @@
 # LayerZero Cross-Chain Demo Guide
 
-This guide demonstrates PrivID's **cross-chain identity verification** using **LayerZero v2**. 
+This guide demonstrates OmniPriv's **cross-chain identity verification** using **LayerZero v2**. 
 
 ## Overview
 
-PrivID uses LayerZero to enable **one identity, verified everywhere**:
+OmniPriv uses LayerZero to enable **one identity, verified everywhere**:
 
 1. User stores credentials on **Chain A** (e.g., Base Sepolia)
 2. User generates a ZK proof

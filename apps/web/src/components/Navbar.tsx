@@ -29,9 +29,9 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-            aria-label="PrivID Home"
+            aria-label="OmniPriv Home"
           >
-            PrivID
+            OmniPriv
           </Link>
 
           {/* Navigation Links */}

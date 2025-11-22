@@ -13,7 +13,7 @@ importers:
       '@heroicons/react':
         specifier: ^2.1.1
         version: 2.2.0(react@18.3.1)
-      '@privid/sdk':
+      '@omnipriv/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
       '@privy-io/react-auth':

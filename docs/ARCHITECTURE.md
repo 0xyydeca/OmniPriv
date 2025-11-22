@@ -1,4 +1,4 @@
-# PrivID Architecture
+# OmniPriv Architecture
 
 Detailed technical architecture for privacy-preserving cross-chain identity.
 
@@ -61,7 +61,7 @@ Detailed technical architecture for privacy-preserving cross-chain identity.
 - `apps/web/src/components/VerifyProof.tsx` - Proof generation
 - `apps/web/src/components/CrossChainBridge.tsx` - Cross-chain UI
 
-### SDK (@privid/sdk)
+### SDK (@omnipriv/sdk)
 
 **Responsibilities:**
 1. Vault management (IndexedDB)
@@ -78,7 +78,7 @@ Detailed technical architecture for privacy-preserving cross-chain identity.
 
 **Storage:**
 ```typescript
-// IndexedDB: privid-vault
+// IndexedDB: omnipriv-vault
 {
   id: string,
   credential: {

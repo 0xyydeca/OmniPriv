@@ -21,10 +21,10 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@privid/contracts": ["./packages/contracts/src"],
-      "@privid/sdk": ["./packages/sdk/src"],
-      "@privid/circuits": ["./packages/circuits/src"],
-      "@privid/testdata": ["./packages/testdata/src"]
+      "@omnipriv/contracts": ["./packages/contracts/src"],
+      "@omnipriv/sdk": ["./packages/sdk/src"],
+      "@omnipriv/circuits": ["./packages/circuits/src"],
+      "@omnipriv/testdata": ["./packages/testdata/src"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/.next/types/**/*.ts"],

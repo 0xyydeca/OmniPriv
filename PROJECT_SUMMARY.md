@@ -1,8 +1,8 @@
-# PrivID - Project Summary
+# OmniPriv - Project Summary
 
 ## What We Built
 
-PrivID is a **privacy-preserving cross-chain identity verification system** that allows users to prove attributes (KYC status, age, country) to dApps without revealing personal data or re-verifying on every chain.
+OmniPriv is a **privacy-preserving cross-chain identity verification system** that allows users to prove attributes (KYC status, age, country) to dApps without revealing personal data or re-verifying on every chain.
 
 ## Core Features
 
@@ -110,7 +110,7 @@ Proof Request → Decrypt Credential → Evaluate Predicate
 ## Project Structure
 
 ```
-privid/
+omnipriv/
 ├── apps/
 │   └── web/                    # Next.js frontend
 │       ├── src/
@@ -266,9 +266,9 @@ pnpm hardhat:deploy --network celoAlfajores
 
 ## Resources
 
-- **GitHub:** [github.com/yourusername/privid](https://github.com/yourusername/privid)
+- **GitHub:** [github.com/yourusername/omnipriv](https://github.com/yourusername/omnipriv)
 - **Demo Video:** [Coming soon]
-- **Live Demo:** [privid.app](https://privid.app)
+- **Live Demo:** [omnipriv.app](https://omnipriv.app)
 - **Docs:** See README, SETUP, ARCHITECTURE, DEMO
 
 ## Team
@@ -288,5 +288,5 @@ MIT License - See [LICENSE](./LICENSE)
 
 ---
 
-**PrivID: Privacy-preserving identity for the multi-chain future**
+**OmniPriv: Privacy-preserving identity for the multi-chain future**
 

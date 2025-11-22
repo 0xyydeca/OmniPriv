@@ -1,6 +1,6 @@
-# PrivID Installation Guide
+# OmniPriv Installation Guide
 
-This guide ensures you have the correct environment setup for PrivID development.
+This guide ensures you have the correct environment setup for OmniPriv development.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ Before you begin, make sure you have the correct versions installed:
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 
 # Install Node.js 20 (will use .nvmrc automatically)
-cd privid
+cd omnipriv
 nvm install
 nvm use
 ```
@@ -40,8 +40,8 @@ npm install -g pnpm@8.15.0
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # Automatic setup (installs dependencies + builds packages)
 pnpm setup
@@ -96,8 +96,8 @@ If you prefer to run commands step-by-step:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # 2. Install dependencies
 pnpm install
@@ -153,7 +153,7 @@ nvm use 20
 # Or download from nodejs.org
 ```
 
-### ❌ "Cannot find module '@privid/sdk'"
+### ❌ "Cannot find module '@omnipriv/sdk'"
 
 The workspace packages aren't built:
 ```bash
@@ -213,8 +213,8 @@ pnpm build
 pnpm test
 
 # Specific package
-pnpm -F @privid/sdk test
-pnpm -F @privid/contracts test
+pnpm -F @omnipriv/sdk test
+pnpm -F @omnipriv/contracts test
 
 # E2E tests
 pnpm -F web test:e2e
@@ -222,7 +222,7 @@ pnpm -F web test:e2e
 
 ## For Contributors
 
-When contributing to PrivID:
+When contributing to OmniPriv:
 
 1. **Never commit `.env.local`** - Contains secrets
 2. **Use pnpm only** - npm/yarn will be blocked
@@ -245,7 +245,7 @@ pnpm test
 - **Setup Issues**: Run `pnpm verify` for diagnostics
 - **Documentation**: See [SETUP.md](./SETUP.md) for detailed setup
 - **Quick Start**: See [QUICKSTART.md](./QUICKSTART.md) for 5-minute setup
-- **Issues**: [GitHub Issues](https://github.com/yourusername/privid/issues)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/omnipriv/issues)
 
 ## System Requirements
 
@@ -258,5 +258,5 @@ pnpm test
 
 ---
 
-**Next Steps**: After installation, see [QUICKSTART.md](./QUICKSTART.md) for your first steps with PrivID.
+**Next Steps**: After installation, see [QUICKSTART.md](./QUICKSTART.md) for your first steps with OmniPriv.
 

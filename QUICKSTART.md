@@ -1,6 +1,6 @@
-# PrivID Quick Start (5 Minutes)
+# OmniPriv Quick Start (5 Minutes)
 
-Get PrivID running locally in 5 minutes!
+Get OmniPriv running locally in 5 minutes!
 
 ## Prerequisites Check
 
@@ -17,8 +17,8 @@ Don't have them? Install:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # Use correct Node version (if you have nvm)
 nvm use
@@ -87,7 +87,7 @@ Wait for:
 
 Visit: **http://localhost:3000**
 
-You should see the PrivID landing page!
+You should see the OmniPriv landing page!
 
 ## What to Try
 
@@ -175,10 +175,10 @@ pnpm hardhat:deploy --network baseSepolia
 pnpm test
 
 # Contract tests only
-pnpm -F @privid/contracts test
+pnpm -F @omnipriv/contracts test
 
 # SDK tests only
-pnpm -F @privid/sdk test
+pnpm -F @omnipriv/sdk test
 
 # E2E tests (requires dev server running)
 pnpm -F web test:e2e
@@ -194,7 +194,7 @@ pnpm -F web test:e2e
 ## Project Structure at a Glance
 
 ```
-privid/
+omnipriv/
 ├── apps/web/           → Next.js frontend (what you see at localhost:3000)
 ├── packages/
 │   ├── contracts/      → Solidity smart contracts
@@ -226,8 +226,8 @@ rm -rf node_modules .next  # Deep clean (re-run pnpm install after)
 ## Getting Help
 
 - **Documentation:** Start with [README.md](./README.md)
-- **Issues:** Check [GitHub Issues](https://github.com/yourusername/privid/issues)
-- **Questions:** Open a [Discussion](https://github.com/yourusername/privid/discussions)
+- **Issues:** Check [GitHub Issues](https://github.com/yourusername/omnipriv/issues)
+- **Questions:** Open a [Discussion](https://github.com/yourusername/omnipriv/discussions)
 
 ## Success! What You Just Built
 

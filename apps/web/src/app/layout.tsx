@@ -6,7 +6,7 @@ import { Providers } from '@/components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'PrivID - Privacy-Preserving Cross-Chain Identity',
+  title: 'OmniPriv - Privacy-Preserving Cross-Chain Identity',
   description: 'Verify user attributes (KYC/age/country) without doxxing users or fragmenting identity across chains',
   icons: {
     icon: '/favicon.ico',

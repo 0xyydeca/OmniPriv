@@ -1,6 +1,6 @@
-# Contributing to PrivID
+# Contributing to OmniPriv
 
-Thank you for your interest in contributing to PrivID! This document provides guidelines and instructions for contributors.
+Thank you for your interest in contributing to OmniPriv! This document provides guidelines and instructions for contributors.
 
 ## Code of Conduct
 
@@ -21,8 +21,8 @@ Be respectful, inclusive, and constructive. We're building privacy infrastructur
 
 ```bash
 # 1. Fork and clone
-git clone https://github.com/YOUR_USERNAME/privid.git
-cd privid
+git clone https://github.com/YOUR_USERNAME/omnipriv.git
+cd omnipriv
 
 # 2. Use correct Node version (with nvm)
 nvm use
@@ -83,8 +83,8 @@ git checkout -b fix/issue-123
 pnpm test
 
 # Run specific tests
-pnpm -F @privid/contracts test
-pnpm -F @privid/sdk test
+pnpm -F @omnipriv/contracts test
+pnpm -F @omnipriv/sdk test
 pnpm -F web test:e2e
 
 # Check linting
@@ -126,7 +126,7 @@ Then open a PR on GitHub with:
 ## Project Structure
 
 ```
-privid/
+omnipriv/
 ├── apps/
 │   └── web/              # Next.js frontend
 ├── packages/
@@ -282,7 +282,7 @@ describe('generateCommitment', () => {
 
 **If you find a security vulnerability:**
 1. **Do NOT open a public issue**
-2. Email us at security@privid.app
+2. Email us at security@omnipriv.app
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -350,9 +350,9 @@ Releases are tagged and documented in CHANGELOG.md.
 
 ## Questions?
 
-- Open a [GitHub Discussion](https://github.com/yourusername/privid/discussions)
-- Join our [Discord](https://discord.gg/privid) (coming soon)
-- Email: dev@privid.app
+- Open a [GitHub Discussion](https://github.com/yourusername/omnipriv/discussions)
+- Join our [Discord](https://discord.gg/omnipriv) (coming soon)
+- Email: dev@omnipriv.app
 
 ## License
 
@@ -360,5 +360,5 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 ---
 
-**Thank you for contributing to PrivID!**
+**Thank you for contributing to OmniPriv!**
 

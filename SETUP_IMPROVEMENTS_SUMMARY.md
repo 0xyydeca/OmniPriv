@@ -1,6 +1,6 @@
 # Setup Improvements Summary
 
-This document summarizes the version enforcement and setup improvements made to PrivID.
+This document summarizes the version enforcement and setup improvements made to OmniPriv.
 
 ## Problem Statement
 
@@ -157,10 +157,10 @@ pnpm verify
 ```bash
 # Partner's workflow (BROKEN)
 git clone ...
-cd privid
+cd omnipriv
 # Has .env.local file
 pnpm install    # Completes, but...
-pnpm dev        # ❌ Error: Cannot find module '@privid/sdk'
+pnpm dev        # ❌ Error: Cannot find module '@omnipriv/sdk'
 ```
 
 **Why it failed:**
@@ -173,7 +173,7 @@ pnpm dev        # ❌ Error: Cannot find module '@privid/sdk'
 ```bash
 # Partner's workflow (WORKS)
 git clone ...
-cd privid
+cd omnipriv
 nvm use         # Uses correct Node version from .nvmrc
 pnpm setup      # Installs AND builds automatically
 pnpm verify     # Confirms everything is ready
@@ -255,7 +255,7 @@ $ pnpm install
 
 # ✅ Verify script works
 $ pnpm verify
-🔍 PrivID Setup Verification
+🔍 OmniPriv Setup Verification
 ✅ Passed:
    Node.js v20.11.0 ✓
    pnpm 8.15.0 ✓
@@ -275,7 +275,7 @@ $ pnpm dev
 
 ## Migration Guide for Existing Contributors
 
-If you've been working on PrivID before these changes:
+If you've been working on OmniPriv before these changes:
 
 ```bash
 # 1. Pull latest changes
@@ -350,7 +350,7 @@ Consider adding (not critical):
 
 ## Summary
 
-We've transformed PrivID from a project where setup could fail in mysterious ways to one where:
+We've transformed OmniPriv from a project where setup could fail in mysterious ways to one where:
 
 1. **Version consistency is enforced** - .nvmrc, .npmrc, preinstall checks
 2. **Setup is automated** - `pnpm setup` does everything

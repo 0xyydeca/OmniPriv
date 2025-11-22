@@ -1,5 +1,5 @@
 {
-  "name": "privid",
+  "name": "omnipriv",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -15,9 +15,9 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "hardhat:compile": "pnpm -F @privid/contracts hardhat compile",
-    "hardhat:test": "pnpm -F @privid/contracts hardhat test",
-    "hardhat:deploy": "pnpm -F @privid/contracts hardhat deploy",
+    "hardhat:compile": "pnpm -F @omnipriv/contracts hardhat compile",
+    "hardhat:test": "pnpm -F @omnipriv/contracts hardhat test",
+    "hardhat:deploy": "pnpm -F @omnipriv/contracts hardhat deploy",
     "clean": "pnpm -r clean && rm -rf node_modules"
   },
   "engines": {

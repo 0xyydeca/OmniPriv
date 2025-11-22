@@ -1,5 +1,5 @@
 /**
- * @privid/contracts
+ * @omnipriv/contracts
  * Contract ABIs, addresses, and utilities
  */
 

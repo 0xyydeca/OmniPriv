@@ -229,6 +229,6 @@ Or manually change back to:
 ---
 
 **Update Completed:** November 22, 2025
-**Updated By:** PrivID Team
+**Updated By:** OmniPriv Team
 **Reason:** Maximize version consistency for open source release
 

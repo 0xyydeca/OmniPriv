@@ -97,7 +97,7 @@ export default function Home() {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
           >
-            PrivID
+            OmniPriv
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
@@ -268,7 +268,7 @@ export default function Home() {
             onClick={handleGetStarted}
             disabled={!ready}
             className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            aria-label={ready ? 'Get started with PrivID' : 'Loading PrivID'}
+            aria-label={ready ? 'Get started with OmniPriv' : 'Loading OmniPriv'}
           >
             {!ready ? 'Loading...' : 'Get Started →'}
           </button>

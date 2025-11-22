@@ -105,7 +105,7 @@ class SetupVerifier {
   }
 
   printResults() {
-    console.log('\n🔍 PrivID Setup Verification\n');
+    console.log('\n🔍 OmniPriv Setup Verification\n');
     console.log('='.repeat(50));
     
     if (this.success.length > 0) {

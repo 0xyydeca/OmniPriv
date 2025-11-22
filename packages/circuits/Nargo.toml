@@ -1,7 +1,7 @@
 [package]
-name = "privid_circuits"
+name = "omnipriv_circuits"
 type = "bin"
-authors = ["PrivID Team"]
+authors = ["OmniPriv Team"]
 compiler_version = ">=0.30.0"
 
 [dependencies]

@@ -122,7 +122,7 @@ echo "NEXT_PUBLIC_IDENTITY_OAPP_CELO_ALFAJORES=0x..." >> apps/web/.env.local
 
 ```typescript
 import { useWalletClient } from 'wagmi';
-import { deployments, getLayerZeroEid } from '@privid/contracts';
+import { deployments, getLayerZeroEid } from '@omnipriv/contracts';
 
 const { data: walletClient } = useWalletClient();
 

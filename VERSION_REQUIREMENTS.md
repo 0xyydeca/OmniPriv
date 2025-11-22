@@ -1,6 +1,6 @@
 # Version Requirements & Enforcement
 
-This document explains how PrivID ensures version consistency across all contributors.
+This document explains how OmniPriv ensures version consistency across all contributors.
 
 ## Enforced Versions
 
@@ -74,7 +74,7 @@ pnpm install  # ✅ Proceeds (checks version matches 8.15.0)
 
 Runs automatically after `pnpm install` and:
 
-- ✅ Builds all workspace packages (`@privid/sdk`, `@privid/contracts`)
+- ✅ Builds all workspace packages (`@omnipriv/sdk`, `@omnipriv/contracts`)
 - ✅ Only runs in root workspace (not in child packages)
 - ✅ Skips in CI environments
 - ✅ Shows friendly error if build fails (doesn't block install)
@@ -136,7 +136,7 @@ pnpm build    # → explicit build
 pnpm verify
 
 # Output:
-# 🔍 PrivID Setup Verification
+# 🔍 OmniPriv Setup Verification
 # ==================================================
 # 
 # ✅ Passed:
@@ -158,7 +158,7 @@ pnpm verify
 
 ❌ Common issues:
 - "Works on my machine" (different Node versions)
-- "Module not found @privid/sdk" (workspace packages not built)
+- "Module not found @omnipriv/sdk" (workspace packages not built)
 - "npm install completed" but app won't start
 - Inconsistent dependency resolutions between npm/pnpm/yarn
 - New contributors stuck for hours on setup
@@ -182,8 +182,8 @@ pnpm verify
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 
 # 2. Clone repository
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 
 # 3. Use correct Node version
 nvm use
@@ -237,7 +237,7 @@ nvm use 20
 pnpm install
 ```
 
-#### "Module not found @privid/sdk"
+#### "Module not found @omnipriv/sdk"
 
 Workspace packages not built:
 ```bash
@@ -362,7 +362,7 @@ CMD ["pnpm", "dev"]
 
 ## Summary
 
-PrivID uses a **multi-layered approach** to ensure version consistency:
+OmniPriv uses a **multi-layered approach** to ensure version consistency:
 
 1. `.nvmrc` → Locks Node.js version
 2. `.npmrc` → Configures pnpm behavior
