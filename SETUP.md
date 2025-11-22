@@ -40,8 +40,9 @@ nano .env.local
 
 **Required for local dev:**
 ```env
-# Privy (get from https://dashboard.privy.io/)
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
+# CDP (get from https://portal.cdp.coinbase.com)
+NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key_here
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id_here
 
 # Optional for full flow
 DEPLOYER_PRIVATE_KEY=your_private_key_for_testnet_deployment
@@ -73,16 +74,15 @@ Visit [http://localhost:3000](http://localhost:3000)
 - Faucet: https://faucet.celo.org/alfajores
 - Chain ID: 44787
 
-### Step 2: Configure Privy
+### Step 2: Configure CDP
 
-1. Go to [Privy Dashboard](https://dashboard.privy.io/)
-2. Create a new app
+1. Go to [CDP Portal](https://portal.cdp.coinbase.com)
+2. Create a new project
 3. Enable:
-   - Email login
-   - Embedded wallets
-   - Gas sponsorship (optional but recommended)
-4. Add allowed domains: `localhost:3000`, `your-domain.vercel.app`
-5. Copy App ID to `.env.local`
+   - Embedded Wallets (for end-user onboarding)
+   - Server Wallets (for agent operations)
+4. Generate API keys
+5. Copy API Key and Project ID to `.env.local`
 
 ### Step 3: Deploy Contracts
 
@@ -190,8 +190,8 @@ Add these in Vercel dashboard:
 
 ## Troubleshooting
 
-### "Privy App ID not found"
-- Check `.env.local` has `NEXT_PUBLIC_PRIVY_APP_ID`
+### "CDP API Key not found"
+- Check `.env.local` has `NEXT_PUBLIC_CDP_API_KEY` and `NEXT_PUBLIC_CDP_PROJECT_ID`
 - Restart dev server after adding env vars
 
 ### "Contract not deployed"
@@ -240,7 +240,7 @@ Add these in Vercel dashboard:
 
 ## Resources
 
-- [Privy Docs](https://docs.privy.io/)
+- [CDP Docs](https://docs.cdp.coinbase.com/)
 - [LayerZero v2 Docs](https://docs.layerzero.network/)
 - [Noir Docs](https://noir-lang.org/)
 - [Hardhat Docs](https://hardhat.org/)

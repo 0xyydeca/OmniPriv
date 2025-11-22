@@ -257,9 +257,10 @@ test_age_too_old_fails
 - 🚧 Cross-chain testing in progress
 - ⏳ Trusted remote configuration needed
 
-### Privy ⏳
+### CDP ⏳
 - ⏳ SDK integration needed
-- ⏳ Embedded wallet setup
+- ⏳ Embedded Wallet setup (end-users)
+- ⏳ Server Wallet setup (agent operations)
 - ⏳ Gas sponsorship configuration
 
 ### Coinbase Developer Platform ⏳
@@ -315,7 +316,7 @@ test_age_too_old_fails
 **Short-term** (next 6 hours):
 4. Implement KycAirdrop demo dApp
 5. Start frontend credential vault
-6. Privy integration
+6. CDP wallet integration
 
 **Medium-term** (next 12 hours):
 7. Complete proof generation UI

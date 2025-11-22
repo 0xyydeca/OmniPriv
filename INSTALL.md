@@ -65,7 +65,8 @@ nano .env.local
 
 **Minimum required for local development:**
 ```env
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_from_dashboard.privy.io
+NEXT_PUBLIC_CDP_API_KEY=your_cdp_api_key_from_portal.cdp.coinbase.com
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
 ```
 
 ### Step 5: Verify Setup
@@ -171,7 +172,7 @@ lsof -ti:3000 | xargs kill -9
 pnpm dev
 ```
 
-### ⚠️ "Privy App ID not found"
+### ⚠️ "CDP API Key not found"
 
 Configure your environment:
 ```bash
@@ -182,7 +183,7 @@ ls -la .env.local
 cat .env.local | grep PRIVY_APP_ID
 ```
 
-Get your Privy App ID from [dashboard.privy.io](https://dashboard.privy.io/)
+Get your CDP API keys from [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com)
 
 ## Development Workflow
 
