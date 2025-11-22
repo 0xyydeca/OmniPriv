@@ -5,9 +5,9 @@ Complete setup instructions for getting PrivID running locally and deploying to 
 ## Prerequisites
 
 - **Node.js**: v20.x LTS ([Download](https://nodejs.org/))
-- **pnpm**: v8.x or higher
+- **pnpm**: v8.15.0
   ```bash
-  npm install -g pnpm@8
+  npm install -g pnpm@8.15.0
   ```
 - **Git**: Latest version
 - **Noir/nargo** (optional, for ZK circuits):

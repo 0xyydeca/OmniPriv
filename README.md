@@ -37,30 +37,45 @@ privid/
 
 ### Prerequisites
 
-- Node.js 20.x LTS
-- pnpm 8.x
-- Git
+- **Node.js 20.x LTS** (enforced via `.nvmrc`)
+- **pnpm 8.15.0** (enforced - npm/yarn blocked)
+- **Git**
 
-### Installation
+### One-Command Setup
 
 ```bash
 # Clone the repo
 git clone https://github.com/yourusername/privid.git
 cd privid
 
-# Install dependencies
-pnpm install
+# If you have nvm, use the pinned Node version
+nvm use
 
-# Copy environment variables
+# Automatic setup (installs deps + builds packages)
+pnpm setup
+
+# Configure environment
 cp .env.example .env.local
 # Edit .env.local with your API keys
 
-# Build all packages
-pnpm build
+# Verify everything is ready
+pnpm verify
 
 # Start development server
 pnpm dev
 ```
+
+**See detailed instructions**: [INSTALL.md](./INSTALL.md)
+
+### What `pnpm setup` Does
+
+The automated setup command:
+1. ✅ Checks Node.js 20+ and pnpm 8+ (blocks npm/yarn)
+2. ✅ Installs all dependencies across the monorepo
+3. ✅ Builds workspace packages (`@privid/sdk`, `@privid/contracts`)
+4. ✅ Verifies environment configuration
+
+This ensures **everyone has the same versions** and prevents common setup issues.
 
 ### Compile & Deploy Contracts
 
@@ -81,6 +96,76 @@ pnpm hardhat:deploy --network celoAlfajores
 - **Base Sepolia**: https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet
 - **Celo Alfajores**: https://faucet.celo.org/alfajores
 - **Ethereum Sepolia**: https://sepoliafaucet.com/
+
+## LayerZero Cross-Chain Integration
+
+PrivID implements **LayerZero v2 OApp** for true omnichain identity verification.
+
+### Key Features
+
+- **One Identity, Many Chains**: Verify credentials once, use everywhere
+- **Privacy-Preserving**: Only cryptographic commitments cross chains (no PII)
+- **Production-Ready**: LayerZero v2 with 99.9% uptime and DVN security
+- **Extensible**: Works with any credential type (KYC, age, country, reputation)
+
+### How It Works
+
+```
+1. User stores credential on Chain A (Base Sepolia)
+2. Generate ZK proof and anchor commitment
+3. Send verification marker to Chain B (Celo Alfajores) via LayerZero
+4. dApps on Chain B check isVerified() without accessing PII
+```
+
+### Quick Demo
+
+```bash
+# Deploy contracts on both chains
+cd packages/contracts
+pnpm deploy:baseSepolia
+pnpm deploy:celoAlfajores
+
+# Configure trusted peers (required for LayerZero)
+export IDENTITY_OAPP_BASE_SEPOLIA=0x...
+export IDENTITY_OAPP_CELO_ALFAJORES=0x...
+pnpm setPeers:baseSepolia
+pnpm setPeers:celoAlfajores
+
+# Test cross-chain flow in frontend
+cd ../../apps/web
+pnpm dev
+# Open http://localhost:3000 → Add Credential → Bridge to Celo
+```
+
+**See full demo**: [docs/LAYERZERO_DEMO.md](docs/LAYERZERO_DEMO.md)
+**Quick Reference**: [docs/LAYERZERO_REFERENCE.md](docs/LAYERZERO_REFERENCE.md)
+
+### Contract: IdentityOApp.sol
+
+```solidity
+// Send verification cross-chain
+function sendVerification(
+    uint32 dstEid,          // Destination chain (Celo = 40125)
+    address user,
+    bytes32 policyId,       // e.g., keccak256("kyc-basic")
+    bytes32 commitment,
+    uint256 expiry,
+    bytes calldata options
+) external payable;
+
+// Check verification on destination chain
+function isVerified(address user, bytes32 policyId) 
+    external view returns (bool);
+```
+
+### Why This Qualifies for LayerZero Prize
+
+- Uses LayerZero v2 OApp with custom `_lzReceive` handler
+- Deployed on 2+ testnets (Base Sepolia + Celo Alfajores)
+- Demonstrates real omnichain use case (cross-chain identity)
+- Privacy-preserving architecture (only commitments cross chains)
+- Working frontend integration with fee quotes
+- Comprehensive documentation and demo script
 
 ## User Journey
 

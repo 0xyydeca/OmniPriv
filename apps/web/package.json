@@ -11,6 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@privid/sdk": "workspace:*",
     "@privy-io/react-auth": "^1.60.0",
     "@privy-io/wagmi": "^0.2.7",
     "@tanstack/react-query": "^5.17.9",
