@@ -5,13 +5,15 @@ Get OmniPriv running locally in 5 minutes!
 ## Prerequisites Check
 
 ```bash
-node --version  # Should be v20.x
-pnpm --version  # Should be 8.15.0
+node --version   # Should be v20.x
+pnpm --version   # Should be 8.15.0
+nargo --version  # Should be 1.0.0-beta.15 (optional for ZK circuits)
 ```
 
 Don't have them? Install:
 - **Node.js:** https://nodejs.org/ (download LTS)
 - **pnpm:** `npm install -g pnpm@8.15.0`
+- **Nargo (optional):** See "ZK Circuit Development" section below
 
 ## Step 1: Clone & Install (2 min)
 
@@ -183,6 +185,48 @@ pnpm -F @omnipriv/sdk test
 # E2E tests (requires dev server running)
 pnpm -F web test:e2e
 ```
+
+### ZK Circuit Development (Optional)
+
+If you want to modify or test the Noir ZK circuits:
+
+**Install Nargo:**
+```bash
+# Install noirup installer
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+
+# Reload shell
+source ~/.zshrc  # or ~/.bashrc for bash
+
+# Install nargo (latest stable)
+noirup
+
+# Verify
+nargo --version  # Should show: nargo version = 1.0.0-beta.15
+```
+
+**Work with circuits:**
+```bash
+cd packages/circuits
+
+# Check circuit syntax
+nargo check
+
+# Run all circuit tests (6 tests)
+nargo test
+
+# Compile circuit (generates proving artifacts)
+nargo compile
+
+# View compiled artifacts
+ls -la target/omnipriv_circuits.json
+```
+
+**What the circuit does:**
+- ✅ Proves age >= 18
+- ✅ Proves country NOT in blocked list
+- ✅ Verifies credential commitment
+- ❌ Never reveals DOB, country, or PII
 
 ### Read the Docs
 

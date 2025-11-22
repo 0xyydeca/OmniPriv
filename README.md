@@ -12,6 +12,21 @@ OmniPriv enables users to prove attributes (age, KYC, country, reputation) acros
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- **Node.js**: 20.11.0 or higher (LTS)
+- **pnpm**: 8.15.0 (exact version)
+- **Nargo**: 1.0.0-beta.15 (optional, for ZK circuit development)
+
+```bash
+# Check versions
+node --version   # v20.11.0+
+pnpm --version   # 8.15.0
+nargo --version  # 1.0.0-beta.15 (optional)
+```
+
+### Installation
+
 ```bash
 # Install dependencies
 pnpm install
@@ -21,6 +36,19 @@ pnpm dev
 
 # Visit http://localhost:3000
 ```
+
+**For ZK circuit development:**
+```bash
+# Install Nargo (Noir compiler)
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+source ~/.zshrc
+noirup
+
+# Test circuits
+cd packages/circuits && nargo test
+```
+
+See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
 
 ## 🏗️ Architecture
 
@@ -51,9 +79,11 @@ User Journey:
 ## 🌟 Sponsor Integration
 
 ### Aztec Network
-- **Noir circuits** for zero-knowledge proof generation
+- **Noir circuits** (`packages/circuits/`) for zero-knowledge proof generation
 - Proves age ≥ 18 and country compliance without revealing PII
-- Aztec Devnet integration for proof generation
+- Noir 1.0 with nargo 1.0.0-beta.15
+- 6 comprehensive circuit tests (all passing ✅)
+- Compiled artifacts: `target/omnipriv_circuits.json`
 
 ### LayerZero
 - **OApp pattern** for cross-chain verification propagation
