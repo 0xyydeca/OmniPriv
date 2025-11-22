@@ -126,7 +126,15 @@ export default function VaultPage() {
       setCredentials(creds);
       if (creds.length > 0) {
         setHasStoredCredential(true);
-        setCurrentCredential(creds[0].credential);
+        // Decode the encrypted credential from base64
+        try {
+          const decrypted = JSON.parse(atob(creds[0].credential.ciphertext));
+          setCurrentCredential(decrypted);
+        } catch (e) {
+          console.error('Failed to decode credential:', e);
+          // Fallback if credential is in old format
+          setCurrentCredential(creds[0].credential);
+        }
       }
     } catch (error) {
       console.error('Failed to load credentials:', error);
@@ -151,13 +159,25 @@ export default function VaultPage() {
         expiry: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
       };
 
-      // Store in local vault (encrypted)
-      const vault = getVault();
-      await vault.init();
-      const credentialId = await vault.addCredential(credential);
-
       // Create commitment for on-chain storage
       const commitmentHash = ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(credential)));
+
+      // Generate unique credential ID
+      const credentialId = `cred-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Create EncryptedCredential object (mock encryption for demo)
+      const encryptedCred = {
+        credential_hash: commitmentHash,
+        expiry: credential.expiry,
+        ciphertext: btoa(JSON.stringify(credential)), // Base64 encode
+        iv: btoa(Math.random().toString(36)), // Mock IV
+        timestamp: Math.floor(Date.now() / 1000),
+      };
+
+      // Store in local vault with correct parameters
+      const vault = getVault();
+      await vault.init();
+      await vault.addCredential(credentialId, encryptedCred);
 
       setCurrentCredential(credential);
       setHasStoredCredential(true);
@@ -199,11 +219,12 @@ export default function VaultPage() {
       const policyId = ethers.keccak256(ethers.toUtf8Bytes(`${policyType}_policy`));
       setPolicyIdForCheck(policyId);
 
-      const predicate: Predicate = { type: 'kyc', operator: 'eq', value: 'passed' };
+      // Check if credential meets age requirement (18+)
+      const predicate: Predicate = { type: 'age', operator: 'gte', value: 18 };
       const passes = evaluatePredicate(currentCredential, predicate);
 
       if (!passes) {
-        throw new Error('Credential does not satisfy policy requirements');
+        throw new Error('Credential does not satisfy policy requirements (must be 18+)');
       }
 
       const noirCredential = {
