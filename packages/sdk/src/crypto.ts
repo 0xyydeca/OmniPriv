@@ -70,10 +70,10 @@ export async function decryptCredential(
   const decrypted = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
-      iv: ivBytes,
+      iv: new Uint8Array(ivBytes),
     },
     key,
-    ciphertextBytes
+    new Uint8Array(ciphertextBytes)
   );
 
   return new TextDecoder().decode(decrypted);
@@ -92,7 +92,7 @@ export async function deriveEncryptionKey(
 
   return await crypto.subtle.importKey(
     'raw',
-    keyMaterial,
+    new Uint8Array(keyMaterial),
     { name: 'AES-GCM' },
     false,
     ['encrypt', 'decrypt']
