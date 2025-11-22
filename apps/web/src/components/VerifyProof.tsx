@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { useAccount } from 'wagmi';
 import { VaultRecord, generateProof, evaluatePredicate } from '@omnipriv/sdk';
 
 interface VerifyProofProps {
@@ -9,7 +9,7 @@ interface VerifyProofProps {
 }
 
 export function VerifyProof({ credentials }: VerifyProofProps) {
-  const { user } = usePrivy();
+  const { address } = useAccount();
   const [selectedCredential, setSelectedCredential] = useState<string>('');
   const [policyType, setPolicyType] = useState<'kyc' | 'age' | 'country'>('kyc');
   const [ageThreshold, setAgeThreshold] = useState(18);

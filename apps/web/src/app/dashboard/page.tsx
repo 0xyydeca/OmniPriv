@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { useAccount, useDisconnect } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CredentialList } from '@/components/CredentialList';
@@ -12,23 +12,24 @@ import { getVault, VaultRecord } from '@omnipriv/sdk';
 type Tab = 'credentials' | 'add' | 'verify' | 'bridge';
 
 export default function Dashboard() {
-  const { ready, authenticated, user, logout } = usePrivy();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('credentials');
   const [credentials, setCredentials] = useState<VaultRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (ready && !authenticated) {
+    if (!isConnected) {
       router.push('/');
     }
-  }, [ready, authenticated, router]);
+  }, [isConnected, router]);
 
   useEffect(() => {
-    if (authenticated) {
+    if (isConnected && address) {
       loadCredentials();
     }
-  }, [authenticated]);
+  }, [isConnected, address]);
 
   const loadCredentials = async () => {
     try {
@@ -49,7 +50,7 @@ export default function Dashboard() {
     setActiveTab('credentials');
   };
 
-  if (!ready || !authenticated) {
+  if (!isConnected || !address) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
@@ -68,15 +69,15 @@ export default function Dashboard() {
                 OmniPriv
               </h1>
               <span className="text-sm text-gray-400" aria-label="Wallet address">
-                {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
+                {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
             </div>
             <button
-              onClick={logout}
+              onClick={() => disconnect()}
               className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-              aria-label="Logout"
+              aria-label="Disconnect wallet"
             >
-              Logout
+              Disconnect
             </button>
           </div>
         </div>

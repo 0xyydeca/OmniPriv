@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { useAccount } from 'wagmi';
 import { getVault, generateCommitment, generateSalt, encryptCredential, deriveEncryptionKey } from '@omnipriv/sdk';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 
@@ -12,7 +12,7 @@ interface AddCredentialProps {
 type IssuerType = 'mock' | 'self';
 
 export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
-  const { user } = usePrivy();
+  const { address } = useAccount();
   const [issuerType, setIssuerType] = useState<IssuerType>('mock');
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string>('');
@@ -32,11 +32,11 @@ export function AddCredential({ onCredentialAdded }: AddCredentialProps) {
       setError('');
       setStatus('Preparing credential...');
 
-      if (!user?.wallet?.address) {
+      if (!address) {
         throw new Error('No wallet connected');
       }
 
-      const walletAddress = user.wallet.address;
+      const walletAddress = address;
 
       // Create credential data
       const issuerDid = issuerType === 'mock' ? 'did:omnipriv:mock_issuer' : process.env.NEXT_PUBLIC_SELF_ISSUER_DID || 'did:self:issuer';

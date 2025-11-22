@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    optimizePackageImports: ['@privy-io/react-auth'],
+    optimizePackageImports: [],
   },
   webpack: (config) => {
     config.resolve.fallback = {
@@ -28,7 +28,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.privy.io https://*.sepolia.base.org https://*.celo-testnet.org https://sepolia.base.org https://alfajores-forno.celo-testnet.org wss://*.privy.io",
+              "connect-src 'self' https://*.sepolia.base.org https://*.celo-testnet.org https://sepolia.base.org https://alfajores-forno.celo-testnet.org https://*.walletconnect.org wss://*.walletconnect.org",
               "frame-ancestors 'none'",
             ].join('; '),
           },

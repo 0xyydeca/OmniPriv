@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { useAccount, useConnect } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -70,17 +70,23 @@ function StepItem({
 }
 
 export default function Home() {
-  const { ready, authenticated, login } = usePrivy();
+  const { isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
   const router = useRouter();
 
   useEffect(() => {
-    if (ready && authenticated) {
+    if (isConnected) {
       router.push('/dashboard');
     }
-  }, [ready, authenticated, router]);
+  }, [isConnected, router]);
 
   const handleGetStarted = () => {
-    login();
+    // Try to connect with Coinbase Wallet first, then fallback to first available connector
+    const coinbaseConnector = connectors.find(c => c.id === 'coinbaseWalletSDK');
+    const connector = coinbaseConnector || connectors[0];
+    if (connector) {
+      connect({ connector });
+    }
   };
 
   return (
@@ -206,7 +212,7 @@ export default function Home() {
               Embedded wallets with sponsored transactions
             </p>
             <p className="text-xs text-green-700 dark:text-green-400 font-medium">
-              Powered by Privy SDK for instant wallet creation
+              Powered by Coinbase Wallet for seamless onboarding
             </p>
           </motion.div>
         </section>
@@ -226,8 +232,8 @@ export default function Home() {
             {[
               {
                 step: 1,
-                text: 'Create your embedded wallet (gasless, instant)',
-                tooltip: 'Step 1: Sign up with email or social login to get your wallet instantly. No seed phrases, no gas fees.',
+                text: 'Connect your wallet (Coinbase Wallet, MetaMask, or others)',
+                tooltip: 'Step 1: Connect with Coinbase Wallet, MetaMask, or any Web3 wallet. Instant connection, no signup required.',
               },
               {
                 step: 2,
@@ -266,11 +272,10 @@ export default function Home() {
         >
           <button
             onClick={handleGetStarted}
-            disabled={!ready}
-            className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            aria-label={ready ? 'Get started with OmniPriv' : 'Loading OmniPriv'}
+            className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            aria-label="Get started with OmniPriv"
           >
-            {!ready ? 'Loading...' : 'Get Started →'}
+            Get Started →
           </button>
         </motion.div>
 
@@ -318,20 +323,22 @@ export default function Home() {
                 </div>
               </a>
               
-              {/* Privy */}
+              {/* Coinbase Wallet */}
               <a
-                href="https://privy.io"
+                href="https://www.coinbase.com/wallet"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-                aria-label="Visit Privy website"
+                aria-label="Visit Coinbase Wallet website"
                 role="listitem"
               >
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                    <span className="text-white font-bold text-base">P</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0052FF] to-[#1B8FFF] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm-1.048-5.5l4-8 4 8h-8zm4.096-9L9 17.5h6.096L15 9.5z"/>
+                    </svg>
                   </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Privy</span>
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Coinbase Wallet</span>
                 </div>
               </a>
               
