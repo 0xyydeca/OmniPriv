@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity } from '@omnipriv/sdk';
 import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
 import { CrossChainStatus } from './CrossChainStatus';
+import { Stepper, type Step, type StepState } from './Stepper';
 import { ethers } from 'ethers';
 
 interface VerifyProofProps {
@@ -21,6 +22,22 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [proof, setProof] = useState<{ proof: string; publicSignals: string[] } | null>(null);
   const [policyIdForCheck, setPolicyIdForCheck] = useState<string>('');
+  
+  // Stepper state
+  const [steps, setSteps] = useState<Step[]>([
+    { id: 'proof', label: 'Generate ZK Proof', description: 'Creating zero-knowledge proof locally', state: 'idle' },
+    { id: 'submit', label: 'Submit to Base Sepolia', description: 'Verifying proof on origin chain', state: 'idle' },
+    { id: 'layerzero', label: 'LayerZero Message', description: 'Sending cross-chain verification', state: 'idle' },
+    { id: 'destination', label: 'Optimism Sepolia Verified', description: 'Final verification on destination', state: 'idle' },
+  ]);
+
+  const updateStepState = (stepId: string, state: StepState) => {
+    setSteps(prevSteps => 
+      prevSteps.map(step => 
+        step.id === stepId ? { ...step, state } : step
+      )
+    );
+  };
 
   // Contract interactions
   const { writeContract, data: hash, isPending: isWritePending } = useWriteContract();
