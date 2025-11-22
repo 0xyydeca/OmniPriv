@@ -2,11 +2,11 @@
 
 **Status:** Accepted  
 **Date:** 2025-11-22  
-**Deciders:** PrivID Team
+**Deciders:** OmniPriv Team
 
 ## Context
 
-PrivID needs a reliable, secure way to propagate verification markers across chains. Users should be able to verify their credentials once on chain A and reuse that verification on chain B without re-proving.
+OmniPriv needs a reliable, secure way to propagate verification markers across chains. Users should be able to verify their credentials once on chain A and reuse that verification on chain B without re-proving.
 
 ### Requirements
 

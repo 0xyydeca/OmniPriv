@@ -19,11 +19,14 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      135deg,
+      #0f172a 0%,
+      #1e293b 25%,
+      #312e81 50%,
+      #1e293b 75%,
+      #0f172a 100%
+    );
+  background-attachment: fixed;
   min-height: 100vh;
 }
 
@@ -65,5 +68,21 @@ body {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Pulse animation for CTA button */
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4), 0 8px 10px -6px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 20px 35px -5px rgba(59, 130, 246, 0.6), 0 10px 15px -6px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.pulse-on-hover:hover {
+  animation: gentle-pulse 2s ease-in-out infinite;
 }
 

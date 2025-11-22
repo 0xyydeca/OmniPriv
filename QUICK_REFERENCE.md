@@ -1,4 +1,4 @@
-# PrivID Quick Reference
+# OmniPriv Quick Reference
 
 Quick commands and info for developers.
 
@@ -14,8 +14,8 @@ Git:      Latest
 
 ### First Time Setup
 ```bash
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 nvm use                           # Use Node 20.11.0
 npm install -g pnpm@8.15.0        # Install exact pnpm version
 pnpm setup                        # Install + build everything
@@ -50,7 +50,7 @@ rm -rf node_modules && pnpm setup # Clean reinstall
 ## Project Structure
 
 ```
-privid/
+omnipriv/
 ├── apps/
 │   └── web/              → Next.js app (localhost:3000)
 ├── packages/
@@ -66,7 +66,7 @@ privid/
 | Error | Fix |
 |-------|-----|
 | "Please use pnpm instead of npm" | `npm install -g pnpm@8.15.0` |
-| "Cannot find module @privid/sdk" | `pnpm build` |
+| "Cannot find module @omnipriv/sdk" | `pnpm build` |
 | "Port 3000 already in use" | `lsof -ti:3000 \| xargs kill -9` |
 | "Node.js version 20.x required" | `nvm install 20 && nvm use 20` |
 | "Privy App ID not found" | Edit `.env.local` with API key |
@@ -104,8 +104,8 @@ git push origin feature/your-feature    # Push
 
 ```bash
 pnpm test                         # All tests
-pnpm -F @privid/sdk test         # SDK tests only
-pnpm -F @privid/contracts test   # Contract tests only
+pnpm -F @omnipriv/sdk test         # SDK tests only
+pnpm -F @omnipriv/contracts test   # Contract tests only
 pnpm -F web test:e2e             # E2E tests
 ```
 
@@ -164,7 +164,7 @@ pnpm -F web test:e2e             # E2E tests
 
 1. Run `pnpm verify` for diagnostics
 2. Check [INSTALL.md](./INSTALL.md) troubleshooting
-3. Search [GitHub Issues](https://github.com/yourusername/privid/issues)
+3. Search [GitHub Issues](https://github.com/yourusername/omnipriv/issues)
 4. Open a new issue with error details
 
 ---

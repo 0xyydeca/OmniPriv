@@ -1,15 +1,15 @@
-# PrivID Demo Script
+# OmniPriv Demo Script
 
-Complete walkthrough for demonstrating PrivID to judges, users, or stakeholders.
+Complete walkthrough for demonstrating OmniPriv to judges, users, or stakeholders.
 
 ## Demo Flow (5-7 minutes)
 
 ### 1. Landing Page (30 seconds)
 
-**Navigate to:** `https://privid.app` or `http://localhost:3000`
+**Navigate to:** `https://omnipriv.app` or `http://localhost:3000`
 
 **Key Points:**
-- "PrivID solves a critical problem: **on-chain apps need identity verification without doxxing users**"
+- "OmniPriv solves a critical problem: **on-chain apps need identity verification without doxxing users**"
 - Show the three core features:
   - Zero-knowledge proofs
   - Cross-chain compatible
@@ -142,7 +142,7 @@ Complete walkthrough for demonstrating PrivID to judges, users, or stakeholders.
 ### 8. Privacy Deep Dive (60 seconds)
 
 **Open Browser DevTools:**
-- **Application → IndexedDB → privid-vault**
+- **Application → IndexedDB → omnipriv-vault**
   - Show encrypted ciphertext
   - Point out: "This is AES-GCM encrypted with user's wallet key"
 
@@ -243,8 +243,8 @@ Complete walkthrough for demonstrating PrivID to judges, users, or stakeholders.
 ## After Demo
 
 **Call to Action:**
-- "Try it yourself: privid.app"
-- "GitHub: github.com/yourusername/privid"
+- "Try it yourself: omnipriv.app"
+- "GitHub: github.com/yourusername/omnipriv"
 - "Docs: setup instructions in README"
 - "Questions? Open an issue or DM me"
 

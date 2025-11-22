@@ -11,7 +11,7 @@ describe('validation', () => {
   describe('validateCredential', () => {
     it('should validate a valid credential', () => {
       const credential = {
-        issuer_did: 'did:privid:test',
+        issuer_did: 'did:omnipriv:test',
         schema_id: 'kyc_v1',
         fields: { kyc_passed: true },
         expiry: Math.floor(Date.now() / 1000) + 86400,
@@ -26,7 +26,7 @@ describe('validation', () => {
 
     it('should reject credential with missing fields', () => {
       const credential = {
-        issuer_did: 'did:privid:test',
+        issuer_did: 'did:omnipriv:test',
         // missing schema_id
         fields: {},
         expiry: 123456,

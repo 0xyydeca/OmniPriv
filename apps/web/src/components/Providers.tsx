@@ -26,11 +26,11 @@ export function Providers({ children }: { children: ReactNode }) {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="max-w-2xl mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-200">
             <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              PrivID Setup Required
+              OmniPriv Setup Required
             </h1>
             <div className="space-y-4 text-gray-700">
               <p className="text-lg">
-                To use PrivID's wallet features, you need a <strong>FREE</strong> Privy App ID.
+                To use OmniPriv's wallet features, you need a <strong>FREE</strong> Privy App ID.
               </p>
               
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -55,7 +55,7 @@ export function Providers({ children }: { children: ReactNode }) {
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-sm">
                   <strong>Without Privy:</strong> You can still explore the{' '}
-                  <a href="https://github.com/yourusername/privid" className="text-blue-600 hover:underline">
+                  <a href="https://github.com/yourusername/omnipriv" className="text-blue-600 hover:underline">
                     code on GitHub
                   </a>{' '}
                   and read the documentation below.

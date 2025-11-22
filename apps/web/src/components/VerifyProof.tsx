@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { VaultRecord, generateProof, evaluatePredicate } from '@privid/sdk';
+import { VaultRecord, generateProof, evaluatePredicate } from '@omnipriv/sdk';
 
 interface VerifyProofProps {
   credentials: VaultRecord[];

@@ -1,6 +1,6 @@
-# PrivID Setup Guide
+# OmniPriv Setup Guide
 
-Complete setup instructions for getting PrivID running locally and deploying to testnets.
+Complete setup instructions for getting OmniPriv running locally and deploying to testnets.
 
 ## Prerequisites
 
@@ -21,8 +21,8 @@ Complete setup instructions for getting PrivID running locally and deploying to 
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/yourusername/privid.git
-cd privid
+git clone https://github.com/yourusername/omnipriv.git
+cd omnipriv
 pnpm install
 ```
 
@@ -234,7 +234,7 @@ Add these in Vercel dashboard:
 3. **SDK changes** (logic):
    ```bash
    # Edit packages/sdk/src/
-   pnpm -F @privid/sdk build
+   pnpm -F @omnipriv/sdk build
    # Restart web dev server
    ```
 
@@ -250,7 +250,7 @@ Add these in Vercel dashboard:
 
 For issues:
 1. Check [Troubleshooting](#troubleshooting)
-2. Search [GitHub Issues](https://github.com/yourusername/privid/issues)
+2. Search [GitHub Issues](https://github.com/yourusername/omnipriv/issues)
 3. Open a new issue with:
    - Error message
    - Steps to reproduce

@@ -9,7 +9,7 @@ interface VaultDB extends DBSchema {
   };
 }
 
-const DB_NAME = 'privid-vault';
+const DB_NAME = 'omnipriv-vault';
 const DB_VERSION = 1;
 
 /**
