@@ -1,0 +1,8 @@
+[package]
+name = "privid_circuits"
+type = "bin"
+authors = ["PrivID Team"]
+compiler_version = ">=0.30.0"
+
+[dependencies]
+

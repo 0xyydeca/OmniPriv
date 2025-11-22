@@ -1,0 +1,59 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+*.lcov
+
+# Next.js
+.next/
+out/
+build
+dist/
+
+# Production
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment
+.env
+.env*.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Hardhat
+cache/
+artifacts/
+typechain/
+typechain-types/
+deployments/localhost
+deployments/hardhat
+
+# Noir
+target/
+Prover.toml
+Verifier.toml
+
+# Misc
+*.tsbuildinfo
+.turbo
+.vercel
+playwright-report/
+test-results/
+
