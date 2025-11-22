@@ -1,6 +1,6 @@
 import { http, createConfig } from 'wagmi';
 import { coinbaseWallet, injected, metaMask, walletConnect } from 'wagmi/connectors';
-import { baseSepolia, celoAlfajores } from 'wagmi/chains';
+import { baseSepolia, celoAlfajores, optimismSepolia } from 'wagmi/chains';
 
 // Build connectors array
 const connectors = [
@@ -23,12 +23,15 @@ const connectors = [
 // }
 
 export const config = createConfig({
-  chains: [baseSepolia, celoAlfajores],
+  chains: [baseSepolia, optimismSepolia, celoAlfajores],
   connectors,
   ssr: true, // Enable SSR support
   transports: {
     [baseSepolia.id]: http(
       process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'
+    ),
+    [optimismSepolia.id]: http(
+      process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_RPC_URL || 'https://sepolia.optimism.io'
     ),
     [celoAlfajores.id]: http(
       process.env.NEXT_PUBLIC_CELO_ALFAJORES_RPC_URL ||

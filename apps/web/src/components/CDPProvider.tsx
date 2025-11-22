@@ -44,6 +44,7 @@ export function CDPProvider({ children }: CDPProviderProps) {
           createOnLogin: 'eoa', // Create EVM account on login
         },
         authMethods: ['email'], // Enable email authentication
+        appName: 'OmniPriv', // Your app name
         // Note: targetChainId is configured via environment variable
         // Chain ID 84532 = Base Sepolia (default)
       }}

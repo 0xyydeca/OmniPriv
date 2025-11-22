@@ -5,4 +5,5 @@
 
 export * from './ProofConsumer';
 export * from './VaultAnchor';
+export * from './OmniPrivVerifier';
 

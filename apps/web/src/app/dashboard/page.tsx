@@ -8,9 +8,11 @@ import { AddCredential } from '@/components/AddCredential';
 import { VerifyProof } from '@/components/VerifyProof';
 import { CrossChainBridge } from '@/components/CrossChainBridge';
 import { ShareCredential } from '@/components/ShareCredential';
+import { FundingGuide } from '@/components/FundingGuide';
+import { DeveloperAPI } from '@/components/DeveloperAPI';
 import { getVault, VaultRecord } from '@omnipriv/sdk';
 
-type Tab = 'credentials' | 'add' | 'verify' | 'bridge' | 'share';
+type Tab = 'credentials' | 'add' | 'verify' | 'bridge' | 'share' | 'api';
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount();
@@ -97,6 +99,7 @@ export default function Dashboard() {
                 { id: 'share', label: 'Share Credential', icon: '🔗' },
                 { id: 'verify', label: 'Verify', icon: '✅' },
                 { id: 'bridge', label: 'Cross-Chain', icon: '🌐' },
+                { id: 'api', label: 'Developer API', icon: '🔧' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -119,6 +122,11 @@ export default function Dashboard() {
 
           {/* Tab Content */}
           <div className="p-6">
+            {/* Funding Guide - Shows balance and faucet links */}
+            <div className="mb-6">
+              <FundingGuide />
+            </div>
+
             {activeTab === 'credentials' && (
               <CredentialList
                 credentials={credentials}
@@ -190,6 +198,9 @@ export default function Dashboard() {
             )}
             {activeTab === 'bridge' && (
               <CrossChainBridge credentials={credentials} />
+            )}
+            {activeTab === 'api' && (
+              <DeveloperAPI />
             )}
           </div>
         </div>

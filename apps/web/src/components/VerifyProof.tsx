@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity } from '@omnipriv/sdk';
 import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
+import { CrossChainStatus } from './CrossChainStatus';
 import { ethers } from 'ethers';
 
 interface VerifyProofProps {
@@ -358,7 +359,7 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
                     ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
                     : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600'
                 }`}>
-                  <h4 className="font-semibold mb-2">On-Chain Status</h4>
+                  <h4 className="font-semibold mb-2">On-Chain Status (Base Sepolia)</h4>
                   <div className="flex items-center gap-2">
                     {isVerifiedOnChain ? (
                       <>
@@ -380,6 +381,16 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
                     Contract: {PROOF_CONSUMER_ADDRESS.slice(0, 10)}...{PROOF_CONSUMER_ADDRESS.slice(-8)}
                   </p>
                 </div>
+              )}
+
+              {/* Cross-Chain Status Stepper */}
+              {address && policyIdForCheck && isTxSuccess && (
+                <CrossChainStatus
+                  userAddress={address}
+                  policyId={policyIdForCheck as `0x${string}`}
+                  baseTxHash={hash}
+                  baseVerified={!!isVerifiedOnChain}
+                />
               )}
             </div>
           )}
