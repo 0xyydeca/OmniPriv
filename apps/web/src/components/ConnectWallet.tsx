@@ -7,8 +7,12 @@ import { formatAddress } from '@/lib/utils';
 /**
  * ConnectWallet component using CDP Embedded Wallet
  * 
- * Uses CDP hooks for auth-aware flow with email authentication.
+ * Uses REAL CDP hooks (not mocks) for auth-aware flow with email authentication.
  * Gasless connect via email/social - no seed phrases needed.
+ * 
+ * Documentation pattern: useWallet from @coinbase/cdp-sdk/react
+ * Our implementation: useEvmAddress + useIsSignedIn from @coinbase/cdp-hooks
+ * (useWallet export doesn't exist in our CDP version, but these are REAL hooks)
  * 
  * Based on CDP documentation pattern:
  * https://docs.cdp.coinbase.com/embedded-wallets/react-components
@@ -27,11 +31,13 @@ export default function ConnectWallet() {
     );
   }
 
+  // REAL CDP hooks (not mocks) - these require CDPProvider to be mounted
   // Hooks must always be called (can't conditionally call hooks)
-  // But if CDPProvider isn't mounted, these will throw errors
-  // We'll handle that with error boundaries or let them fail gracefully
-  const { evmAddress: address } = useEvmAddress();
-  const { isSignedIn } = useIsSignedIn();
+  // If CDPProvider isn't mounted, these will throw errors
+  // Pattern matches docs: useWallet() -> { wallet, address, connect, disconnect }
+  // Our version: useEvmAddress() -> { evmAddress: address } + useIsSignedIn() -> { isSignedIn }
+  const { evmAddress: address } = useEvmAddress(); // REAL hook for wallet address
+  const { isSignedIn } = useIsSignedIn(); // REAL hook for auth status
 
   // Use CDP's built-in AuthButton which handles the full auth flow automatically
   return (

@@ -3,16 +3,18 @@
 /**
  * ShareCredential component
  * 
- * Demonstrates how to use CDP x402 for credential delegation.
- * This enables agentic sharing without pop-ups.
+ * Uses CDP's x402 Facilitator for secure HTTP-based credential delegation.
+ * Leverages your connected wallet for gasless, secure delegations.
  * 
- * Usage: Call `delegateCredential(userAddress, 'kyc-proof-123')` on a "Share Anonymously" button.
+ * Based on x402 protocol that CDP builds on:
+ * https://github.com/coinbase/x402
+ * 
+ * Usage: Share a credential (e.g., KYC proof) to another address anonymously.
  */
 
 import { useState } from 'react';
-// TODO: When @coinbase/cdp-sdk/react export is available, use this import:
-// import { useWallet } from '@coinbase/cdp-sdk/react';
-import { delegateCredential } from '@/lib/cdpX402';
+import { useX402 } from '@coinbase/cdp-hooks'; // For delegations
+import { useEvmAddress, useIsSignedIn } from '@coinbase/cdp-hooks';
 import { formatAddress } from '@/lib/utils';
 
 interface ShareCredentialProps {
@@ -22,29 +24,13 @@ interface ShareCredentialProps {
 
 export function ShareCredential({ credentialId, onShared }: ShareCredentialProps) {
   const [toAddress, setToAddress] = useState('');
-  const [isDelegating, setIsDelegating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // TODO: When @coinbase/cdp-sdk/react export is available, use this:
-  // const { wallet, connect } = useWallet();
-  
-  // Temporary: get wallet from localStorage (in real implementation, use useWallet hook)
-  const getWallet = () => {
-    if (typeof window === 'undefined') return null;
-    const address = localStorage.getItem('cdp_wallet_address');
-    if (!address) return null;
-    
-    // Mock wallet object - in real implementation, this comes from useWallet hook
-    return {
-      address,
-      signMessage: async (message: string) => {
-        // Placeholder - actual implementation will use CDP wallet signing
-        console.log('Signing message:', message);
-        return '0x' + '0'.repeat(128);
-      },
-    };
-  };
+  // CDP hooks for wallet connection and signing
+  const { evmAddress: address } = useEvmAddress(); // Get connected wallet address
+  const { isSignedIn } = useIsSignedIn(); // Check if user is signed in
+  const { delegate, isDelegating } = useX402(); // Hook for facilitator - handles appId automatically from CDPProvider context
 
   const handleShare = async () => {
     if (!toAddress) {
@@ -57,40 +43,39 @@ export function ShareCredential({ credentialId, onShared }: ShareCredentialProps
       return;
     }
 
-    setIsDelegating(true);
+    if (!isSignedIn || !address) {
+      setError('Please connect your wallet first');
+      return;
+    }
+
     setError(null);
     setSuccess(false);
 
     try {
-      const wallet = getWallet();
-      
-      // TODO: Replace with actual useWallet hook pattern:
-      // if (!wallet) await connect();
-      
-      if (!wallet) {
-        throw new Error('Please connect your wallet first');
-      }
+      // Delegate credential access using x402 Facilitator
+      // useX402 hook automatically uses appId from CDPProvider context
+      // CDP's Facilitator handles secure HTTP-based delegations seamlessly
+      await delegate({
+        to: toAddress, // Recipient address
+        resource: credentialId, // Credential ID (e.g., 'kyc-proof-123')
+        amount: '0', // Gasless delegation
+        chainId: 84532, // Base Sepolia
+      });
 
-      const success = await delegateCredential(toAddress, credentialId, wallet);
-      
-      if (success) {
-        setSuccess(true);
-        if (onShared) {
-          onShared(toAddress);
-        }
-        // Reset form after a delay
-        setTimeout(() => {
-          setToAddress('');
-          setSuccess(false);
-        }, 3000);
-      } else {
-        setError('Delegation verification failed');
+      // Success - credential access delegated
+      setSuccess(true);
+      if (onShared) {
+        onShared(toAddress);
       }
+      
+      // Reset form after a delay
+      setTimeout(() => {
+        setToAddress('');
+        setSuccess(false);
+      }, 3000);
     } catch (error: any) {
-      console.error('Failed to share credential:', error);
-      setError(error.message || 'Failed to share credential');
-    } finally {
-      setIsDelegating(false);
+      console.error('x402 error:', error);
+      setError(error.message || 'Failed to delegate credential');
     }
   };
 
@@ -118,7 +103,7 @@ export function ShareCredential({ credentialId, onShared }: ShareCredentialProps
 
       <button
         onClick={handleShare}
-        disabled={isDelegating || !toAddress || success}
+        disabled={isDelegating || !toAddress || !isSignedIn || !address || success}
         className="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900"
       >
         {isDelegating ? (
@@ -128,6 +113,8 @@ export function ShareCredential({ credentialId, onShared }: ShareCredentialProps
           </span>
         ) : success ? (
           '✓ Shared Successfully'
+        ) : !isSignedIn || !address ? (
+          'Connect Wallet to Share'
         ) : (
           'Share Anonymously'
         )}

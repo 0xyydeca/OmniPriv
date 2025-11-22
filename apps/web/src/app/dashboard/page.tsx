@@ -7,9 +7,10 @@ import { CredentialList } from '@/components/CredentialList';
 import { AddCredential } from '@/components/AddCredential';
 import { VerifyProof } from '@/components/VerifyProof';
 import { CrossChainBridge } from '@/components/CrossChainBridge';
+import { ShareCredential } from '@/components/ShareCredential';
 import { getVault, VaultRecord } from '@omnipriv/sdk';
 
-type Tab = 'credentials' | 'add' | 'verify' | 'bridge';
+type Tab = 'credentials' | 'add' | 'verify' | 'bridge' | 'share';
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount();
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('credentials');
   const [credentials, setCredentials] = useState<VaultRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCredentialId, setSelectedCredentialId] = useState<string>('');
 
   useEffect(() => {
     if (!isConnected) {
@@ -92,6 +94,7 @@ export default function Dashboard() {
               {[
                 { id: 'credentials', label: 'My Credentials', icon: '📁' },
                 { id: 'add', label: 'Add Credential', icon: '➕' },
+                { id: 'share', label: 'Share Credential', icon: '🔗' },
                 { id: 'verify', label: 'Verify', icon: '✅' },
                 { id: 'bridge', label: 'Cross-Chain', icon: '🌐' },
               ].map((tab) => (
@@ -125,6 +128,62 @@ export default function Dashboard() {
             )}
             {activeTab === 'add' && (
               <AddCredential onCredentialAdded={handleCredentialAdded} />
+            )}
+            {activeTab === 'share' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Share Credential</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Use CDP's x402 Facilitator for secure, gasless credential delegation. Share a mock identity (e.g., KYC proof) to another address anonymously.
+                  </p>
+                </div>
+                {credentials.length > 0 ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="credential-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Select Credential to Share
+                      </label>
+                      <select
+                        id="credential-select"
+                        value={selectedCredentialId}
+                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        onChange={(e) => setSelectedCredentialId(e.target.value)}
+                      >
+                        <option value="">Choose a credential...</option>
+                        {credentials
+                          .filter((c) => c.credential.expiry > Date.now() / 1000)
+                          .map((credential) => (
+                            <option key={credential.id} value={credential.id}>
+                              {credential.id.slice(0, 16)}... (Expires: {new Date(credential.credential.expiry * 1000).toLocaleDateString()})
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    {selectedCredentialId ? (
+                      <ShareCredential
+                        credentialId={selectedCredentialId}
+                        onShared={(address) => {
+                          console.log('Credential shared with:', address);
+                          // Optionally refresh credentials after sharing
+                          loadCredentials();
+                        }}
+                      />
+                    ) : (
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                          Please select a credential to share
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      No credentials available to share. Add a credential first.
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
             {activeTab === 'verify' && (
               <VerifyProof credentials={credentials} />

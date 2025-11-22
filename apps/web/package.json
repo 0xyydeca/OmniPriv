@@ -11,9 +11,11 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@coinbase/cdp-core": "^0.0.67",
     "@coinbase/cdp-hooks": "^0.0.67",
     "@coinbase/cdp-react": "^0.0.67",
     "@coinbase/cdp-sdk": "^1.38.6",
+    "@coinbase/onchainkit": "^1.1.2",
     "@heroicons/react": "^2.1.1",
     "@omnipriv/sdk": "workspace:*",
     "@tanstack/react-query": "^5.17.9",

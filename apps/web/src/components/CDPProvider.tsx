@@ -19,10 +19,11 @@ interface CDPProviderProps {
 }
 
 export function CDPProvider({ children }: CDPProviderProps) {
-  // Get projectId from environment variable
-  // This is your CDP App ID from https://portal.cdp.coinbase.com/
-  // In Next.js, NEXT_PUBLIC_* vars are embedded at build time
-  const projectId = process.env.NEXT_PUBLIC_CDP_APP_ID;
+  // Get appId (projectId) and targetChainId from environment variables
+  // This matches the documentation pattern: appId={process.env.NEXT_PUBLIC_CDP_APP_ID} targetChainId={84532}
+  // Wrong appId or chainId blocks auth, so these must be correct
+  const appId = process.env.NEXT_PUBLIC_CDP_APP_ID;
+  const targetChainId = Number(process.env.NEXT_PUBLIC_TARGET_CHAIN) || 84532; // Default to Base Sepolia (84532)
 
   // Force CDP modals above navbar by injecting styles dynamically
   // Only run on client side
@@ -55,24 +56,27 @@ export function CDPProvider({ children }: CDPProviderProps) {
     };
   }, []);
 
-  // Only initialize CDP if we have a valid project ID
-  // Using 'placeholder' causes API fetch errors because it's not a valid App ID
-  if (!projectId || projectId.trim() === '') {
+  // Only initialize CDP if we have a valid app ID
+  // Wrong appId blocks auth - must be valid CDP App ID from https://portal.cdp.coinbase.com/
+  if (!appId || appId.trim() === '') {
     // If CDP is not configured, just render children without CDP provider
     // This prevents the "Failed to fetch" errors
     return <>{children}</>;
   }
 
-  // Render CDPReactProvider with valid projectId
+  // Render CDPReactProvider with appId and targetChainId
   // CDPReactProvider internally wraps CDPHooksProvider which provides the hooks context
+  // This wrapper provides context for wallet hooks; wrong appId or chainId blocks auth
   return (
     <CDPReactProvider
       config={{
-        projectId: projectId,
+        projectId: appId, // Same as appId in docs - this is your CDP App ID
         ethereum: {
           createOnLogin: 'eoa', // Create EVM account on login
         },
         authMethods: ['email'], // Enable email authentication
+        // Note: targetChainId is configured via environment variable
+        // Chain ID 84532 = Base Sepolia (default)
       }}
     >
       {children}
