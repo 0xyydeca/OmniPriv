@@ -24,6 +24,7 @@ lerna-debug.log*
 # Environment - CRITICAL: Never commit private keys!
 .env
 .env*.local
+.env.local.bak
 .env.production
 .env.development
 .env.test

@@ -86,3 +86,39 @@ body {
   animation: gentle-pulse 2s ease-in-out infinite;
 }
 
+/* Ensure CDP modals appear above all content */
+/* CDP React uses Radix UI Dialog components with portals */
+/* The modal portal needs to be above everything, including navbar (z-50) and main content (z-10) */
+
+/* Radix Portal container */
+[data-radix-portal] {
+  z-index: 99999 !important;
+}
+
+/* Radix Dialog Overlay (backdrop) - behind modal content */
+[data-radix-portal] [data-radix-dialog-overlay] {
+  z-index: 99998 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+/* Radix Dialog Content (modal) - above overlay */
+[data-radix-portal] [data-radix-dialog-content],
+[data-radix-portal] [data-radix-dialog-content] > * {
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+/* CDP modal classes - fallback */
+[data-cdp-modal],
+[data-cdp-sign-in],
+.cdp-modal,
+.cdp-sign-in-modal {
+  z-index: 99999 !important;
+}
+
+/* Dialog role elements */
+div[role="dialog"] {
+  z-index: 99999 !important;
+}
+
