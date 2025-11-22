@@ -1,12 +1,11 @@
 'use client';
 
-import { ThemeToggle } from './ThemeToggle';
 import Link from 'next/link';
 
 export function Navbar() {
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm"
+      className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-700 shadow-sm"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -20,11 +19,6 @@ export function Navbar() {
           >
             PrivID
           </Link>
-
-          {/* Right side - Theme toggle */}
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-          </div>
         </div>
       </div>
     </nav>
