@@ -71,7 +71,7 @@ function StepItem({
 
 export default function Home() {
   const { isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
+  const { connect, connectors, error: connectError } = useConnect();
   const router = useRouter();
 
   useEffect(() => {
@@ -80,14 +80,42 @@ export default function Home() {
     }
   }, [isConnected, router]);
 
+  // Log connectors for debugging
+  useEffect(() => {
+    if (connectors.length > 0) {
+      console.log('Available connectors:', connectors.map(c => ({ id: c.id, name: c.name })));
+    } else {
+      console.warn('No wallet connectors available');
+    }
+  }, [connectors]);
+
   const handleGetStarted = () => {
     // Try to connect with Coinbase Wallet first, then fallback to first available connector
-    const coinbaseConnector = connectors.find(c => c.id === 'coinbaseWalletSDK');
+    const coinbaseConnector = connectors.find(c => 
+      c.id === 'coinbaseWalletSDK' || c.name?.toLowerCase().includes('coinbase')
+    );
     const connector = coinbaseConnector || connectors[0];
     if (connector) {
       connect({ connector });
+    } else {
+      console.error('No wallet connectors available');
     }
   };
+
+  // Show loading state if connectors aren't ready
+  if (connectors.length === 0) {
+    return (
+      <>
+        <Navbar />
+        <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-10">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading wallet connectors...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
