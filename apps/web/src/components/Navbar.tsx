@@ -35,27 +35,29 @@ export function Navbar() {
             OmniPriv
           </Link>
 
-          {/* Navigation Links */}
-          <ul className="flex items-center gap-4 sm:gap-6" role="list">
-            {navLinks.map((link) => (
-              <li key={link.href} role="listitem">
-                <Link
-                  href={link.href}
-                  className={`text-sm sm:text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1 ${
-                    isActive(link.href)
-                      ? 'text-primary-400'
-                      : 'text-gray-300 hover:text-primary-400'
-                  }`}
-                  aria-current={isActive(link.href) ? 'page' : undefined}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {/* Connect Wallet Button */}
-          <ConnectWallet />
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Navigation Links */}
+            <ul className="hidden sm:flex items-center gap-4 sm:gap-6" role="list">
+              {navLinks.map((link) => (
+                <li key={link.href} role="listitem">
+                  <Link
+                    href={link.href}
+                    className={`text-sm sm:text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1 ${
+                      isActive(link.href)
+                        ? 'text-primary-400'
+                        : 'text-gray-300 hover:text-primary-400'
+                    }`}
+                    aria-current={isActive(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Connect Wallet Button */}
+            <ConnectWallet />
+          </div>
         </div>
       </div>
     </nav>

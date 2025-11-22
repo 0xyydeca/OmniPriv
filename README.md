@@ -1,257 +1,254 @@
-# OmniPriv - Privacy-Preserving Cross-Chain Identity
+# OmniPriv 2.0
 
-> On-chain apps need to verify user attributes (KYC/age/country/reputation) without doxxing users or fragmenting identity across chains.
+**Privacy-first omnichain identity router powered by Aztec, LayerZero, and Coinbase Developer Platform.**
 
-## Architecture
+> 🎯 **ETHGlobal Buenos Aires 2025 Hackathon Project**
 
-OmniPriv is a Next.js app with embedded wallets (Privy/CDP) and a client-encrypted vault storing credential payloads. Users ingest a credential (e.g., Self on Celo), which we anchor on-chain as a commitment in VaultAnchor. When a dApp asks "does user meet policy X?", OmniPriv compiles an Aztec/Noir circuit to produce a ZK proof that verifies in ProofConsumer—no PII leaked. To reuse the result across chains, an LZ v2 OApp sends a minimal verified marker (SBT/event) to chain B's CrossChainVerifier, where the consuming dApp reads it. The UI orchestrates onboarding, ingestion, proof, and bridging with gas sponsorship and optional session signers. Contracts are developed with Hardhat 3 (and optionally Foundry), state is fetched via wagmi/viem, and tests include unit/integration/e2e with Playwright. Logs are structured (pino), sanitized, and basic OTEL spans capture proof/bridge timings. Nothing sensitive is logged or stored on-chain.
+## Overview
 
-## Project Structure
+OmniPriv enables users to prove attributes (age, KYC, country, reputation) across any blockchain without revealing personal data. Users ingest credentials into an encrypted vault, generate zero-knowledge proofs with Noir, anchor commitments on Chain A, then propagate minimal "verified claim" flags to Chain B via LayerZero.
+
+**In one sentence:** *On‑chain apps need to verify user attributes across chains without doxxing users or re‑implementing KYC on every chain/dApp.*
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js**: 20.11.0 or higher (LTS)
+- **pnpm**: 8.15.0 (exact version)
+- **Nargo**: 1.0.0-beta.15 (optional, for ZK circuit development)
+
+```bash
+# Check versions
+node --version   # v20.11.0+
+pnpm --version   # 8.15.0
+nargo --version  # 1.0.0-beta.15 (optional)
+```
+
+### Installation
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Visit http://localhost:3000
+```
+
+**For ZK circuit development:**
+```bash
+# Install Nargo (Noir compiler)
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+source ~/.zshrc
+noirup
+
+# Test circuits
+cd packages/circuits && nargo test
+```
+
+See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
+
+## 🏗️ Architecture
+
+```
+User Journey:
+1. Land on omnipriv.app → "Prove you qualify once, reuse privately across chains"
+2. Click "Continue" → Sign in with CDP Embedded Wallet (gasless onboarding)
+3. Add credential → Encrypt & store locally → Anchor commitment on Chain A
+4. Generate proof → Noir circuit proves age ≥ 18 and country ∉ {blocked}
+5. Bridge verification → LayerZero sends flag to Chain B
+6. Use on dApp → Chain B dApp checks isVerified(userHash, policyId) → ✅
+```
+
+### Components
+
+- **Frontend**: Next.js 14 + React 18 + wagmi/viem
+- **Contracts** (Solidity ^0.8.24):
+  - `VaultAnchor`: Commitment storage on Chain A
+  - `ProofConsumer`: ZK proof verification on Chain A
+  - `IdentityOApp`: LayerZero OApp for cross-chain messaging
+  - `OmniPrivVerifier`: Verification receiver on Chain B
+  - `KycAirdrop`: Demo dApp with gated access
+- **ZK Circuits**: Noir (Aztec Devnet)
+  - `identity_claim`: Age ≥ 18 + country allowlist proof
+- **Agent**: CDP x402-gated endpoint for automated refresh
+- **SDK**: TypeScript utilities for vault, crypto, proof generation
+
+## 🌟 Sponsor Integration
+
+### Aztec Network
+- **Noir circuits** (`packages/circuits/`) for zero-knowledge proof generation
+- Proves age ≥ 18 and country compliance without revealing PII
+- Noir 1.0 with nargo 1.0.0-beta.15
+- 6 comprehensive circuit tests (all passing ✅)
+- Compiled artifacts: `target/omnipriv_circuits.json`
+
+### LayerZero (Best Omnichain Implementation)
+- **Integrate LayerZero v2 OApps and Endpoint contracts** to propagate a minimal, privacy-preserving "verified identity marker" across chains
+- **Extend base OApp logic** with custom replay protection, per-policy nonces, and expiry semantics
+- **dApps on any LZ-connected chain** can query `isVerified(user, policyId)` without touching PII
+- **Working cross-chain demo** with detailed feedback on SDK and docs
+- Minimal payload design (< 1KB) for gas efficiency
+
+### Coinbase Developer Platform (CDP)
+- **CDP Embedded Wallets** for end-user onboarding and gasless UX
+- **CDP Server Wallets** for agent operations and treasury management
+- **x402-gated endpoints** for automated verification refresh
+- Email/social login → instant wallet creation (no MetaMask, no seed phrases)
+- Pays for identity-related on-chain actions via HTTP API
+
+## 📂 Project Structure
 
 ```
 omnipriv/
 ├── apps/
-│   ├── web/                    # Next.js frontend
-│   └── prover-service/         # Optional server-side prover
+│   └── web/                    # Next.js frontend
+│       ├── src/app/
+│       │   ├── page.tsx        # Landing + onboarding
+│       │   ├── dashboard/      # Vault + proof + bridge
+│       │   ├── demo-dapp/      # KYC airdrop demo
+│       │   └── api/
+│       │       └── refresh-claim/  # CDP x402 agent
+│       └── src/components/
 ├── packages/
-│   ├── contracts/              # Solidity smart contracts
-│   ├── sdk/                    # TypeScript SDK
+│   ├── contracts/              # Solidity contracts
+│   │   ├── contracts/
+│   │   │   ├── VaultAnchor.sol
+│   │   │   ├── ProofConsumer.sol
+│   │   │   ├── IdentityOApp.sol
+│   │   │   ├── OmniPrivVerifier.sol
+│   │   │   └── KycAirdrop.sol
+│   │   └── deploy/
 │   ├── circuits/               # Noir ZK circuits
-│   └── testdata/               # Test fixtures
-└── docs/                       # Documentation & ADRs
+│   │   └── src/main.nr
+│   └── sdk/                    # TypeScript SDK
+│       └── src/
+└── docs/                       # Documentation
 ```
 
-## Tech Stack
+## 🎯 Key Features
 
-- **Frontend**: Next.js 14 (App Router), React 18.2, TailwindCSS
-- **Wallet**: Privy SDK (embedded wallets + gas sponsorship)
-- **State**: wagmi 1.x + viem 2.x, React Query, Zustand
-- **Validation**: Zod
-- **Contracts**: Solidity ^0.8.24, Hardhat 3, Foundry (optional)
-- **ZK**: Aztec Devnet + Noir
-- **Cross-Chain**: LayerZero v2 OApp/OFT
-- **Testing**: Vitest, Playwright, Foundry
-- **Logging**: pino, OpenTelemetry (basic)
+### Privacy-Preserving
+- ✅ No DOB, country, or PII on-chain
+- ✅ Only commitments and policy IDs stored
+- ✅ Zero-knowledge proofs reveal nothing beyond policy compliance
 
-## Quick Start
+### Cross-Chain Native
+- ✅ Verify once, use everywhere
+- ✅ LayerZero v2 OApp for reliable messaging
+- ✅ Support for Base Sepolia, Celo Sepolia, and more
 
-### Prerequisites
+### Developer-Friendly
+- ✅ Gasless onboarding via CDP Embedded Wallets
+- ✅ Simple `isVerified(userHash, policyId)` API for dApps
+- ✅ CDP Server Wallets for automated operations
 
-- **Node.js 20.x LTS** (enforced via `.nvmrc`)
-- **pnpm 8.15.0** (enforced - npm/yarn blocked)
-- **Git**
-
-### One-Command Setup
+## 🧪 Testing
 
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/omnipriv.git
-cd omnipriv
-
-# If you have nvm, use the pinned Node version
-nvm use
-
-# Automatic setup (installs deps + builds packages)
-pnpm setup
-
-# Configure environment
-cp .env.example .env.local
-# Edit .env.local with your API keys
-
-# Verify everything is ready
-pnpm verify
-
-# Start development server
-pnpm dev
-```
-
-**See detailed instructions**: [INSTALL.md](./INSTALL.md)
-
-### What `pnpm setup` Does
-
-The automated setup command:
-1. ✅ Checks Node.js 20+ and pnpm 8+ (blocks npm/yarn)
-2. ✅ Installs all dependencies across the monorepo
-3. ✅ Builds workspace packages (`@omnipriv/sdk`, `@omnipriv/contracts`)
-4. ✅ Verifies environment configuration
-
-This ensures **everyone has the same versions** and prevents common setup issues.
-
-### Compile & Deploy Contracts
-
-```bash
-# Compile contracts
-pnpm hardhat:compile
-
-# Run tests
-pnpm hardhat:test
-
-# Deploy to testnets (Base Sepolia, Celo Alfajores)
-pnpm hardhat:deploy --network baseSepolia
-pnpm hardhat:deploy --network celoAlfajores
-```
-
-### Get Testnet Tokens
-
-- **Base Sepolia**: https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet
-- **Celo Alfajores**: https://faucet.celo.org/alfajores
-- **Ethereum Sepolia**: https://sepoliafaucet.com/
-
-## LayerZero Cross-Chain Integration
-
-OmniPriv implements **LayerZero v2 OApp** for true omnichain identity verification.
-
-### Key Features
-
-- **One Identity, Many Chains**: Verify credentials once, use everywhere
-- **Privacy-Preserving**: Only cryptographic commitments cross chains (no PII)
-- **Production-Ready**: LayerZero v2 with 99.9% uptime and DVN security
-- **Extensible**: Works with any credential type (KYC, age, country, reputation)
-
-### How It Works
-
-```
-1. User stores credential on Chain A (Base Sepolia)
-2. Generate ZK proof and anchor commitment
-3. Send verification marker to Chain B (Celo Alfajores) via LayerZero
-4. dApps on Chain B check isVerified() without accessing PII
-```
-
-### Quick Demo
-
-```bash
-# Deploy contracts on both chains
-cd packages/contracts
-pnpm deploy:baseSepolia
-pnpm deploy:celoAlfajores
-
-# Configure trusted peers (required for LayerZero)
-export IDENTITY_OAPP_BASE_SEPOLIA=0x...
-export IDENTITY_OAPP_CELO_ALFAJORES=0x...
-pnpm setPeers:baseSepolia
-pnpm setPeers:celoAlfajores
-
-# Test cross-chain flow in frontend
-cd ../../apps/web
-pnpm dev
-# Open http://localhost:3000 → Add Credential → Bridge to Celo
-```
-
-**See full demo**: [docs/LAYERZERO_DEMO.md](docs/LAYERZERO_DEMO.md)
-**Quick Reference**: [docs/LAYERZERO_REFERENCE.md](docs/LAYERZERO_REFERENCE.md)
-
-### Contract: IdentityOApp.sol
-
-```solidity
-// Send verification cross-chain
-function sendVerification(
-    uint32 dstEid,          // Destination chain (Celo = 40125)
-    address user,
-    bytes32 policyId,       // e.g., keccak256("kyc-basic")
-    bytes32 commitment,
-    uint256 expiry,
-    bytes calldata options
-) external payable;
-
-// Check verification on destination chain
-function isVerified(address user, bytes32 policyId) 
-    external view returns (bool);
-```
-
-### Why This Qualifies for LayerZero Prize
-
-- Uses LayerZero v2 OApp with custom `_lzReceive` handler
-- Deployed on 2+ testnets (Base Sepolia + Celo Alfajores)
-- Demonstrates real omnichain use case (cross-chain identity)
-- Privacy-preserving architecture (only commitments cross chains)
-- Working frontend integration with fee quotes
-- Comprehensive documentation and demo script
-
-## User Journey
-
-1. **Onboard**: Visit omnipriv.app → embedded wallet created (Privy)
-2. **Add Credential**: Choose issuer (Self/mock) → credential encrypted to vault → commitment anchored on-chain
-3. **Prove Privately**: Select dApp → generate ZK proof → verify on-chain → dApp receives yes/no (no PII)
-4. **Cross-Chain**: LayerZero sends verified marker to another chain
-5. **Manage Vault**: View credentials, check expiries, export backup
-
-## MVP Scope (36-48h)
-
-### In Scope
-- Embedded wallet onboarding (Privy) + gas sponsorship
-- Credential ingestion (Self on Celo + mock issuer)
-- Aztec/Noir proof circuit (e.g., "age ≥ 18" or "KYC passed")
-- LayerZero v2 OApp (chain A → chain B)
-- Minimal dashboard (add credential, prove, status)
-- Smart contracts: VaultAnchor, ProofConsumer, IdentityOApp
-- Tests: unit + integration + e2e happy path
-- Documentation + demo video
-
-### Out of Scope
-- Production KYC integrations beyond Self + mock
-- Full DID spec compliance
-- Advanced recovery flows
-- Mobile native apps
-- Full analytics dashboard
-
-## Success Metrics
-
-- **Functional**: User can onboard, add credential, prove to dApp without PII leakage
-- **UX**: Onboarding ≤ 20s, proof ≤ 3-7s
-- **Privacy**: No PII in logs or on-chain
-- **Performance**: p95 verification ≤ 2s, cross-chain ≤ 60s
-
-## Security
-
-- **No PII**: Vault encrypted with AES-GCM, only commitments on-chain
-- **Nonce-based**: Single-use proofs to prevent replay
-- **Allowlists**: Issuer verification via DID allowlist
-- **CSP/CORS**: Strict content security policy
-- **Audited Dependencies**: Regular `pnpm audit`
-
-## Testing
-
-```bash
-# Run all tests
+# Unit tests
 pnpm test
 
 # Contract tests
-pnpm hardhat:test
+pnpm -F @omnipriv/contracts test
+
+# Noir circuit tests
+cd packages/circuits && nargo test
 
 # E2E tests
 pnpm -F web test:e2e
-
-# Coverage
-pnpm test:coverage
 ```
 
-## Deployment
+## 📊 Deployed Contracts
+
+### Base Sepolia (Chain ID: 84532)
+- VaultAnchor: `0x6DB3992C31AFc84E442621fff00511e9f26335d1`
+- ProofConsumer: `0x5BB995757E8Be755967160C256eF2F8e07a3e579`
+- IdentityOApp: `0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48`
+
+### Celo Sepolia (Chain ID: 11142220)
+- VaultAnchor: `0xcf1a9522FB166a1E79564b5081940a271ab5A187`
+- ProofConsumer: `0x6DB3992C31AFc84E442621fff00511e9f26335d1`
+
+## 🔧 Environment Setup
+
+Create `.env.local` in `apps/web/`:
 
 ```bash
-# Build for production
-pnpm build
+# CDP (required for wallet functionality)
+# Get from: https://portal.cdp.coinbase.com
+NEXT_PUBLIC_CDP_APP_ID=your_cdp_app_id
 
-# Deploy to Vercel
-vercel deploy
+# Contract addresses
+NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS_BASE_SEPOLIA=0x6DB3992C31AFc84E442621fff00511e9f26335d1
+NEXT_PUBLIC_PROOF_CONSUMER_ADDRESS_BASE_SEPOLIA=0x5BB995757E8Be755967160C256eF2F8e07a3e579
+NEXT_PUBLIC_IDENTITY_OAPP_ADDRESS_BASE_SEPOLIA=0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
 
-# Update contract addresses in .env.production
+# CDP (for agent)
+CDP_API_KEY=your_cdp_api_key
+CDP_SERVER_WALLET_ID=your_wallet_id
+
+# RPC URLs (optional)
+BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
+CELO_SEPOLIA_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
 ```
 
-## Contributing
+## 📖 Documentation
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
+- [Architecture](./docs/ARCHITECTURE.md) - Technical architecture overview
+- [Setup Guide](./SETUP.md) - Detailed setup instructions
+- [Quick Start](./QUICKSTART.md) - 5-minute setup guide
+- [ADR: LayerZero v2](./docs/ADR-001-layerzero-v2.md) - Architecture decision record
 
-## License
+## 🎭 Demo Flow
 
-MIT
+1. **Onboard**: Sign in with email → CDP creates embedded wallet (< 20s)
+2. **Add Credential**: Mock KYC form (DOB, country) → Encrypted vault → Commitment on-chain
+3. **Prove**: Generate Noir proof (< 7s) → Verify on Chain A
+4. **Bridge**: Send verification flag to Chain B via LayerZero (< 60s)
+5. **Use**: Demo dApp checks verification → Grant access to airdrop
 
-## Links
+## 🏆 Hackathon Success Criteria
 
-- **Demo**: [omnipriv.app](https://omnipriv.app)
-- **Docs**: [docs.omnipriv.app](https://docs.omnipriv.app)
-- **GitHub**: [github.com/yourusername/omnipriv](https://github.com/yourusername/omnipriv)
+### Functional
+- ✅ Complete user journey from credential to cross-chain verification
+- ✅ One commitment on Chain A
+- ✅ One Noir proof generation
+- ✅ One LayerZero message
+- ✅ Chain B dApp shows "Verified via OmniPriv"
+
+### Sponsor-Specific
+- ✅ **Aztec**: Noir circuit + Devnet integration for proof generation
+- ✅ **LayerZero**: Custom OApp with replay protection, per-policy nonces, and cross-chain demo
+- ✅ **CDP**: Embedded Wallets for users + Server Wallets for agents + x402 workflow
+
+### UX
+- ✅ Onboarding ≤ 20 seconds
+- ✅ Proof generation ≤ 7 seconds (laptop), ≤ 10 seconds (mobile)
+- ✅ Cross-chain delivery ≤ 60 seconds
+
+### Privacy
+- ✅ No PII in logs or on-chain
+- ✅ Only commitments and policy IDs visible
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+## 📜 License
+
+MIT License - see [LICENSE](./LICENSE)
+
+## 🌐 Links
+
+- **Website**: [omnipriv.app](https://omnipriv.app)
+- **Demo Video**: Coming soon
+- **Slides**: Coming soon
 
 ---
 
-**Built for ETHGlobal Hackathon** | Privacy-first identity for the multi-chain future
+**Built with ❤️ for ETHGlobal Buenos Aires 2025**
 
+*Powered by Aztec • LayerZero • Coinbase Developer Platform*

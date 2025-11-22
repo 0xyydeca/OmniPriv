@@ -1,0 +1,612 @@
+{
+  "address": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "AlreadyRevoked",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CommitmentAlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CommitmentExpired",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CommitmentNotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidExpiry",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroCommitment",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "CommitmentAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "CommitmentRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        }
+      ],
+      "name": "addCommitment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "commitments",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "revoked",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getCommitment",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "commitment",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiry",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "revoked",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct VaultAnchor.Commitment",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserCommitments",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isCommitmentValid",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "commitment",
+          "type": "bytes32"
+        }
+      ],
+      "name": "revokeCommitment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userCommitments",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x57004d93041f3def0264f83c9ba68232278e72c1e89de9ec2d74f15b00739868",
+  "receipt": {
+    "to": null,
+    "from": "0x2F63A7A9Bb198CdCd7f2cA4364eEfAb32253D9D3",
+    "contractAddress": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+    "transactionIndex": 14,
+    "gasUsed": "514491",
+    "logsBloom": "0x00000400000000000000000000000000000000000000000000800000000000000400000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000020000000000000000000000000100000000000000000000000000000000000000000",
+    "blockHash": "0x5a3c7d6b2fd2692c9201a4a0c936df3f2a7d5c7478b6d358f92d77acaa1232ea",
+    "transactionHash": "0x57004d93041f3def0264f83c9ba68232278e72c1e89de9ec2d74f15b00739868",
+    "logs": [
+      {
+        "transactionIndex": 14,
+        "blockNumber": 34007236,
+        "transactionHash": "0x57004d93041f3def0264f83c9ba68232278e72c1e89de9ec2d74f15b00739868",
+        "address": "0x6DB3992C31AFc84E442621fff00511e9f26335d1",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000002f63a7a9bb198cdcd7f2ca4364eefab32253d9d3"
+        ],
+        "data": "0x",
+        "logIndex": 184,
+        "blockHash": "0x5a3c7d6b2fd2692c9201a4a0c936df3f2a7d5c7478b6d358f92d77acaa1232ea"
+      }
+    ],
+    "blockNumber": 34007236,
+    "cumulativeGasUsed": "4630880",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "dd51e8dc02176ed32b2c2063e029919e",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AlreadyRevoked\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"CommitmentAlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"CommitmentExpired\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"CommitmentNotFound\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidExpiry\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroCommitment\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"CommitmentAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"CommitmentRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"}],\"name\":\"addCommitment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"commitments\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"revoked\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"getCommitment\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"revoked\",\"type\":\"bool\"}],\"internalType\":\"struct VaultAnchor.Commitment\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserCommitments\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"isCommitmentValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"revokeCommitment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"userCommitments\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Each commitment is a Poseidon hash of (issuer_did, schema_id, salted_fields)\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"kind\":\"dev\",\"methods\":{\"addCommitment(bytes32,uint256)\":{\"params\":{\"commitment\":\"The Poseidon hash of the credential\",\"expiry\":\"Unix timestamp when the credential expires\"}},\"getCommitment(address,bytes32)\":{\"params\":{\"commitment\":\"The commitment hash\",\"user\":\"The user address\"},\"returns\":{\"_0\":\"Commitment struct\"}},\"getUserCommitments(address)\":{\"params\":{\"user\":\"The user address\"},\"returns\":{\"_0\":\"bytes32[] Array of commitment hashes\"}},\"isCommitmentValid(address,bytes32)\":{\"params\":{\"commitment\":\"The commitment hash\",\"user\":\"The user address\"},\"returns\":{\"_0\":\"bool True if valid\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"revokeCommitment(bytes32)\":{\"params\":{\"commitment\":\"The commitment hash to revoke\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"VaultAnchor\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"addCommitment(bytes32,uint256)\":{\"notice\":\"Add a new credential commitment\"},\"getCommitment(address,bytes32)\":{\"notice\":\"Get commitment details\"},\"getUserCommitments(address)\":{\"notice\":\"Get all commitments for a user\"},\"isCommitmentValid(address,bytes32)\":{\"notice\":\"Check if a commitment is valid (exists, not expired, not revoked)\"},\"revokeCommitment(bytes32)\":{\"notice\":\"Revoke a credential commitment\"}},\"notice\":\"Stores commitment hashes for user credentials without revealing PII\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/VaultAnchor.sol\":\"VaultAnchor\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/ReentrancyGuard.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If EIP-1153 (transient storage) is available on the chain you're deploying at,\\n * consider using {ReentrancyGuardTransient} instead.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract ReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant NOT_ENTERED = 1;\\n    uint256 private constant ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be NOT_ENTERED\\n        if (_status == ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x11a5a79827df29e915a12740caf62fe21ebe27c08c9ae3e09abe9ee3ba3866d3\",\"license\":\"MIT\"},\"contracts/VaultAnchor.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\\\";\\n\\n/**\\n * @title VaultAnchor\\n * @notice Stores commitment hashes for user credentials without revealing PII\\n * @dev Each commitment is a Poseidon hash of (issuer_did, schema_id, salted_fields)\\n */\\ncontract VaultAnchor is Ownable, ReentrancyGuard {\\n    // Events\\n    event CommitmentAdded(\\n        address indexed user,\\n        bytes32 indexed commitment,\\n        uint256 expiry,\\n        uint256 timestamp\\n    );\\n    event CommitmentRevoked(\\n        address indexed user,\\n        bytes32 indexed commitment,\\n        uint256 timestamp\\n    );\\n\\n    // Structs\\n    struct Commitment {\\n        bytes32 commitment;\\n        uint256 expiry;\\n        uint256 timestamp;\\n        bool revoked;\\n    }\\n\\n    // State\\n    mapping(address => mapping(bytes32 => Commitment)) public commitments;\\n    mapping(address => bytes32[]) public userCommitments;\\n\\n    // Errors\\n    error CommitmentAlreadyExists();\\n    error CommitmentNotFound();\\n    error CommitmentExpired();\\n    error AlreadyRevoked();\\n    error InvalidExpiry();\\n    error ZeroCommitment();\\n\\n    constructor() Ownable(msg.sender) {}\\n\\n    /**\\n     * @notice Add a new credential commitment\\n     * @param commitment The Poseidon hash of the credential\\n     * @param expiry Unix timestamp when the credential expires\\n     */\\n    function addCommitment(bytes32 commitment, uint256 expiry)\\n        external\\n        nonReentrant\\n    {\\n        if (commitment == bytes32(0)) revert ZeroCommitment();\\n        if (expiry <= block.timestamp) revert InvalidExpiry();\\n        if (commitments[msg.sender][commitment].commitment != bytes32(0)) {\\n            revert CommitmentAlreadyExists();\\n        }\\n\\n        commitments[msg.sender][commitment] = Commitment({\\n            commitment: commitment,\\n            expiry: expiry,\\n            timestamp: block.timestamp,\\n            revoked: false\\n        });\\n\\n        userCommitments[msg.sender].push(commitment);\\n\\n        emit CommitmentAdded(msg.sender, commitment, expiry, block.timestamp);\\n    }\\n\\n    /**\\n     * @notice Revoke a credential commitment\\n     * @param commitment The commitment hash to revoke\\n     */\\n    function revokeCommitment(bytes32 commitment) external nonReentrant {\\n        Commitment storage c = commitments[msg.sender][commitment];\\n        if (c.commitment == bytes32(0)) revert CommitmentNotFound();\\n        if (c.revoked) revert AlreadyRevoked();\\n\\n        c.revoked = true;\\n\\n        emit CommitmentRevoked(msg.sender, commitment, block.timestamp);\\n    }\\n\\n    /**\\n     * @notice Check if a commitment is valid (exists, not expired, not revoked)\\n     * @param user The user address\\n     * @param commitment The commitment hash\\n     * @return bool True if valid\\n     */\\n    function isCommitmentValid(address user, bytes32 commitment)\\n        external\\n        view\\n        returns (bool)\\n    {\\n        Commitment memory c = commitments[user][commitment];\\n        return\\n            c.commitment != bytes32(0) &&\\n            c.expiry > block.timestamp &&\\n            !c.revoked;\\n    }\\n\\n    /**\\n     * @notice Get all commitments for a user\\n     * @param user The user address\\n     * @return bytes32[] Array of commitment hashes\\n     */\\n    function getUserCommitments(address user)\\n        external\\n        view\\n        returns (bytes32[] memory)\\n    {\\n        return userCommitments[user];\\n    }\\n\\n    /**\\n     * @notice Get commitment details\\n     * @param user The user address\\n     * @param commitment The commitment hash\\n     * @return Commitment struct\\n     */\\n    function getCommitment(address user, bytes32 commitment)\\n        external\\n        view\\n        returns (Commitment memory)\\n    {\\n        return commitments[user][commitment];\\n    }\\n}\\n\\n\",\"keccak256\":\"0x58ddfa2b2f6bb50eece3e78632f77bf6116270bd5f701ab88d6307b0ce15d986\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461007e5733156100685760008054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a36001805561077a90816100848239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6040608081526004908136101561001557600080fd5b600091823560e01c806313a0fc40146105d957806322550a421461052d57806331091d7a1461045457806352f98630146102f9578063715018a61461029f5780638b1592b5146102365780638da5cb5b1461020e57806399deff9e146101755780639a546848146101185763f2fde38b1461008f57600080fd5b34610114576020366003190112610114576100a861067a565b906100b1610718565b6001600160a01b039182169283156100fe57505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8280fd5b50503461017157806003193601126101715761013261067a565b6001600160a01b0316825260036020528082208054602435939084101561016e575060209261016091610695565b90549060031b1c9051908152f35b80fd5b5080fd5b50503461017157806003193601126101715760209181906001600160a01b0361019c61067a565b1681526002845281812060243582528452209080516101ba816106c3565b825480825260ff6003600186015495868886015260028101548686015201541615916060831591015215159283610204575b50826101fc575b50519015158152f35b9150386101f3565b42109250386101ec565b505034610171578160031936011261017157905490516001600160a01b039091168152602090f35b50503461017157806003193601126101715760809181906001600160a01b0361025d61067a565b16815260026020528181206024358252602052209081549160018101549160ff6003600284015493015416928151948552602085015283015215156060820152f35b833461016e578060031936011261016e576102b8610718565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b509190346101715780600319360112610171578235906024359061031b6106f5565b821561044557428211156104375733845260206002815281852084865281528185205461042757815161034d816106c3565b8481526003828201918583528481014281526060820193898552338a5260028652868a20898b528652868a2092518355516001830155516002820155019051151560ff80198354169116179055338552600381528185208054906801000000000000000082101561041457816103eb9160017f088ba85fddbfeb85ac2af828667d994f40afef040ff8349a8b578e83c1d64965969594018155610695565b81549060031b9087821b91600019901b1916179055815193845242908401523392a36001805580f35b634e487b7160e01b875260418852602487fd5b815163145718a760e01b81528690fd5b5162d36c8560e81b81528490fd5b516351bda03d60e01b81528490fd5b5091903461017157602080600319360112610114576001600160a01b0361047961067a565b1683526003815281832092825192838386549182815201908196845284842090845b868282106105195750505050849003601f01601f191684019567ffffffffffffffff871185881017610506575085815282865292518583018190528594938501939290915b8281106104ef57505050500390f35b8351855286955093810193928101926001016104e0565b634e487b7160e01b835260419052602482fd5b83548552909301926001928301920161049b565b5050346101715780600319360112610171578060809261054b61067a565b8160608451610559816106c3565b8281528260208201528286820152015260018060a01b03168152600260205281812060243582526020522090805190610591826106c3565b825492838352600181015460208401908152606060ff600360028501549486880195865201541694019315158452825194855251602085015251908301525115156060820152f35b509034610114576020366003190112610114578135916105f76106f5565b338452600260205281842083855260205281842080541561066b576003019081549060ff821661065d575060019060ff1916179055514281527f07f1dd2cbb433129c12cf7dbd113280d4df983e7335ff28423b7dd4121649f1060203392a36001805580f35b835163905e710760e01b8152fd5b509051635b34156960e11b8152fd5b600435906001600160a01b038216820361069057565b600080fd5b80548210156106ad5760005260206000200190600090565b634e487b7160e01b600052603260045260246000fd5b6080810190811067ffffffffffffffff8211176106df57604052565b634e487b7160e01b600052604160045260246000fd5b600260015414610706576002600155565b604051633ee5aeb560e01b8152600490fd5b6000546001600160a01b0316330361072c57565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212205452609a9b4ecca0ea43654daffc7d9377092872c741157be0f97e461f43460164736f6c63430008180033",
+  "deployedBytecode": "0x6040608081526004908136101561001557600080fd5b600091823560e01c806313a0fc40146105d957806322550a421461052d57806331091d7a1461045457806352f98630146102f9578063715018a61461029f5780638b1592b5146102365780638da5cb5b1461020e57806399deff9e146101755780639a546848146101185763f2fde38b1461008f57600080fd5b34610114576020366003190112610114576100a861067a565b906100b1610718565b6001600160a01b039182169283156100fe57505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8280fd5b50503461017157806003193601126101715761013261067a565b6001600160a01b0316825260036020528082208054602435939084101561016e575060209261016091610695565b90549060031b1c9051908152f35b80fd5b5080fd5b50503461017157806003193601126101715760209181906001600160a01b0361019c61067a565b1681526002845281812060243582528452209080516101ba816106c3565b825480825260ff6003600186015495868886015260028101548686015201541615916060831591015215159283610204575b50826101fc575b50519015158152f35b9150386101f3565b42109250386101ec565b505034610171578160031936011261017157905490516001600160a01b039091168152602090f35b50503461017157806003193601126101715760809181906001600160a01b0361025d61067a565b16815260026020528181206024358252602052209081549160018101549160ff6003600284015493015416928151948552602085015283015215156060820152f35b833461016e578060031936011261016e576102b8610718565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b509190346101715780600319360112610171578235906024359061031b6106f5565b821561044557428211156104375733845260206002815281852084865281528185205461042757815161034d816106c3565b8481526003828201918583528481014281526060820193898552338a5260028652868a20898b528652868a2092518355516001830155516002820155019051151560ff80198354169116179055338552600381528185208054906801000000000000000082101561041457816103eb9160017f088ba85fddbfeb85ac2af828667d994f40afef040ff8349a8b578e83c1d64965969594018155610695565b81549060031b9087821b91600019901b1916179055815193845242908401523392a36001805580f35b634e487b7160e01b875260418852602487fd5b815163145718a760e01b81528690fd5b5162d36c8560e81b81528490fd5b516351bda03d60e01b81528490fd5b5091903461017157602080600319360112610114576001600160a01b0361047961067a565b1683526003815281832092825192838386549182815201908196845284842090845b868282106105195750505050849003601f01601f191684019567ffffffffffffffff871185881017610506575085815282865292518583018190528594938501939290915b8281106104ef57505050500390f35b8351855286955093810193928101926001016104e0565b634e487b7160e01b835260419052602482fd5b83548552909301926001928301920161049b565b5050346101715780600319360112610171578060809261054b61067a565b8160608451610559816106c3565b8281528260208201528286820152015260018060a01b03168152600260205281812060243582526020522090805190610591826106c3565b825492838352600181015460208401908152606060ff600360028501549486880195865201541694019315158452825194855251602085015251908301525115156060820152f35b509034610114576020366003190112610114578135916105f76106f5565b338452600260205281842083855260205281842080541561066b576003019081549060ff821661065d575060019060ff1916179055514281527f07f1dd2cbb433129c12cf7dbd113280d4df983e7335ff28423b7dd4121649f1060203392a36001805580f35b835163905e710760e01b8152fd5b509051635b34156960e11b8152fd5b600435906001600160a01b038216820361069057565b600080fd5b80548210156106ad5760005260206000200190600090565b634e487b7160e01b600052603260045260246000fd5b6080810190811067ffffffffffffffff8211176106df57604052565b634e487b7160e01b600052604160045260246000fd5b600260015414610706576002600155565b604051633ee5aeb560e01b8152600490fd5b6000546001600160a01b0316330361072c57565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212205452609a9b4ecca0ea43654daffc7d9377092872c741157be0f97e461f43460164736f6c63430008180033",
+  "devdoc": {
+    "details": "Each commitment is a Poseidon hash of (issuer_did, schema_id, salted_fields)",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ],
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "addCommitment(bytes32,uint256)": {
+        "params": {
+          "commitment": "The Poseidon hash of the credential",
+          "expiry": "Unix timestamp when the credential expires"
+        }
+      },
+      "getCommitment(address,bytes32)": {
+        "params": {
+          "commitment": "The commitment hash",
+          "user": "The user address"
+        },
+        "returns": {
+          "_0": "Commitment struct"
+        }
+      },
+      "getUserCommitments(address)": {
+        "params": {
+          "user": "The user address"
+        },
+        "returns": {
+          "_0": "bytes32[] Array of commitment hashes"
+        }
+      },
+      "isCommitmentValid(address,bytes32)": {
+        "params": {
+          "commitment": "The commitment hash",
+          "user": "The user address"
+        },
+        "returns": {
+          "_0": "bool True if valid"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "revokeCommitment(bytes32)": {
+        "params": {
+          "commitment": "The commitment hash to revoke"
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "VaultAnchor",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "addCommitment(bytes32,uint256)": {
+        "notice": "Add a new credential commitment"
+      },
+      "getCommitment(address,bytes32)": {
+        "notice": "Get commitment details"
+      },
+      "getUserCommitments(address)": {
+        "notice": "Get all commitments for a user"
+      },
+      "isCommitmentValid(address,bytes32)": {
+        "notice": "Check if a commitment is valid (exists, not expired, not revoked)"
+      },
+      "revokeCommitment(bytes32)": {
+        "notice": "Revoke a credential commitment"
+      }
+    },
+    "notice": "Stores commitment hashes for user credentials without revealing PII",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1327,
+        "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 2139,
+        "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+        "label": "_status",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 2881,
+        "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+        "label": "commitments",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_mapping(t_bytes32,t_struct(Commitment)2874_storage))"
+      },
+      {
+        "astId": 2886,
+        "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+        "label": "userCommitments",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_array(t_bytes32)dyn_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_array(t_bytes32)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bytes32[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_bytes32)dyn_storage"
+      },
+      "t_mapping(t_address,t_mapping(t_bytes32,t_struct(Commitment)2874_storage))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(bytes32 => struct VaultAnchor.Commitment))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_bytes32,t_struct(Commitment)2874_storage)"
+      },
+      "t_mapping(t_bytes32,t_struct(Commitment)2874_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct VaultAnchor.Commitment)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Commitment)2874_storage"
+      },
+      "t_struct(Commitment)2874_storage": {
+        "encoding": "inplace",
+        "label": "struct VaultAnchor.Commitment",
+        "members": [
+          {
+            "astId": 2867,
+            "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+            "label": "commitment",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 2869,
+            "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+            "label": "expiry",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2871,
+            "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2873,
+            "contract": "contracts/VaultAnchor.sol:VaultAnchor",
+            "label": "revoked",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

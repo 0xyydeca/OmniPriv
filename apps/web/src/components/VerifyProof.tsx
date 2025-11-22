@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
-import { VaultRecord, generateProof, evaluatePredicate } from '@omnipriv/sdk';
+import { VaultRecord, generateProof, evaluatePredicate, type Predicate } from '@omnipriv/sdk';
 
 interface VerifyProofProps {
   credentials: VaultRecord[];
@@ -46,13 +46,15 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       };
 
       // Build predicate based on policy type
-      let predicate: Record<string, unknown> = {};
+      let predicate: Predicate;
       if (policyType === 'kyc') {
-        predicate = { kyc_passed: { $eq: true } };
+        predicate = { type: 'kyc', operator: 'eq', value: 'passed' };
       } else if (policyType === 'age') {
-        predicate = { age: { $gte: ageThreshold } };
+        predicate = { type: 'age', operator: 'gte', value: ageThreshold };
       } else if (policyType === 'country') {
-        predicate = { country: { $in: allowedCountries } };
+        predicate = { type: 'country', operator: 'in', value: allowedCountries };
+      } else {
+        throw new Error('Invalid policy type');
       }
 
       // Evaluate predicate locally
@@ -69,20 +71,33 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
 
       // Generate ZK proof
       const policyId = `0x${policyType}${Date.now()}`;
+      
+      // NoirCredential expects: dob_year, country_code, secret_salt
+      const noirCredential = {
+        dob_year: mockCredentialData.age ? new Date().getFullYear() - mockCredentialData.age : 2000,
+        country_code: 1, // Mock country code
+        secret_salt: 12345n, // Mock salt
+      };
+      
+      const policyConfig = {
+        policy_id: policyId,
+        expiry_days: 30,
+      };
+      
       const proofResponse = await generateProof(
-        {
-          policy_id: policyId,
-          schema_id: 'kyc_v1',
-          predicate,
-          nonce: Date.now(),
-        },
-        mockCredentialData,
-        credential.credential.credential_hash
+        noirCredential,
+        policyConfig,
+        Date.now()
       );
 
+      // Convert Uint8Array proof to hex string for storage/display
+      const proofHex = '0x' + Array.from(proofResponse.proof)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+      
       setProof({
-        proof: proofResponse.proof,
-        publicSignals: proofResponse.public_signals,
+        proof: proofHex,
+        publicSignals: Object.values(proofResponse.publicInputs).map(String),
       });
 
       // In production, submit proof to ProofConsumer contract

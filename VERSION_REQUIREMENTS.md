@@ -9,6 +9,11 @@ This document explains how OmniPriv ensures version consistency across all contr
 | Node.js | 20.11.0 (or 20.x) | `.nvmrc` + preinstall script |
 | pnpm | 8.15.0 (exact) | `package.json` + preinstall script |
 | Package Manager | pnpm only | Preinstall script blocks npm/yarn |
+| Nargo (Noir) | 1.0.0-beta.15 | Manual install via `noirup` |
+| Hardhat | 3.x | `package.json` |
+| Next.js | 14.x | `package.json` |
+| TypeScript | 5.4+ | `package.json` |
+| Solidity | ^0.8.24 | Contract pragma |
 
 ## Enforcement Mechanisms
 
@@ -90,6 +95,42 @@ Run manually with `pnpm verify` to check:
 - ✅ Dependencies installed
 - ✅ Packages built
 - ✅ Environment file configured
+
+### 6. Nargo (Noir) - ZK Circuit Compiler
+
+**Required for:** Compiling and testing ZK circuits (`packages/circuits/`)
+
+**Installation:**
+```bash
+# Install noirup (installer)
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+
+# Reload shell
+source ~/.zshrc  # or ~/.bashrc
+
+# Install nargo
+noirup
+
+# Verify installation
+nargo --version
+# Should output: nargo version = 1.0.0-beta.15
+```
+
+**Usage:**
+```bash
+cd packages/circuits
+
+# Check circuit syntax
+nargo check
+
+# Run circuit tests
+nargo test
+
+# Compile circuit (generates artifacts)
+nargo compile
+```
+
+**Note:** Nargo is installed globally (in `~/.nargo/bin`), not via pnpm. This is the recommended approach from the Noir team.
 
 ## Package.json Configuration
 
@@ -191,17 +232,25 @@ nvm use
 # 4. Install pnpm
 npm install -g pnpm@8.15.0
 
-# 5. Automatic setup
+# 5. Install Nargo (Noir compiler) - Required for ZK circuits
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+source ~/.zshrc  # or ~/.bashrc for bash users
+noirup  # Installs nargo 1.0.0-beta.15
+
+# 6. Verify Nargo installation
+nargo --version  # Should show: nargo version = 1.0.0-beta.15
+
+# 7. Automatic setup
 pnpm setup
 
-# 6. Verify everything
+# 8. Verify everything
 pnpm verify
 
-# 7. Configure environment
+# 9. Configure environment
 cp .env.example .env.local
 # Edit .env.local with your API keys
 
-# 8. Start developing
+# 10. Start developing
 pnpm dev
 ```
 

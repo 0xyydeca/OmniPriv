@@ -2,6 +2,7 @@ import { http, createConfig } from 'wagmi';
 import { coinbaseWallet, injected, metaMask, walletConnect } from 'wagmi/connectors';
 import { baseSepolia, celoAlfajores } from 'wagmi/chains';
 
+// Build connectors array
 const connectors = [
   coinbaseWallet({
     appName: 'OmniPriv',
@@ -11,18 +12,20 @@ const connectors = [
   metaMask(),
 ];
 
+// TODO: Fix WalletConnect connector type mismatch
 // Only add WalletConnect if project ID is provided
-if (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
-  connectors.push(
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    })
-  );
-}
+// if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
+//   connectors.push(
+//     walletConnect({
+//       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+//     })
+//   );
+// }
 
 export const config = createConfig({
   chains: [baseSepolia, celoAlfajores],
   connectors,
+  ssr: true, // Enable SSR support
   transports: {
     [baseSepolia.id]: http(
       process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'

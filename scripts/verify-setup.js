@@ -53,18 +53,20 @@ class SetupVerifier {
     
     try {
       if (fs.existsSync(envPath)) {
-        // Check if it has the required Privy key
+        // Check if it has the required CDP App ID
         const envContent = fs.readFileSync(envPath, 'utf8');
         
-        if (envContent.includes('NEXT_PUBLIC_PRIVY_APP_ID')) {
-          const hasValue = envContent.match(/NEXT_PUBLIC_PRIVY_APP_ID=(.+)/);
-          if (hasValue && hasValue[1] && hasValue[1].trim() !== 'your_privy_app_id_here') {
+        const hasCDPAppId = envContent.includes('NEXT_PUBLIC_CDP_APP_ID');
+        
+        if (hasCDPAppId) {
+          const appIdValue = envContent.match(/NEXT_PUBLIC_CDP_APP_ID=(.+)/);
+          if (appIdValue && appIdValue[1] && appIdValue[1].trim() !== 'your_cdp_app_id_here') {
             this.success.push('.env.local configured ✓');
           } else {
-            this.warnings.push('.env.local exists but NEXT_PUBLIC_PRIVY_APP_ID not set');
+            this.warnings.push('.env.local exists but CDP App ID not set');
           }
         } else {
-          this.warnings.push('.env.local exists but missing NEXT_PUBLIC_PRIVY_APP_ID');
+          this.warnings.push('.env.local exists but missing NEXT_PUBLIC_CDP_APP_ID');
         }
       } else {
         this.warnings.push('.env.local not found (optional for demo mode)');

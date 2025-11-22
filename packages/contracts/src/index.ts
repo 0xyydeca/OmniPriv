@@ -8,11 +8,20 @@ import deployments from '../deployments.json';
 export { deployments };
 
 // Export types
-export interface ContractAddresses {
+// Chain A contracts (Base Sepolia)
+export interface ChainAContracts {
   VaultAnchor: string;
   ProofConsumer: string;
   IdentityOApp: string;
 }
+
+// Chain B contracts (Optimism Sepolia)
+export interface ChainBContracts {
+  OmniPrivVerifier: string;
+}
+
+// Union type for all possible contract configurations
+export type ContractAddresses = ChainAContracts | ChainBContracts | Partial<ChainAContracts & ChainBContracts>;
 
 export interface ChainDeployment {
   chainId: number;

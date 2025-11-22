@@ -7,7 +7,7 @@ import { IdentityOApp } from '../typechain-types';
  */
 const ENDPOINT_IDS = {
   baseSepolia: 40245,
-  celoAlfajores: 40125,
+  optimismSepolia: 40232, // Optimism Sepolia testnet
 };
 
 /**
@@ -16,7 +16,7 @@ const ENDPOINT_IDS = {
  */
 const DEPLOYED_CONTRACTS = {
   baseSepolia: process.env.IDENTITY_OAPP_BASE_SEPOLIA || '',
-  celoAlfajores: process.env.IDENTITY_OAPP_CELO_ALFAJORES || '',
+  optimismSepolia: process.env.OMNIPRIV_VERIFIER_OPTIMISM_SEPOLIA || '',
 };
 
 /**
