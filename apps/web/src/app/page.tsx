@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { LockClosedIcon, GlobeAltIcon, BoltIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { CredentialFlowAnimation } from '@/components/CredentialFlowAnimation';
 import { Navbar } from '@/components/Navbar';
+import { ParticleBackground } from '@/components/ParticleBackground';
 
 // StepItem component with tooltip
 function StepItem({
@@ -84,11 +85,12 @@ export default function Home() {
 
   return (
     <>
+      <ParticleBackground />
       <Navbar />
-      <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32">
+      <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-10">
       <div className="max-w-4xl w-full space-y-6 sm:space-y-8 text-center">
         {/* Hero Section */}
-        <div className="space-y-4">
+        <header className="space-y-4">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -101,37 +103,47 @@ export default function Home() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-gray-200 font-medium"
+            className="text-lg sm:text-xl md:text-2xl text-gray-200 font-medium"
           >
             Privacy-Preserving Cross-Chain Identity
           </motion.p>
-        </div>
+        </header>
 
         {/* Problem Statement */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-200 dark:border-gray-700"
+        <section
+          id="about"
+          className="scroll-mt-20"
         >
-          <p className="text-base sm:text-lg text-gray-800 dark:text-gray-200 font-medium">
-            Verify age, country, or rep privately across any chain.
-          </p>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+            className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-700"
+          >
+            <p className="text-base sm:text-lg text-gray-200 font-medium">
+              Verify age, country, or rep privately across any chain.
+            </p>
+          </motion.div>
+        </section>
 
         {/* Credential Flow Demo Animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
-          className="flex justify-center w-full px-4"
-          aria-label="Credential verification flow demonstration"
+        <section
+          id="demo"
+          className="scroll-mt-20"
         >
-          <CredentialFlowAnimation />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+            className="flex justify-center w-full px-4"
+            aria-label="Credential verification flow demonstration"
+          >
+            <CredentialFlowAnimation />
+          </motion.div>
+        </section>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 w-full">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 w-full">
           {/* Zero-Knowledge Proofs Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -197,16 +209,17 @@ export default function Home() {
               Powered by Privy SDK for instant wallet creation
             </p>
           </motion.div>
-        </div>
+        </section>
 
         {/* User Journey - Stepper Layout */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.4 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700"
-        >
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center text-gray-900 dark:text-gray-100">
+        <section>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+            className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-700"
+          >
+          <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center text-gray-100">
             How It Works
           </h2>
           <div className="space-y-6">
@@ -241,7 +254,8 @@ export default function Home() {
               />
             ))}
           </div>
-        </motion.div>
+          </motion.div>
+        </section>
 
         {/* CTA Button */}
         <motion.div

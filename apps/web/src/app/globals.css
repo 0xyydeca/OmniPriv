@@ -19,11 +19,14 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      135deg,
+      #0f172a 0%,
+      #1e293b 25%,
+      #312e81 50%,
+      #1e293b 75%,
+      #0f172a 100%
+    );
+  background-attachment: fixed;
   min-height: 100vh;
 }
 

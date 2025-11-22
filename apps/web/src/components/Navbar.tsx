@@ -1,8 +1,22 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Navbar() {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/#demo', label: 'Demo' },
+    { href: '/#about', label: 'About' },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname?.startsWith(href);
+  };
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-700 shadow-sm"
@@ -19,6 +33,25 @@ export function Navbar() {
           >
             PrivID
           </Link>
+
+          {/* Navigation Links */}
+          <ul className="flex items-center gap-4 sm:gap-6" role="list">
+            {navLinks.map((link) => (
+              <li key={link.href} role="listitem">
+                <Link
+                  href={link.href}
+                  className={`text-sm sm:text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1 ${
+                    isActive(link.href)
+                      ? 'text-primary-400'
+                      : 'text-gray-300 hover:text-primary-400'
+                  }`}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </nav>
