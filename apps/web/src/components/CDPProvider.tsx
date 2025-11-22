@@ -18,35 +18,41 @@ interface CDPProviderProps {
 }
 
 export function CDPProvider({ children }: CDPProviderProps) {
-  // Get appId (projectId) and targetChainId from environment variables
-  // This matches the documentation pattern: appId={process.env.NEXT_PUBLIC_CDP_APP_ID} targetChainId={84532}
-  // Wrong appId or chainId blocks auth, so these must be correct
-  const appId = process.env.NEXT_PUBLIC_CDP_APP_ID;
-  const targetChainId = Number(process.env.NEXT_PUBLIC_TARGET_CHAIN) || 84532; // Default to Base Sepolia (84532)
+  // Get projectId from environment variable
+  // This is your CDP App ID from https://portal.cdp.coinbase.com/
+  const projectId = process.env.NEXT_PUBLIC_CDP_APP_ID;
 
-  // Only initialize CDP if we have a valid app ID
-  // Wrong appId blocks auth - must be valid CDP App ID from https://portal.cdp.coinbase.com/
-  if (!appId || appId.trim() === '') {
+  // Debug logging (remove in production)
+  if (typeof window !== 'undefined') {
+    console.log('[CDPProvider] Initializing with projectId:', projectId ? `${projectId.substring(0, 10)}...` : 'NOT SET');
+    console.log('[CDPProvider] Current origin:', window.location.origin);
+  }
+
+  // Only initialize CDP if we have a valid project ID
+  // Using 'placeholder' or empty string causes API fetch errors because it's not a valid App ID
+  if (!projectId || projectId.trim() === '') {
     // If CDP is not configured, just render children without CDP provider
     // This prevents the "Failed to fetch" errors
-    console.warn('CDP_APP_ID not configured. CDP features will be disabled.');
+    console.warn('[CDPProvider] CDP_APP_ID not configured. CDP features will be disabled.');
     return <>{children}</>;
   }
 
-  // Render CDPReactProvider with appId and targetChainId
+  // Validate projectId format (should be a non-empty string)
+  if (projectId.length < 10) {
+    console.error('[CDPProvider] CDP_APP_ID appears to be invalid. Expected a longer string from CDP Portal.');
+    return <>{children}</>;
+  }
+
+  // Render CDPReactProvider with valid projectId
   // CDPReactProvider internally wraps CDPHooksProvider which provides the hooks context
-  // This wrapper provides context for wallet hooks; wrong appId or chainId blocks auth
   return (
     <CDPReactProvider
       config={{
-        projectId: appId, // Same as appId in docs - this is your CDP App ID
+        projectId: projectId,
         ethereum: {
           createOnLogin: 'eoa', // Create EVM account on login
         },
         authMethods: ['email'], // Enable email authentication
-        appName: 'OmniPriv', // Your app name
-        // Note: targetChainId is configured via environment variable
-        // Chain ID 84532 = Base Sepolia (default)
       }}
     >
       {children}
