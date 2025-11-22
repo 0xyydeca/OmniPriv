@@ -6,6 +6,9 @@ import { VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePu
 import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
 import { CrossChainStatus } from './CrossChainStatus';
 import { Stepper, type Step, type StepState } from './Stepper';
+import { CopyButton } from './CopyButton';
+import { useToast } from './Toast';
+import { formatTxHash } from '@/lib/clipboard';
 import { ethers } from 'ethers';
 
 interface VerifyProofProps {
@@ -14,6 +17,7 @@ interface VerifyProofProps {
 
 export function VerifyProof({ credentials }: VerifyProofProps) {
   const { address } = useAccount();
+  const { showToast } = useToast();
   const [selectedCredential, setSelectedCredential] = useState<string>('');
   const [policyType, setPolicyType] = useState<'kyc' | 'age' | 'country'>('kyc');
   const [ageThreshold, setAgeThreshold] = useState(18);
@@ -63,6 +67,10 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       setLoading(true);
       setResult(null);
       setProof(null);
+      
+      // Reset stepper
+      setSteps(steps => steps.map(s => ({ ...s, state: 'idle' })));
+      updateStepState('proof', 'in_progress');
 
       if (!selectedCredential) {
         throw new Error('Please select a credential');
@@ -97,6 +105,7 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       const passes = evaluatePredicate(mockCredentialData, predicate);
 
       if (!passes) {
+        updateStepState('proof', 'error');
         setResult({
           success: false,
           message: 'Credential does not satisfy the policy requirements',
@@ -140,17 +149,24 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
         publicSignals: publicSignalsBytes32,
       });
 
+      // Mark proof step as complete
+      updateStepState('proof', 'done');
+
       setResult({
         success: true,
         message: '✅ Proof generated! Click "Submit to Base Sepolia" to verify on-chain.',
       });
+      
+      showToast('✅ ZK Proof generated successfully!', 'success');
 
     } catch (err: any) {
       console.error('Verification failed:', err);
+      updateStepState('proof', 'error');
       setResult({
         success: false,
         message: err.message || 'Verification failed',
       });
+      showToast(`❌ Proof generation failed: ${err.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -161,6 +177,7 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
 
     try {
       setLoading(true);
+      updateStepState('submit', 'in_progress');
       setResult({
         success: true,
         message: '📡 Submitting proof to Base Sepolia...',
@@ -179,13 +196,29 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
       });
     } catch (err: any) {
       console.error('Failed to submit proof:', err);
+      updateStepState('submit', 'error');
       setResult({
         success: false,
         message: err.message || 'Failed to submit proof to chain',
       });
+      showToast(`❌ Failed to submit proof: ${err.message}`, 'error');
       setLoading(false);
     }
   };
+
+  // Watch for transaction success
+  useEffect(() => {
+    if (isTxSuccess) {
+      updateStepState('submit', 'done');
+      updateStepState('layerzero', 'in_progress');
+      setLoading(false);
+      setResult({
+        success: true,
+        message: '✅ Proof verified on Base Sepolia! LayerZero message sending...',
+      });
+      showToast(`✅ Proof verified on Base Sepolia! Tx: ${formatTxHash(hash)}`, 'success');
+    }
+  }, [isTxSuccess, hash, showToast]);
 
   // Update result when transaction confirms
   if (isTxSuccess && loading) {
@@ -313,6 +346,14 @@ export function VerifyProof({ credentials }: VerifyProofProps) {
               >
                 {result.message}
               </p>
+            </div>
+          )}
+
+          {/* Verification Stepper */}
+          {proof && (
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 mb-6">
+              <h3 className="text-lg font-semibold mb-4 text-gray-100">Verification Progress</h3>
+              <Stepper steps={steps} />
             </div>
           )}
 

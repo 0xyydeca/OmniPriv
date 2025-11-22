@@ -53,8 +53,12 @@ export default function ConnectWallet() {
       <AuthButton
         signOutButton={({ onSuccess }) => (
           <button
-            onClick={onSuccess}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            onClick={() => {
+              console.log('Disconnecting CDP wallet...');
+              onSuccess();
+              console.log('CDP wallet disconnected');
+            }}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
           >
             Disconnect
           </button>
@@ -66,9 +70,20 @@ export default function ConnectWallet() {
             Connect with CDP
           </button>
         )}
-        onSignInSuccess={() => {
-          // Address will be available via useEvmAddress hook after successful sign-in
-          console.log('Signed in successfully');
+        onSignInSuccess={(address) => {
+          console.log('✅ CDP Sign-in successful!');
+          console.log('Address:', address);
+          // Optionally show a toast
+          if (typeof window !== 'undefined') {
+            console.log('Wallet connected:', address);
+          }
+        }}
+        onSignOutSuccess={() => {
+          console.log('✅ CDP Sign-out successful!');
+          // Optionally show a toast
+          if (typeof window !== 'undefined') {
+            console.log('Wallet disconnected');
+          }
         }}
       />
     </div>

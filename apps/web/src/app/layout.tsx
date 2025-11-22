@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 import { CDPProvider } from '@/components/CDPProvider';
 import { ModalBackdropFix } from '@/components/ModalBackdropFix';
+import { ToastProvider } from '@/components/Toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,8 +26,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <CDPProvider>
           <Providers>
-            <ModalBackdropFix />
-            {children}
+            <ToastProvider>
+              <ModalBackdropFix />
+              {children}
+            </ToastProvider>
           </Providers>
         </CDPProvider>
       </body>
