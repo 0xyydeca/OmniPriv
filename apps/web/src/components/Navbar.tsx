@@ -9,8 +9,8 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/#demo', label: 'Demo' },
-    { href: '/#about', label: 'About' },
+    { href: '/vault', label: 'Vault' },
+    { href: '/dapp', label: 'Demo dApp' },
   ];
 
   const isActive = (href: string) => {
@@ -29,10 +29,15 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
             aria-label="OmniPriv Home"
           >
-            OmniPriv
+            <span className="text-xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
+              OmniPriv
+            </span>
+            <span className="hidden sm:inline text-xs text-gray-400 font-normal">
+              Privacy-first cross-chain identity
+            </span>
           </Link>
 
           <div className="flex items-center gap-4 sm:gap-6">

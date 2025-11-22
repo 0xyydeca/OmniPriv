@@ -12,7 +12,7 @@ interface Toast {
 }
 
 interface ToastContextType {
-  showToast: (message: string, type: ToastType) => void;
+  showToast: (options: { message: string; type?: ToastType; link?: string }) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -22,8 +22,8 @@ export function useToast() {
   if (!context) {
     // Return a no-op implementation if used outside provider (SSR safety)
     return {
-      showToast: (message: string, type: ToastType = 'info') => {
-        console.log('[Toast]', type, message);
+      showToast: (options: { message: string; type?: ToastType; link?: string }) => {
+        console.log('[Toast]', options.type || 'info', options.message);
       }
     };
   }
@@ -33,9 +33,9 @@ export function useToast() {
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastType = 'info') => {
+  const showToast = useCallback((options: { message: string; type?: ToastType; link?: string }) => {
     const id = Math.random().toString(36).substring(7);
-    const newToast: Toast = { id, message, type };
+    const newToast: Toast = { id, message: options.message, type: options.type || 'info' };
     
     setToasts((prev) => [...prev, newToast]);
 

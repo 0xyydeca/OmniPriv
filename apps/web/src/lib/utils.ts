@@ -18,6 +18,33 @@ export function formatAddress(address: string | null | undefined): string {
 export const truncateAddress = formatAddress;
 
 /**
+ * Get block explorer link for a chain
+ */
+export function getBlockExplorerLink(
+  chainId: number,
+  hash: string,
+  type: 'transaction' | 'address' | 'block' = 'transaction'
+): string {
+  const explorers: Record<number, string> = {
+    84532: 'https://sepolia.basescan.org', // Base Sepolia
+    11155420: 'https://sepolia-optimism.etherscan.io', // Optimism Sepolia
+    1: 'https://etherscan.io', // Ethereum Mainnet
+    10: 'https://optimistic.etherscan.io', // Optimism
+    8453: 'https://basescan.org', // Base
+  };
+
+  const baseUrl = explorers[chainId] || 'https://etherscan.io';
+  
+  if (type === 'transaction') {
+    return `${baseUrl}/tx/${hash}`;
+  } else if (type === 'address') {
+    return `${baseUrl}/address/${hash}`;
+  } else {
+    return `${baseUrl}/block/${hash}`;
+  }
+}
+
+/**
  * Truncate text to a maximum length
  */
 export function truncate(text: string, maxLength: number): string {

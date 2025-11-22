@@ -76,7 +76,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isConnected) {
-      router.push('/dashboard');
+      router.push('/vault');
     }
   }, [isConnected, router]);
 
@@ -298,13 +298,22 @@ export default function Home() {
           transition={{ duration: 0.6, delay: 1.6 }}
           className="pt-8"
         >
-          <button
-            onClick={handleGetStarted}
-            className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            aria-label="Get started with OmniPriv"
-          >
-            Get Started →
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={() => router.push('/vault')}
+              className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+              aria-label="Go to Vault"
+            >
+              Go to Vault →
+            </button>
+            <button
+              onClick={() => router.push('/dapp')}
+              className="px-8 sm:px-12 py-3 sm:py-4 bg-gray-700 hover:bg-gray-600 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+              aria-label="Open Demo dApp"
+            >
+              Open Demo dApp →
+            </button>
+          </div>
         </motion.div>
 
         {/* Footer */}

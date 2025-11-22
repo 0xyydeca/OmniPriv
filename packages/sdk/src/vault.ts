@@ -5,7 +5,7 @@ interface VaultDB extends DBSchema {
   credentials: {
     key: string;
     value: VaultRecord;
-    indexes: { 'by-expiry': number; 'by-added': number };
+    indexes: { 'by-added': number };
   };
 }
 
@@ -28,7 +28,7 @@ export class Vault {
       upgrade(db) {
         if (!db.objectStoreNames.contains('credentials')) {
           const store = db.createObjectStore('credentials', { keyPath: 'id' });
-          store.createIndex('by-expiry', 'credential.expiry');
+          // Don't use nested paths for indexes - just use top-level fields
           store.createIndex('by-added', 'addedAt');
         }
       },
