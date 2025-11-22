@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ConnectWallet from './ConnectWallet';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -52,6 +53,9 @@ export function Navbar() {
               </li>
             ))}
           </ul>
+
+          {/* Connect Wallet Button */}
+          <ConnectWallet />
         </div>
       </div>
     </nav>
