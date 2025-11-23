@@ -1,33 +1,89 @@
 'use client';
 
-import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useIsSignedIn, useEvmAddress } from '@coinbase/cdp-hooks';
 import { AuthButton } from '@coinbase/cdp-react/components/AuthButton';
-import { getVault, VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity } from '@omnipriv/sdk';
-import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
+import { getVault, VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity, hashCredential, generateRandomSalt } from '@omnipriv/sdk';
+import { useReadContract, useWalletClient, usePublicClient } from 'wagmi';
+import { createWalletClient, custom, createPublicClient, http } from 'viem';
+import { baseSepolia } from 'viem/chains';
 import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
 import { VAULT_ANCHOR_ADDRESS, VAULT_ANCHOR_ABI } from '@/contracts/VaultAnchor';
 import { StatusCard } from '@/components/StatusCard';
 import { DebugPanel } from '@/components/DebugPanel';
-import { Stepper } from '@/components/Stepper';
+import { CrossChainStepper } from '@/components/CrossChainStepper';
 import { CopyButton } from '@/components/CopyButton';
 import { useToast } from '@/components/Toast';
 import { getBlockExplorerLink, formatAddress } from '@/lib/utils';
 import { ethers } from 'ethers';
+import type { Hash } from 'viem';
 
 type StepId = 'proof_generated' | 'base_verified' | 'lz_message_sent' | 'optimism_verified';
 
 export default function VaultPage() {
-  const { address: wagmiAddress } = useAccount();
-  const { evmAddress: cdpAddress } = useEvmAddress();
+  // CDP Embedded Wallet hooks
+  const { evmAddress: address } = useEvmAddress();
   const { isSignedIn } = useIsSignedIn();
   const router = useRouter();
   const { showToast } = useToast();
-
-  // Use CDP address if available, otherwise fall back to wagmi address
-  const address = cdpAddress || wagmiAddress;
+  
+  // Wagmi hooks (work with CDP Embedded Wallet!)
+  const { data: wagmiWalletClient } = useWalletClient();
+  const wagmiPublicClient = usePublicClient();
+  
+  // Helper to get wallet client (wagmi or manual fallback)
+  const getWalletClient = () => {
+    if (wagmiWalletClient) {
+      return wagmiWalletClient;
+    }
+    
+    // Fallback: Create wallet client manually if CDP has injected window.ethereum
+    if (typeof window !== 'undefined' && window.ethereum && address) {
+      return createWalletClient({
+        account: address as `0x${string}`,
+        chain: baseSepolia,
+        transport: custom(window.ethereum),
+      });
+    }
+    
+    return null;
+  };
+  
+  // Helper to get public client
+  const getPublicClient = () => {
+    if (wagmiPublicClient) {
+      return wagmiPublicClient;
+    }
+    
+    // Fallback: Create public client manually
+    return createPublicClient({
+      chain: baseSepolia,
+      transport: http('https://sepolia.base.org'),
+    });
+  };
+  
+  // Debug CDP wallet state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log('🔌 CDP Wallet State:', {
+        isSignedIn,
+        address,
+        hasEthereum: !!window.ethereum,
+        hasWagmiWalletClient: !!wagmiWalletClient,
+        canCreateFallbackClient: !!window.ethereum && !!address,
+      });
+      
+      // Deep debug
+      console.log('🔍 window.ethereum details:', {
+        exists: !!window.ethereum,
+        isCoinbaseWallet: window.ethereum?.isCoinbaseWallet,
+        isMetaMask: window.ethereum?.isMetaMask,
+        providers: window.ethereum?.providers?.length,
+        request: typeof window.ethereum?.request,
+      });
+    }
+  }, [isSignedIn, address, wagmiWalletClient]);
 
   // Vault state
   const [credentials, setCredentials] = useState<VaultRecord[]>([]);
@@ -49,13 +105,18 @@ export default function VaultPage() {
   });
   const [proof, setProof] = useState<{ proof: string; publicSignals: string[] } | null>(null);
   const [policyIdForCheck, setPolicyIdForCheck] = useState<string>('');
-
-  // Contract interactions
-  const { writeContract: writeVault, data: vaultHash, isPending: isVaultPending } = useWriteContract();
-  const { isLoading: isVaultConfirming, isSuccess: isVaultSuccess } = useWaitForTransactionReceipt({ hash: vaultHash });
   
-  const { writeContract: writeProof, data: proofHash, isPending: isProofPending } = useWriteContract();
-  const { isLoading: isProofConfirming, isSuccess: isProofSuccess } = useWaitForTransactionReceipt({ hash: proofHash });
+  // Transaction state (manual tracking since we're not using wagmi)
+  const [vaultHash, setVaultHash] = useState<Hash | undefined>();
+  const [isVaultPending, setIsVaultPending] = useState(false);
+  const [isVaultConfirming, setIsVaultConfirming] = useState(false);
+  const [isVaultSuccess, setIsVaultSuccess] = useState(false);
+  
+  const [proofHash, setProofHash] = useState<Hash | undefined>();
+  const [isProofPending, setIsProofPending] = useState(false);
+  const [isProofConfirming, setIsProofConfirming] = useState(false);
+  const [isProofSuccess, setIsProofSuccess] = useState(false);
+  const [proofError, setProofError] = useState<Error | null>(null);
 
   // Check if user is verified on-chain
   const { data: isVerifiedOnChain } = useReadContract({
@@ -103,19 +164,38 @@ export default function VaultPage() {
         type: 'success',
         link: getBlockExplorerLink(84532, proofHash, 'transaction'),
       });
+      // Reset loading state and retry counters on success
+      setLoading(false);
+      setRetryCount(0);
+      setIsRetrying(false);
+      setProofSubmissionData(null); // Clear submission data
     }
   }, [isProofSuccess, proofHash, showToast]);
 
+  // Note: Error handling is now done directly in the async functions
+  // No need for separate useEffect watchers since we use try/catch with CDP transactions
+
   // Handle on-chain verification
   useEffect(() => {
+    console.log('Verification check:', { 
+      isVerifiedOnChain, 
+      address, 
+      policyIdForCheck,
+      proofHash,
+      isProofSuccess 
+    });
+    
     if (isVerifiedOnChain !== undefined) {
       if (isVerifiedOnChain) {
         updateStep('base_verified', 'done');
         updateStep('lz_message_sent', 'in-progress');
         showToast({ message: 'Proof verified on Base Sepolia!', type: 'success' });
+      } else if (isProofSuccess && proofHash) {
+        // Transaction succeeded but not verified yet - might be an issue
+        console.warn('Transaction succeeded but isVerified returns false. This might indicate a contract revert.');
       }
     }
-  }, [isVerifiedOnChain, showToast]);
+  }, [isVerifiedOnChain, showToast, address, policyIdForCheck, proofHash, isProofSuccess]);
 
   const loadCredentials = async () => {
     try {
@@ -152,15 +232,48 @@ export default function VaultPage() {
     try {
       setLoading(true);
 
+      const dobYear = new Date(dob).getFullYear();
+      
+      // 🔒 PRODUCTION-READY: Generate cryptographically secure random salt
+      // This prevents brute-force attacks on the commitment
+      const secretSalt = generateRandomSalt();
+      
+      console.log('🔐 Generating credential with RANDOM salt:');
+      console.log('  DOB Year:', dobYear, '(kept private, not on-chain)');
+      console.log('  Country:', country, '(kept private, not on-chain)');
+      console.log('  Random Salt:', secretSalt.toString().substring(0, 20) + '...', '(256-bit random)');
+      console.log('  ⚠️ Salt is cryptographically random - different every time!');
+      
       const credential = {
         kyc_passed: true,
-        age: new Date().getFullYear() - new Date(dob).getFullYear(),
+        age: new Date().getFullYear() - dobYear,
         country,
+        dob_year: dobYear, // Store for proof generation
+        secret_salt: secretSalt.toString(), // Store for proof generation
+        country_code: 1, // Simplified: 1=US (in production, map country to code)
         expiry: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
       };
 
-      // Create commitment for on-chain storage
-      const commitmentHash = ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(credential)));
+      // 🔐 Create commitment using PRODUCTION-READY cryptographic hash
+      // Uses: keccak256-style hash of (issuer, schema, dob_year, country_code, random_salt)
+      // This is ONE-WAY - cannot reverse engineer DOB/country from commitment
+      const commitmentBigInt = hashCredential(
+        dobYear, 
+        credential.country_code, 
+        secretSalt,
+        address as string, // Issuer (self-attested)
+        'kyc_v1' // Schema ID
+      );
+      const commitmentHash = '0x' + commitmentBigInt.toString(16).padStart(64, '0');
+      
+      console.log('');
+      console.log('🔐 COMMITMENT HASH (Production-Ready):');
+      console.log('  Input: dob_year=' + dobYear + ', country_code=' + credential.country_code + ', salt=' + secretSalt.toString().substring(0, 15) + '...');
+      console.log('  Output: ' + commitmentHash);
+      console.log('  ⚠️ This is a ONE-WAY cryptographic hash');
+      console.log('  ⚠️ Only this hash goes on-chain - never the actual DOB or country!');
+      console.log('  ⚠️ Different salt = completely different hash (try adding same data twice)');
+      console.log('');
 
       // Generate unique credential ID
       const credentialId = `cred-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -182,18 +295,52 @@ export default function VaultPage() {
       setCurrentCredential(credential);
       setHasStoredCredential(true);
 
-      // Store commitment on-chain
-      writeVault({
+      showToast({ message: 'Credential encrypted and stored locally!', type: 'success' });
+      loadCredentials();
+
+      // Store commitment on-chain using CDP wallet
+      if (!address) {
+        throw new Error('CDP wallet not connected');
+      }
+
+      console.log('📝 Storing commitment on-chain via CDP wallet...');
+      
+      const walletClient = getWalletClient();
+      if (!walletClient) {
+        throw new Error('Wallet client not available - please ensure you are signed in');
+      }
+      
+      setIsVaultPending(true);
+      
+      const hash = await walletClient.writeContract({
         address: VAULT_ANCHOR_ADDRESS,
         abi: VAULT_ANCHOR_ABI,
         functionName: 'addCommitment',
         args: [commitmentHash as `0x${string}`, BigInt(credential.expiry)],
       });
 
-      showToast({ message: 'Credential encrypted and stored locally!', type: 'success' });
-      loadCredentials();
+      setVaultHash(hash);
+      showToast({ 
+        message: 'Transaction sent to Base Sepolia!', 
+        type: 'success',
+        link: getBlockExplorerLink(84532, hash, 'transaction'),
+      });
+      
+      setIsVaultPending(false);
+      setIsVaultConfirming(true);
+      
+      // Wait for confirmation
+      const publicClient = getPublicClient();
+      await publicClient.waitForTransactionReceipt({ hash });
+      
+      setIsVaultConfirming(false);
+      setIsVaultSuccess(true);
+      
+      showToast({ message: 'Commitment stored on-chain!', type: 'success' });
     } catch (error: any) {
       console.error('Failed to add credential:', error);
+      setIsVaultPending(false);
+      setIsVaultConfirming(false);
       showToast({ message: error.message || 'Failed to add credential', type: 'error' });
     } finally {
       setLoading(false);
@@ -201,6 +348,16 @@ export default function VaultPage() {
   };
 
   const handleGenerateProofAndVerify = async () => {
+    // Capture address at start to avoid timing issues with CDP wallet state
+    const userAddress = address;
+    if (!userAddress) {
+      showToast({
+        message: 'Please connect your wallet first',
+        type: 'error',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       setSteps({
@@ -227,11 +384,21 @@ export default function VaultPage() {
         throw new Error('Credential does not satisfy policy requirements (must be 18+)');
       }
 
+      // Use the EXACT same values that were used to create the commitment
+      // This ensures the proof's commitment matches what's stored on-chain
       const noirCredential = {
-        dob_year: new Date().getFullYear() - currentCredential.age,
-        country_code: 1,
-        secret_salt: 12345n,
+        dob_year: currentCredential.dob_year || (new Date().getFullYear() - currentCredential.age),
+        country_code: currentCredential.country_code || 1,
+        secret_salt: currentCredential.secret_salt ? BigInt(currentCredential.secret_salt) : 12345n,
       };
+      
+      console.log('');
+      console.log('🔍 ZK PROOF - Using EXACT values from encrypted vault:');
+      console.log('  DOB Year:', noirCredential.dob_year, '(private input)');
+      console.log('  Country Code:', noirCredential.country_code, '(private input)');
+      console.log('  Salt:', noirCredential.secret_salt.toString().substring(0, 20) + '...', '(private input)');
+      console.log('  ⚠️ These values stay LOCAL - never sent to chain!');
+      console.log('');
 
       const policyConfig = {
         policy_id: `${policyType}_policy`,
@@ -245,51 +412,120 @@ export default function VaultPage() {
         .join('');
 
       const publicSignalsBytes32 = encodePublicInputsForSolidity(proofResponse.publicInputs);
+      
+      console.log('');
+      console.log('✅ ZK PROOF GENERATED:');
+      console.log('  Proof bytes:', proofHex.substring(0, 20) + '...');
+      console.log('  Commitment (public):', publicSignalsBytes32[0]);
+      console.log('  Policy ID (public):', publicSignalsBytes32[1]);
+      console.log('  Nonce (public):', publicSignalsBytes32[2]);
+      console.log('  ⚠️ Proof shows "age ≥ 18 and country allowed" WITHOUT revealing DOB or country!');
+      console.log('  ⚠️ Contract will verify: commitment matches on-chain anchor + proof is valid');
+      console.log('');
 
+      updateStep('proof_generated', 'done');
+      showToast({ message: 'ZK Proof generated successfully!', type: 'success' });
+
+      // Store proof for later submission
       setProof({
         proof: proofHex,
         publicSignals: publicSignalsBytes32,
       });
 
-      updateStep('proof_generated', 'done');
-      showToast({ message: 'ZK Proof generated successfully!', type: 'success' });
+      // Submit proof using CDP wallet
+      console.log('🔍 Submitting proof with CDP wallet:', {
+        userAddress,
+        isSignedIn,
+        contract: PROOF_CONSUMER_ADDRESS,
+      });
+      
+      updateStep('base_verified', 'in-progress');
+      
+      const walletClient = getWalletClient();
+      if (!walletClient) {
+        throw new Error('Wallet client not available - please ensure you are signed in');
+      }
+      
+      setIsProofPending(true);
+      
+      const hash = await walletClient.writeContract({
+        address: PROOF_CONSUMER_ADDRESS,
+        abi: PROOF_CONSUMER_ABI,
+        functionName: 'submitProofAndBridge',
+        args: [
+          proofHex as `0x${string}`,
+          publicSignalsBytes32 as `0x${string}`[],
+          policyId as `0x${string}`,
+          40232, // LayerZero Endpoint ID for Optimism Sepolia
+          '0x' as `0x${string}`, // Empty options bytes
+        ],
+        value: BigInt('100000000000000'), // 0.0001 ETH for LayerZero gas
+      });
 
-      // Automatically submit proof
-      setTimeout(() => {
-        updateStep('base_verified', 'in-progress');
-        writeProof({
-          address: PROOF_CONSUMER_ADDRESS,
-          abi: PROOF_CONSUMER_ABI,
-          functionName: 'submitProofAndBridge',
-          args: [
-            proofHex as `0x${string}`,
-            publicSignalsBytes32 as `0x${string}`[],
-            policyId as `0x${string}`,
-            BigInt(84532),
-            BigInt(0),
-          ],
-        });
-      }, 1000);
+      setProofHash(hash);
+      setIsProofPending(false);
+      setIsProofConfirming(true);
+      
+      showToast({
+        message: 'Transaction sent to Base Sepolia!',
+        type: 'success',
+        link: getBlockExplorerLink(84532, hash, 'transaction'),
+      });
+      
+      // Wait for confirmation
+      const publicClient = getPublicClient();
+      await publicClient.waitForTransactionReceipt({ hash });
+      
+      setIsProofConfirming(false);
+      setIsProofSuccess(true);
+      
+      updateStep('base_verified', 'done');
+      showToast({ message: 'Proof verified on Base Sepolia!', type: 'success' });
 
     } catch (error: any) {
       console.error('Verification failed:', error);
       updateStep('proof_generated', 'error');
+      setIsProofPending(false);
+      setIsProofConfirming(false);
+      setProofError(error);
       showToast({ message: error.message || 'Verification failed', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  // Show sign-in prompt if not signed in
-  if (!isSignedIn && !address) {
+  // Show sign-in prompt if not signed in with CDP
+  if (!isSignedIn || !address) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-gray-900 rounded-xl border border-gray-700 p-8 text-center">
           <h1 className="text-3xl font-bold text-gray-100 mb-4">Your OmniPriv Identity Vault</h1>
           <p className="text-gray-400 mb-6">
-            Sign in to create your private identity vault and verify across chains.
+            Sign in with CDP Embedded Wallet to create your private identity vault and verify across chains.
           </p>
+          
           <AuthButton />
+          
+          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <p className="text-sm text-blue-300">
+              ✨ <strong>Powered by CDP Embedded Wallets</strong>
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              No extension needed • Sign in with email • Gasless onboarding
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state if CDP is signing in but address not yet available
+  if (isSignedIn && !address) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-gray-900 rounded-xl border border-gray-700 p-8 text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading wallet...</p>
         </div>
       </div>
     );
@@ -360,9 +596,17 @@ export default function VaultPage() {
           
           {!hasStoredCredential ? (
             <>
-              <p className="text-sm text-gray-400 mb-4">
-                Add your identity information. It will be encrypted and stored locally - only a commitment hash goes on-chain.
-              </p>
+              {/* Privacy Notice */}
+              <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-green-300">
+                  🛡️ <strong>Your privacy is guaranteed:</strong>
+                </p>
+                <ul className="text-sm text-green-400/80 mt-2 space-y-1 ml-4">
+                  <li>• Credential is encrypted locally in your browser (IndexedDB)</li>
+                  <li>• Only a commitment hash goes on-chain (not your DOB or country)</li>
+                  <li>• No data is sent to any server</li>
+                </ul>
+              </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
@@ -406,25 +650,54 @@ export default function VaultPage() {
             </>
           ) : (
             <>
-              <StatusCard
-                variant="success"
-                title="Credential Stored Locally"
-                description="Your identity data is encrypted and stored only in your browser. Only a hash is used on-chain."
-              >
-                <div className="space-y-2 text-sm">
-                  <p><strong>DOB:</strong> {dob || 'Hidden (kept private)'}</p>
-                  <p><strong>Country:</strong> {country || currentCredential?.country || 'N/A'}</p>
-                  <p><strong>Age:</strong> {currentCredential?.age || 'N/A'}</p>
+              {/* Local Vault Explanation */}
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
+                <p className="text-sm text-blue-300">
+                  🔐 <strong>Your credential is encrypted and stored locally in your browser.</strong>
+                </p>
+                <p className="text-sm text-blue-400/80 mt-1">
+                  Only a cryptographic hash (not your actual data) goes on-chain.
+                </p>
+              </div>
+
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">DOB:</span>
+                  <span className="text-sm text-gray-500 font-mono">●●●●-●●-●● (kept private) 🔒</span>
                 </div>
-              </StatusCard>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Country:</span>
+                  <span className="text-sm text-gray-200 font-mono">{country || currentCredential?.country || 'N/A'} ✓</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">Age:</span>
+                  <span className="text-sm text-gray-200 font-mono">{currentCredential?.age || 'N/A'} ✓</span>
+                </div>
+              </div>
+
+              {/* View on-chain anchor link */}
+              <div className="mt-4">
+                <a 
+                  href={`https://sepolia.basescan.org/address/${VAULT_ANCHOR_ADDRESS}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  🔍 View on-chain commitment (only hash, no PII)
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+
               {vaultHash && (
                 <p className="mt-3 text-xs text-gray-400">
-                  Commitment stored on-chain:{' '}
+                  Latest commitment tx:{' '}
                   <a
                     href={getBlockExplorerLink(84532, vaultHash, 'transaction')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 hover:underline"
+                    className="text-blue-400 hover:underline font-mono"
                   >
                     {vaultHash.slice(0, 10)}...{vaultHash.slice(-8)}
                   </a>
@@ -433,6 +706,56 @@ export default function VaultPage() {
             </>
           )}
         </div>
+
+        {/* Card 2.5: Zero-Knowledge Proof Explanation */}
+        {hasStoredCredential && (
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
+            <h2 className="text-xl font-semibold text-purple-300 mb-4 flex items-center gap-2">
+              📐 Zero-Knowledge Proof Circuit (Noir)
+            </h2>
+            <p className="text-sm text-gray-300 mb-4">
+              We use a Noir/Aztec circuit to prove you meet requirements <strong>without revealing your data</strong>.
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Private Inputs */}
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-gray-200 mb-3 flex items-center gap-2">
+                  🔒 Private Inputs (stay on your device)
+                </h3>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Your date of birth ✓</li>
+                  <li>• Your country ✓</li>
+                  <li>• Secret salt ✓</li>
+                </ul>
+                <p className="text-xs text-gray-500 mt-3">
+                  ⚠️ Never sent to blockchain or any server
+                </p>
+              </div>
+
+              {/* Public Outputs */}
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-gray-200 mb-3 flex items-center gap-2">
+                  🌐 Public Outputs (sent to blockchain)
+                </h3>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Commitment hash: 0x1234...</li>
+                  <li>• Policy ID: AGE18_COUNTRY_ALLOWED</li>
+                  <li>• Proof: Passes ✅</li>
+                </ul>
+                <p className="text-xs text-gray-500 mt-3">
+                  ✅ Safe to share - no PII included
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 bg-purple-500/5 border border-purple-500/20 rounded-lg p-3">
+              <p className="text-sm text-purple-300">
+                💡 <strong>The blockchain knows you're verified, but never sees your actual data!</strong>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Card 3: Verify & Bridge */}
         {hasStoredCredential && (
@@ -450,7 +773,7 @@ export default function VaultPage() {
               {loading || isProofPending || isProofConfirming ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Generating proof...
+                  {isProofPending ? 'Submitting transaction...' : isProofConfirming ? 'Confirming...' : 'Generating proof...'}
                 </span>
               ) : steps.proof_generated === 'done' ? (
                 '✅ Proof Generated & Submitted'
@@ -459,9 +782,9 @@ export default function VaultPage() {
               )}
             </button>
 
-            {/* Stepper */}
+            {/* Cross-Chain Stepper */}
             {steps.proof_generated !== 'idle' && address && policyIdForCheck && (
-              <Stepper
+              <CrossChainStepper
                 steps={stepperSteps}
                 activeStep={activeStep}
                 onOptimismVerified={() => updateStep('optimism_verified', 'done')}

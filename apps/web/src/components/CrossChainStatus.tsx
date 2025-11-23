@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useReadContract } from 'wagmi';
-import { OMNIPRIV_VERIFIER_ADDRESS, OMNIPRIV_VERIFIER_ABI, OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/OmniPrivVerifier';
+import { IDENTITY_OAPP_ADDRESS, IDENTITY_OAPP_ABI, OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/IdentityOApp';
 import { CheckCircleIcon, ClockIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 interface CrossChainStatusProps {
@@ -27,9 +27,10 @@ export function CrossChainStatus({ userAddress, policyId, baseTxHash, baseVerifi
   ]);
 
   // Poll destination chain for verification status
+  // ✅ Fixed: Query IdentityOApp (which actually receives messages)
   const { data: isVerifiedOnOptimism, refetch } = useReadContract({
-    address: OMNIPRIV_VERIFIER_ADDRESS,
-    abi: OMNIPRIV_VERIFIER_ABI,
+    address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
+    abi: IDENTITY_OAPP_ABI,
     functionName: 'isVerified',
     args: [userAddress, policyId],
     chainId: OPTIMISM_SEPOLIA_CHAIN_ID,
@@ -39,17 +40,20 @@ export function CrossChainStatus({ userAddress, policyId, baseTxHash, baseVerifi
     },
   });
 
-  // Get expiry from destination chain
-  const { data: destExpiry } = useReadContract({
-    address: OMNIPRIV_VERIFIER_ADDRESS,
-    abi: OMNIPRIV_VERIFIER_ABI,
-    functionName: 'getExpiry',
+  // Get verification details from destination chain
+  const { data: verification } = useReadContract({
+    address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
+    abi: IDENTITY_OAPP_ABI,
+    functionName: 'getVerification',
     args: [userAddress, policyId],
     chainId: OPTIMISM_SEPOLIA_CHAIN_ID,
     query: {
       enabled: !!isVerifiedOnOptimism,
     },
   });
+
+  // Extract expiry from verification
+  const destExpiry = verification ? verification.expiry : undefined;
 
   // Update steps based on verification status
   useEffect(() => {

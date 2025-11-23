@@ -6,7 +6,7 @@ import { useEvmAddress, useIsSignedIn } from '@coinbase/cdp-hooks';
 import { AuthButton } from '@coinbase/cdp-react/components/AuthButton';
 import { optimismSepolia } from 'wagmi/chains';
 import { OPTIMISM_SEPOLIA_CONTRACTS } from '@omnipriv/sdk';
-import { OMNIPRIV_VERIFIER_ABI } from '@/contracts/OmniPrivVerifier';
+import { IDENTITY_OAPP_ABI, IDENTITY_OAPP_ADDRESS } from '@/contracts/IdentityOApp';
 import { CheckCircleIcon, XCircleIcon, GiftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { StatusCard } from '@/components/StatusCard';
 import { DebugPanel } from '@/components/DebugPanel';
@@ -28,9 +28,10 @@ export default function DAppPage() {
   const policyId = ethers.keccak256(ethers.toUtf8Bytes('kyc_policy')) as `0x${string}`;
   
   // Check verification status on Optimism Sepolia
+  // ✅ Fixed: Query IdentityOApp (which actually receives messages)
   const { data: isVerified, isLoading, refetch } = useReadContract({
-    address: OPTIMISM_SEPOLIA_CONTRACTS.OmniPrivVerifier,
-    abi: OMNIPRIV_VERIFIER_ABI,
+    address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
+    abi: IDENTITY_OAPP_ABI,
     functionName: 'isVerified',
     args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
     chainId: optimismSepolia.id,
@@ -40,10 +41,11 @@ export default function DAppPage() {
     },
   });
 
-  const { data: expiry } = useReadContract({
-    address: OPTIMISM_SEPOLIA_CONTRACTS.OmniPrivVerifier,
-    abi: OMNIPRIV_VERIFIER_ABI,
-    functionName: 'getExpiry',
+  // Get full verification details
+  const { data: verification } = useReadContract({
+    address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
+    abi: IDENTITY_OAPP_ABI,
+    functionName: 'getVerification',
     args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
     chainId: optimismSepolia.id,
     query: {
@@ -51,16 +53,9 @@ export default function DAppPage() {
     },
   });
 
-  const { data: nonce } = useReadContract({
-    address: OPTIMISM_SEPOLIA_CONTRACTS.OmniPrivVerifier,
-    abi: OMNIPRIV_VERIFIER_ABI,
-    functionName: 'getNonce',
-    args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
-    chainId: optimismSepolia.id,
-    query: {
-      enabled: !!address && !!policyId && !!isVerified,
-    },
-  });
+  // Extract data from verification
+  const expiry = verification ? verification.expiry : undefined;
+  const sourceEid = verification ? verification.sourceEid : undefined;
 
   // Mock badge minting (would be real contract call in production)
   const [mintingBadge, setMintingBadge] = useState(false);
@@ -257,10 +252,10 @@ export default function DAppPage() {
             { label: 'User Address', value: address },
             { label: 'Policy ID', value: policyId },
             { label: 'Destination Chain', value: 'Optimism Sepolia (Chain ID: 11155420)' },
-            { label: 'OmniPrivVerifier', value: OPTIMISM_SEPOLIA_CONTRACTS.OmniPrivVerifier, link: getBlockExplorerLink(optimismSepolia.id, OPTIMISM_SEPOLIA_CONTRACTS.OmniPrivVerifier, 'address') },
+            { label: 'IdentityOApp', value: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA, link: getBlockExplorerLink(optimismSepolia.id, IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA, 'address') },
             { label: 'Verification Status', value: isVerified ? 'Verified ✅' : 'Not Verified ❌' },
             { label: 'Expiry Timestamp', value: expiry ? new Date(Number(expiry) * 1000).toISOString() : 'N/A' },
-            { label: 'Nonce', value: nonce ? nonce.toString() : 'N/A' },
+            { label: 'Source Chain EID', value: sourceEid ? sourceEid.toString() : 'N/A' },
           ]}
         />
       </div>

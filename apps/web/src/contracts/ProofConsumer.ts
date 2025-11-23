@@ -100,6 +100,36 @@ export const PROOF_CONSUMER_ABI = [
     "outputs": [{ "internalType": "contract IVaultAnchor", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "proof", "type": "bytes" },
+      { "internalType": "bytes32[]", "name": "publicSignals", "type": "bytes32[]" },
+      { "internalType": "bytes32", "name": "policyId", "type": "bytes32" },
+      { "internalType": "uint32", "name": "dstEid", "type": "uint32" },
+      { "internalType": "bytes", "name": "options", "type": "bytes" }
+    ],
+    "name": "submitProofAndBridge",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+      { "indexed": true, "internalType": "bytes32", "name": "policyId", "type": "bytes32" },
+      { "indexed": false, "internalType": "bytes32", "name": "commitment", "type": "bytes32" },
+      { "indexed": false, "internalType": "uint32", "name": "dstEid", "type": "uint32" },
+      { "indexed": false, "internalType": "uint256", "name": "expiry", "type": "uint256" }
+    ],
+    "name": "ProofVerifiedAndBridged",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "IdentityOAppNotSet",
+    "type": "error"
   }
 ] as const;
 
