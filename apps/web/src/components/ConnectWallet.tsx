@@ -52,14 +52,14 @@ export default function ConnectWallet() {
             </span>
           </div>
           {/* Use default AuthButton - it automatically shows "Sign Out" when signed in */}
-          <div className="cdp-auth-button-wrapper">
+          <div className="cdp-auth-button-wrapper [&_button]:text-white [&_button]:font-semibold">
             <AuthButton />
           </div>
         </>
       ) : (
         <>
           {/* Not signed in - show sign in prompt and button */}
-          <div className="cdp-auth-button-wrapper">
+          <div className="cdp-auth-button-wrapper [&_button]:text-white [&_button]:font-semibold">
             <AuthButton />
           </div>
         </>

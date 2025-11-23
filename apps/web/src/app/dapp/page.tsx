@@ -135,7 +135,9 @@ export default function DAppPage() {
           <p className="text-gray-400 mb-6">
             Connect your wallet to access this verified-only application.
           </p>
-          <AuthButton />
+          <div className="[&_button]:text-white [&_button]:font-semibold">
+            <AuthButton />
+          </div>
         </div>
       </div>
     );

@@ -889,7 +889,9 @@ export default function VaultPage() {
             Sign in with CDP Embedded Wallet to create your private identity vault and verify across chains.
           </p>
           
-          <AuthButton />
+          <div className="[&_button]:text-white [&_button]:font-semibold">
+            <AuthButton />
+          </div>
           
           <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
             <p className="text-sm text-blue-300">
