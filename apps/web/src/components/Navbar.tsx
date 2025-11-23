@@ -11,6 +11,7 @@ export function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/vault', label: 'Vault' },
     { href: '/dapp', label: 'Demo dApp' },
+    { href: '/future', label: 'Future Directions' },
   ];
 
   const isActive = (href: string) => {
