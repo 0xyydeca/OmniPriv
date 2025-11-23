@@ -86,11 +86,6 @@ export default function DAppPage() {
     sourceEid = optimismVerification.sourceEid;
     timestamp = optimismVerification.timestamp;
     verificationSource = 'Optimism Sepolia (via LayerZero)';
-  } else if (baseVerification) {
-    expiry = baseVerification;
-    sourceEid = undefined;
-    timestamp = undefined;
-    verificationSource = 'Base Sepolia (origin chain)';
   } else if (isDemoUser) {
     // 🎬 DEMO MODE: Provide mock data
     const now = Math.floor(Date.now() / 1000);
