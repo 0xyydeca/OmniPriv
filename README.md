@@ -2,7 +2,7 @@
 
 **Private Identity Verification Across Chains**
 
-> **The one-sentence pitch:** OmniPriv is like a private digital passport locker that lets you prove "I'm allowed to use this app" on any supported blockchain, without ever showing your actual passport details to the apps or putting them on-chain.
+> **Our first hackathon!** OmniPriv is like a private digital passport locker that lets you prove "I'm allowed to use this app" on any supported blockchain, without ever showing your actual passport details to the apps or putting them on-chain.
 
 ---
 
@@ -495,16 +495,6 @@ pnpm test:e2e
 
 ---
 
-##  Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
-- Code standards
-- Pull request process
-- Testing requirements
-
----
-
-
 ##  Built For
 
 **ETHGlobal Buenos Aires 2025**
@@ -525,4 +515,4 @@ Special thanks to:
 
 ---
 
-**Remember:** Privacy is a right, not a privilege. OmniPriv makes it easier to exercise that right across the entire blockchain ecosystem. ✨
+**Remember:** Privacy is a right, not a privilege. OmniPriv makes it easier to exercise that right across the entire blockchain ecosystem.
