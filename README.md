@@ -197,7 +197,7 @@ VaultAnchor:     0x6DB3992C31AFc84E442621fff00511e9f26335d1
 ProofConsumer:   0xdC98b38F092413fedc31ef42667C71907fc5350A
   ↳ Verifies ZK proofs, marks wallets as verified
 
-IdentityOApp:    0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
+IdentityOApp:    0x89C6d0D3782a2E5556EfaDE40361D2864a6b3275
   ↳ Sends verification messages via LayerZero
 ```
 
@@ -206,7 +206,7 @@ IdentityOApp:    0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
 OmniPrivVerifier: 0xcf1a9522FB166a1E79564b5081940a271ab5A187
   ↳ Stores verification status from Chain A
 
-IdentityOApp:     0x5BB995757E8Be755967160C256eF2F8e07a3e579
+IdentityOApp:     0x591A2902FB1853A0fca20b163a63720b7579B473
   ↳ Receives verification messages from Chain A
 ```
 
@@ -304,6 +304,16 @@ cd OmniPriv
 # Install dependencies
 pnpm install
 ```
+
+### Deploy to Vercel
+
+**Want to deploy to production?** We've got you covered!
+
+- **Quick Start (5 min):** [VERCEL_QUICK_START.md](./VERCEL_QUICK_START.md)
+- **Complete Guide:** [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+- **Ready Checklist:** [VERCEL_READY_CHECKLIST.md](./VERCEL_READY_CHECKLIST.md)
+
+All configuration files are already set up - just push to GitHub and deploy!
 
 ### Environment Setup
 
