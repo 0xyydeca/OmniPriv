@@ -2,11 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useIsSignedIn, useEvmAddress } from '@coinbase/cdp-hooks';
+import { useIsSignedIn, useEvmAddress, useSendEvmTransaction } from '@coinbase/cdp-hooks';
 import { AuthButton } from '@coinbase/cdp-react/components/AuthButton';
 import { getVault, VaultRecord, generateProof, evaluatePredicate, type Predicate, encodePublicInputsForSolidity, hashCredential, generateRandomSalt } from '@omnipriv/sdk';
-import { useReadContract, useWalletClient, usePublicClient } from 'wagmi';
-import { createWalletClient, custom, createPublicClient, http } from 'viem';
+import { useReadContract, usePublicClient } from 'wagmi';
+import { createPublicClient, http, encodeFunctionData } from 'viem';
 import { baseSepolia } from 'viem/chains';
 import { PROOF_CONSUMER_ADDRESS, PROOF_CONSUMER_ABI } from '@/contracts/ProofConsumer';
 import { VAULT_ANCHOR_ADDRESS, VAULT_ANCHOR_ABI } from '@/contracts/VaultAnchor';
@@ -25,30 +25,12 @@ export default function VaultPage() {
   // CDP Embedded Wallet hooks
   const { evmAddress: address } = useEvmAddress();
   const { isSignedIn } = useIsSignedIn();
+  const { sendEvmTransaction } = useSendEvmTransaction(); // CDP's native transaction sender!
   const router = useRouter();
   const { showToast } = useToast();
   
-  // Wagmi hooks (work with CDP Embedded Wallet!)
-  const { data: wagmiWalletClient } = useWalletClient();
+  // Wagmi public client for reading
   const wagmiPublicClient = usePublicClient();
-  
-  // Helper to get wallet client (wagmi or manual fallback)
-  const getWalletClient = () => {
-    if (wagmiWalletClient) {
-      return wagmiWalletClient;
-    }
-    
-    // Fallback: Create wallet client manually if CDP has injected window.ethereum
-    if (typeof window !== 'undefined' && window.ethereum && address) {
-      return createWalletClient({
-        account: address as `0x${string}`,
-        chain: baseSepolia,
-        transport: custom(window.ethereum),
-      });
-    }
-    
-    return null;
-  };
   
   // Helper to get public client
   const getPublicClient = () => {
@@ -69,21 +51,10 @@ export default function VaultPage() {
       console.log('🔌 CDP Wallet State:', {
         isSignedIn,
         address,
-        hasEthereum: !!window.ethereum,
-        hasWagmiWalletClient: !!wagmiWalletClient,
-        canCreateFallbackClient: !!window.ethereum && !!address,
-      });
-      
-      // Deep debug
-      console.log('🔍 window.ethereum details:', {
-        exists: !!window.ethereum,
-        isCoinbaseWallet: window.ethereum?.isCoinbaseWallet,
-        isMetaMask: window.ethereum?.isMetaMask,
-        providers: window.ethereum?.providers?.length,
-        request: typeof window.ethereum?.request,
+        hasSendEvmTransaction: !!sendEvmTransaction,
       });
     }
-  }, [isSignedIn, address, wagmiWalletClient]);
+  }, [isSignedIn, address, sendEvmTransaction]);
 
   // Vault state
   const [credentials, setCredentials] = useState<VaultRecord[]>([]);
@@ -126,7 +97,7 @@ export default function VaultPage() {
     args: address && policyIdForCheck ? [address as `0x${string}`, policyIdForCheck as `0x${string}`] : undefined,
     query: {
       enabled: !!address && !!policyIdForCheck && isProofSuccess,
-      pollingInterval: 5000,
+      refetchInterval: 5000,
     },
   });
 
@@ -164,11 +135,8 @@ export default function VaultPage() {
         type: 'success',
         link: getBlockExplorerLink(84532, proofHash, 'transaction'),
       });
-      // Reset loading state and retry counters on success
+      // Reset loading state on success
       setLoading(false);
-      setRetryCount(0);
-      setIsRetrying(false);
-      setProofSubmissionData(null); // Clear submission data
     }
   }, [isProofSuccess, proofHash, showToast]);
 
@@ -303,22 +271,33 @@ export default function VaultPage() {
         throw new Error('CDP wallet not connected');
       }
 
-      console.log('📝 Storing commitment on-chain via CDP wallet...');
+      console.log('📝 Storing commitment on-chain via CDP native transaction...');
       
-      const walletClient = getWalletClient();
-      if (!walletClient) {
-        throw new Error('Wallet client not available - please ensure you are signed in');
+      if (!sendEvmTransaction) {
+        throw new Error('CDP transaction hook not available - please ensure you are signed in');
       }
       
       setIsVaultPending(true);
       
-      const hash = await walletClient.writeContract({
-        address: VAULT_ANCHOR_ADDRESS,
+      // Encode the contract call
+      const data = encodeFunctionData({
         abi: VAULT_ANCHOR_ABI,
         functionName: 'addCommitment',
         args: [commitmentHash as `0x${string}`, BigInt(credential.expiry)],
       });
+      
+      // Send transaction using CDP's native hook
+      // CDP automatically handles transaction type, nonce, and gas estimation
+      const result = await sendEvmTransaction({
+        evmAccount: address as `0x${string}`,
+        network: 'base-sepolia', // CDP network identifier
+        transaction: {
+          to: VAULT_ANCHOR_ADDRESS,
+          data,
+        } as any, // Type assertion: CDP API docs say chainId is optional/ignored
+      });
 
+      const hash = result.transactionHash as `0x${string}`;
       setVaultHash(hash);
       showToast({ 
         message: 'Transaction sent to Base Sepolia!', 
@@ -441,15 +420,14 @@ export default function VaultPage() {
       
       updateStep('base_verified', 'in-progress');
       
-      const walletClient = getWalletClient();
-      if (!walletClient) {
-        throw new Error('Wallet client not available - please ensure you are signed in');
+      if (!sendEvmTransaction) {
+        throw new Error('CDP transaction hook not available - please ensure you are signed in');
       }
       
       setIsProofPending(true);
       
-      const hash = await walletClient.writeContract({
-        address: PROOF_CONSUMER_ADDRESS,
+      // Encode the contract call
+      const data = encodeFunctionData({
         abi: PROOF_CONSUMER_ABI,
         functionName: 'submitProofAndBridge',
         args: [
@@ -459,9 +437,21 @@ export default function VaultPage() {
           40232, // LayerZero Endpoint ID for Optimism Sepolia
           '0x' as `0x${string}`, // Empty options bytes
         ],
-        value: BigInt('100000000000000'), // 0.0001 ETH for LayerZero gas
+      });
+      
+      // Send transaction using CDP's native hook
+      // CDP automatically handles transaction type, nonce, and gas estimation
+      const result = await sendEvmTransaction({
+        evmAccount: userAddress as `0x${string}`,
+        network: 'base-sepolia', // CDP network identifier
+        transaction: {
+          to: PROOF_CONSUMER_ADDRESS,
+          data,
+          value: BigInt('100000000000000'), // 0.0001 ETH for LayerZero gas
+        } as any, // Type assertion: CDP API docs say chainId is optional/ignored
       });
 
+      const hash = result.transactionHash as `0x${string}`;
       setProofHash(hash);
       setIsProofPending(false);
       setIsProofConfirming(true);
