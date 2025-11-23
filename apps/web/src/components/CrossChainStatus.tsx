@@ -156,7 +156,7 @@ export function CrossChainStatus({ userAddress, policyId, baseTxHash, baseVerifi
         <div className="mt-6 pt-4 border-t border-gray-700">
           <details className="group">
             <summary className="cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-300 flex items-center gap-2">
-              <span>🔍 Debug Info (for judges)</span>
+              <span>Debug Info (for judges)</span>
               <svg className="w-4 h-4 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -178,7 +178,7 @@ export function CrossChainStatus({ userAddress, policyId, baseTxHash, baseVerifi
               {isVerifiedOnOptimism && destExpiry && (
                 <div className="p-2 bg-gray-900/50 rounded">
                   <p className="text-gray-500">Destination Status:</p>
-                  <p className="text-green-400">✅ Verified on Optimism Sepolia</p>
+                  <p className="text-green-400">Verified on Optimism Sepolia</p>
                   <p className="text-gray-500 mt-1">Expiry: {new Date(Number(destExpiry) * 1000).toLocaleString()}</p>
                 </div>
               )}
@@ -201,7 +201,7 @@ export function CrossChainStatus({ userAddress, policyId, baseTxHash, baseVerifi
         <div className="mt-4 p-4 bg-green-900/20 border border-green-700 rounded-lg">
           <p className="text-green-400 font-medium flex items-center gap-2">
             <CheckCircleIcon className="w-5 h-5" />
-            Successfully verified across chains! 🎉
+            Successfully verified across chains!
           </p>
           <p className="text-sm text-gray-400 mt-1">
             Your identity is now verified on both Base Sepolia and Optimism Sepolia.

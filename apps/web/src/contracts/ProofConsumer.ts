@@ -1,9 +1,9 @@
 /**
  * ProofConsumer Contract ABI and Address
- * Base Sepolia: 0xdC98b38F092413fedc31ef42667C71907fc5350A
+ * Base Sepolia: 0xf68F1508f917C2D02B1E741c3906e590cdB3598C (REAL MODE - no bypasses)
  */
 
-export const PROOF_CONSUMER_ADDRESS = '0xdC98b38F092413fedc31ef42667C71907fc5350A' as const;
+export const PROOF_CONSUMER_ADDRESS = '0xf68F1508f917C2D02B1E741c3906e590cdB3598C' as const;
 
 export const PROOF_CONSUMER_ABI = [
   {

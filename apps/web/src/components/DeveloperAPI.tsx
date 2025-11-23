@@ -107,7 +107,7 @@ print(f"Verification triggered: {result['txHash']}")`;
       {/* Features */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-3xl mb-2">🔐</div>
+          <div className="text-3xl mb-2 font-bold">ZK</div>
           <h3 className="font-semibold mb-1">x402 Payment</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Pay-per-verification via CDP Facilitator
@@ -123,7 +123,7 @@ print(f"Verification triggered: {result['txHash']}")`;
         </div>
         
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-3xl mb-2">💰</div>
+          <div className="text-3xl mb-2 font-bold">$</div>
           <h3 className="font-semibold mb-1">CDP Funded</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Gas paid by compliance treasury
@@ -332,7 +332,7 @@ print(f"Verification triggered: {result['txHash']}")`;
 
       {/* Pricing Info */}
       <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg p-6 border border-green-200 dark:border-green-700">
-        <h3 className="text-lg font-semibold mb-2">💰 Pricing & Economics</h3>
+        <h3 className="text-lg font-semibold mb-2">Pricing & Economics</h3>
         <div className="space-y-2 text-sm">
           <p className="text-gray-700 dark:text-gray-300">
             <strong>x402 Payment:</strong> Pay per verification via CDP Facilitator

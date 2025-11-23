@@ -192,5 +192,37 @@ contract IdentityOApp is OApp {
     ) public view returns (MessagingFee memory fee) {
         return _quote(dstEid, message, options, payInLzToken);
     }
+    
+    /**
+     * @notice Admin force verify (for demo/emergency use)
+     * @dev Allows contract owner to manually set verification status
+     * @param user User address to verify
+     * @param policyId Policy identifier
+     * @param commitment Commitment hash
+     * @param expiry Expiration timestamp
+     * @param sourceEid Source chain endpoint ID (e.g., 40245 for Base Sepolia)
+     */
+    function adminForceVerify(
+        address user,
+        bytes32 policyId,
+        bytes32 commitment,
+        uint256 expiry,
+        uint32 sourceEid
+    ) external onlyOwner {
+        verifications[user][policyId] = CrossChainVerification({
+            user: user,
+            policyId: policyId,
+            commitment: commitment,
+            expiry: expiry,
+            sourceEid: sourceEid,
+            timestamp: block.timestamp,
+            active: true
+        });
+        
+        // Track user policies
+        userPolicies[user].push(policyId);
+        
+        emit VerificationReceived(user, sourceEid, policyId, commitment, expiry);
+    }
 }
 

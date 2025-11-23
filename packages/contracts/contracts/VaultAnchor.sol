@@ -46,8 +46,72 @@ contract VaultAnchor is Ownable, ReentrancyGuard {
     constructor() Ownable(msg.sender) {}
 
     /**
-     * @notice Add a new credential commitment
-     * @param commitment The Poseidon hash of the credential
+     * @notice Compute commitment hash (canonical implementation)
+     * @dev This is the ONLY place commitment hashing happens - prevents mismatches
+     * @param dobYear Birth year (uint16)
+     * @param countryCode Country code (uint8)
+     * @param salt Random salt (uint256)
+     * @param issuer Issuer address (use address(0) for self-attested)
+     * @param schema Schema identifier (e.g., keccak256("kyc_v1"))
+     * @return bytes32 The commitment hash
+     */
+    function computeCommitment(
+        uint16 dobYear,
+        uint8 countryCode,
+        uint256 salt,
+        address issuer,
+        bytes32 schema
+    ) public pure returns (bytes32) {
+        return keccak256(
+            abi.encodePacked(
+                dobYear,
+                countryCode,
+                salt,
+                issuer,
+                schema
+            )
+        );
+    }
+
+    /**
+     * @notice Add a KYC credential commitment (simplified interface)
+     * @dev Frontend passes raw data, contract computes hash - no mismatch possible!
+     * @param dobYear Birth year
+     * @param countryCode Country code
+     * @param salt Random salt
+     */
+    function addKycCommitment(
+        uint16 dobYear,
+        uint8 countryCode,
+        uint256 salt
+    ) external nonReentrant {
+        bytes32 schema = keccak256("kyc_v1");
+        address issuer = address(0); // self-attested
+        
+        bytes32 commitment = computeCommitment(dobYear, countryCode, salt, issuer, schema);
+        
+        if (commitment == bytes32(0)) revert ZeroCommitment();
+        if (commitments[msg.sender][commitment].commitment != bytes32(0)) {
+            revert CommitmentAlreadyExists();
+        }
+
+        uint256 expiry = block.timestamp + 365 days; // 1 year expiry
+
+        commitments[msg.sender][commitment] = Commitment({
+            commitment: commitment,
+            expiry: expiry,
+            timestamp: block.timestamp,
+            revoked: false
+        });
+
+        userCommitments[msg.sender].push(commitment);
+
+        emit CommitmentAdded(msg.sender, commitment, expiry, block.timestamp);
+    }
+
+    /**
+     * @notice Add a new credential commitment (legacy - accepts precomputed hash)
+     * @param commitment The hash of the credential
      * @param expiry Unix timestamp when the credential expires
      */
     function addCommitment(bytes32 commitment, uint256 expiry)

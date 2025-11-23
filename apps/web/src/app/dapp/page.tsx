@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
 import { useEvmAddress, useIsSignedIn } from '@coinbase/cdp-hooks';
 import { AuthButton } from '@coinbase/cdp-react/components/AuthButton';
-import { optimismSepolia } from 'wagmi/chains';
+import { optimismSepolia, baseSepolia } from 'wagmi/chains';
 import { OPTIMISM_SEPOLIA_CONTRACTS } from '@omnipriv/sdk';
 import { IDENTITY_OAPP_ABI, IDENTITY_OAPP_ADDRESS } from '@/contracts/IdentityOApp';
+import { PROOF_CONSUMER_ABI, PROOF_CONSUMER_ADDRESS } from '@/contracts/ProofConsumer';
 import { CheckCircleIcon, XCircleIcon, GiftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { StatusCard } from '@/components/StatusCard';
 import { DebugPanel } from '@/components/DebugPanel';
@@ -14,6 +15,10 @@ import { formatAddress, getBlockExplorerLink } from '@/lib/utils';
 import { useToast } from '@/components/Toast';
 import { ethers } from 'ethers';
 import Link from 'next/link';
+
+// 🎬 DEMO MODE for Hackathon Presentation
+const DEMO_MODE = true; // ← Set to true for demo
+const DEMO_WALLET = '0x4D9A256A2b9e594653Ed943f0B9dA47f8201f143'; // Your CDP wallet
 
 export default function DAppPage() {
   const { address: wagmiAddress } = useAccount();
@@ -27,9 +32,33 @@ export default function DAppPage() {
   // Mock policy ID (same as used in Vault)
   const policyId = ethers.keccak256(ethers.toUtf8Bytes('kyc_policy')) as `0x${string}`;
   
-  // Check verification status on Optimism Sepolia
-  // ✅ Fixed: Query IdentityOApp (which actually receives messages)
-  const { data: isVerified, isLoading, refetch } = useReadContract({
+  // Check verification status on Base Sepolia (origin chain)
+  const { data: isVerifiedOnBase, isLoading: isLoadingBase, refetch: refetchBase } = useReadContract({
+    address: PROOF_CONSUMER_ADDRESS,
+    abi: PROOF_CONSUMER_ABI,
+    functionName: 'isVerified',
+    args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
+    chainId: baseSepolia.id,
+    query: {
+      enabled: !!address && !!policyId,
+      refetchInterval: 5000, // Refresh every 5 seconds
+    },
+  });
+
+  // Get Base verification details
+  const { data: baseVerification } = useReadContract({
+    address: PROOF_CONSUMER_ADDRESS,
+    abi: PROOF_CONSUMER_ABI,
+    functionName: 'verifiedUntil',
+    args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
+    chainId: baseSepolia.id,
+    query: {
+      enabled: !!address && !!policyId,
+    },
+  });
+  
+  // Check verification status on Optimism Sepolia (destination chain)
+  const { data: isVerifiedOnOptimism, isLoading: isLoadingOptimism, refetch: refetchOptimism } = useReadContract({
     address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
     abi: IDENTITY_OAPP_ABI,
     functionName: 'isVerified',
@@ -41,22 +70,57 @@ export default function DAppPage() {
     },
   });
 
-  // Get full verification details
-  const { data: verification } = useReadContract({
+  // Get full verification details from Optimism
+  const { data: optimismVerification } = useReadContract({
     address: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA,
     abi: IDENTITY_OAPP_ABI,
     functionName: 'getVerification',
     args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
     chainId: optimismSepolia.id,
     query: {
-      enabled: !!address && !!policyId && !!isVerified,
+      enabled: !!address && !!policyId && !!isVerifiedOnOptimism,
     },
   });
 
-  // Extract data from verification
-  const expiry = verification ? verification.expiry : undefined;
-  const sourceEid = verification ? verification.sourceEid : undefined;
-  const timestamp = verification ? verification.timestamp : undefined;
+  // 🎬 DEMO MODE: Check if this is the demo wallet
+  const isDemoUser = DEMO_MODE && address?.toLowerCase() === DEMO_WALLET.toLowerCase();
+  
+  // Determine overall status (with demo mode fallback)
+  const realVerification = isVerifiedOnBase || isVerifiedOnOptimism;
+  const isVerified = realVerification || isDemoUser;
+  const isLoading = isLoadingBase || isLoadingOptimism;
+  
+  // Extract data from verification (prefer Optimism, fall back to Base, then demo)
+  let expiry, sourceEid, timestamp, verificationSource;
+  
+  if (optimismVerification) {
+    expiry = optimismVerification.expiry;
+    sourceEid = optimismVerification.sourceEid;
+    timestamp = optimismVerification.timestamp;
+    verificationSource = 'Optimism Sepolia (via LayerZero)';
+  } else if (baseVerification) {
+    expiry = baseVerification;
+    sourceEid = undefined;
+    timestamp = undefined;
+    verificationSource = 'Base Sepolia (origin chain)';
+  } else if (isDemoUser) {
+    // 🎬 DEMO MODE: Provide mock data
+    const now = Math.floor(Date.now() / 1000);
+    expiry = BigInt(now + 30 * 24 * 60 * 60); // 30 days from now
+    sourceEid = 40245n; // Base Sepolia EID
+    timestamp = BigInt(now);
+    verificationSource = 'Demo Mode (Base Sepolia verification simulated)';
+  } else {
+    expiry = undefined;
+    sourceEid = undefined;
+    timestamp = undefined;
+    verificationSource = 'Not verified';
+  }
+  
+  const refetch = () => {
+    refetchBase();
+    refetchOptimism();
+  };
 
   // Mock badge minting (would be real contract call in production)
   const [mintingBadge, setMintingBadge] = useState(false);
@@ -75,7 +139,7 @@ export default function DAppPage() {
     setTimeout(() => {
       setMintingBadge(false);
       setBadgeMinted(true);
-      showToast({ message: '✅ Badge minted successfully!', type: 'success' });
+      showToast({ message: 'Badge minted successfully!', type: 'success' });
     }, 2000);
   };
 
@@ -101,12 +165,22 @@ export default function DAppPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-            🎮 Verified-Only Demo dApp
+            Verified-Only Demo dApp
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             This dApp runs on <strong>Optimism Sepolia</strong> and checks your verification status without ever seeing your personal data.
             It simply queries: <code className="bg-gray-800 px-2 py-1 rounded text-sm">isVerified(address, policyId)</code>
           </p>
+          
+          {/* Demo Mode Banner */}
+          {isDemoUser && !realVerification && (
+            <div className="mt-4 max-w-2xl mx-auto bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-4">
+              <p className="text-sm text-yellow-200">
+                <strong>Demo Mode Active:</strong> Showing simulated verification for presentation purposes. 
+                In production, this would check real on-chain verification status.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Wallet Info Card */}
@@ -137,17 +211,70 @@ export default function DAppPage() {
             </div>
           </StatusCard>
         ) : isVerified ? (
-          <StatusCard
-            variant="success"
-            title="✅ Verified for KYC Policy!"
-            description="Your identity has been verified on Optimism Sepolia via LayerZero."
-          >
-            <div className="space-y-2 text-sm text-gray-300">
-              <p><strong>Policy:</strong> AGE18_ALLOWED_COUNTRIES_V1</p>
-              <p><strong>Expiry:</strong> {expiry ? new Date(Number(expiry) * 1000).toLocaleString() : 'N/A'}</p>
-              <p><strong>Verified:</strong> {timestamp ? new Date(Number(timestamp) * 1000).toLocaleString() : 'N/A'}</p>
+          <div className="space-y-3">
+            <StatusCard
+              variant="success"
+              title="Identity Verified"
+              description={`Verification found on ${verificationSource}`}
+            >
+              <div className="space-y-2 text-sm text-gray-300">
+                <p><strong>Policy:</strong> kyc_policy (AGE18_ALLOWED_COUNTRIES_V1)</p>
+                <p><strong>Expiry:</strong> {expiry ? new Date(Number(expiry) * 1000).toLocaleString() : 'Active'}</p>
+                {timestamp && <p><strong>Cross-Chain Verified:</strong> {new Date(Number(timestamp) * 1000).toLocaleString()}</p>}
+              </div>
+            </StatusCard>
+            
+            {/* Show chain-specific status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-gray-900/30 border border-gray-700 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  {isVerifiedOnBase || (isDemoUser && !realVerification) ? (
+                    <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                  ) : (
+                    <XCircleIcon className="w-5 h-5 text-gray-500" />
+                  )}
+                  <h3 className="font-semibold text-gray-200">Base Sepolia</h3>
+                </div>
+                <p className="text-xs text-gray-400">
+                  {isVerifiedOnBase ? 'Verified (Origin Chain)' : 
+                   isDemoUser && !realVerification ? 'Demo: Simulated verification' : 
+                   'Not verified'}
+                </p>
+              </div>
+              
+              <div className="bg-gray-900/30 border border-gray-700 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  {isVerifiedOnOptimism ? (
+                    <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                  ) : (
+                    <XCircleIcon className="w-5 h-5 text-gray-500" />
+                  )}
+                  <h3 className="font-semibold text-gray-200">Optimism Sepolia</h3>
+                </div>
+                <p className="text-xs text-gray-400">
+                  {isVerifiedOnOptimism ? 'Verified (via LayerZero)' : 
+                   isDemoUser && !realVerification ? 'Demo: Would arrive via LayerZero' :
+                   'Awaiting cross-chain message'}
+                </p>
+              </div>
             </div>
-          </StatusCard>
+            
+            {isVerifiedOnBase && !isVerifiedOnOptimism && !isDemoUser && (
+              <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-4">
+                <p className="text-sm text-yellow-200">
+                  <strong>Note:</strong> Your verification is on Base Sepolia. In hackathon mode, LayerZero cross-chain messages are not sent automatically. The dApp can still verify you using Base Sepolia data!
+                </p>
+              </div>
+            )}
+            
+            {isDemoUser && !realVerification && (
+              <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
+                <p className="text-sm text-blue-200">
+                  <strong>Demo Mode:</strong> This is a simulated verification for hackathon presentation. The full system architecture is functional - verification would come from real on-chain data in production.
+                </p>
+              </div>
+            )}
+          </div>
         ) : (
           <StatusCard
             variant="warning"
@@ -208,7 +335,7 @@ export default function DAppPage() {
               
               {!isVerified && (
                 <p className="mt-3 text-sm text-yellow-400">
-                  💡 Tip: Go to the <Link href="/vault" className="underline hover:text-yellow-300">Vault</Link> to verify your identity first.
+                  Tip: Go to the <Link href="/vault" className="underline hover:text-yellow-300">Vault</Link> to verify your identity first.
                 </p>
               )}
             </div>
@@ -217,7 +344,7 @@ export default function DAppPage() {
 
         {/* How It Works */}
         <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">🔍 How This Works</h2>
+          <h2 className="text-xl font-semibold text-gray-100 mb-4">How This Works</h2>
           <div className="space-y-3 text-gray-300">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">
@@ -252,11 +379,20 @@ export default function DAppPage() {
           items={[
             { label: 'User Address', value: address },
             { label: 'Policy ID', value: policyId },
-            { label: 'Destination Chain', value: 'Optimism Sepolia (Chain ID: 11155420)' },
+            ...(isDemoUser ? [
+              { label: 'Demo Mode', value: isDemoUser && !realVerification ? 'Active (simulated verification)' : 'Active (but real verification found!)' }
+            ] : []),
+            { label: '=== Base Sepolia (Origin) ===', value: '' },
+            { label: 'ProofConsumer', value: PROOF_CONSUMER_ADDRESS, link: getBlockExplorerLink(baseSepolia.id, PROOF_CONSUMER_ADDRESS, 'address') },
+            { label: 'Base Verification', value: isVerifiedOnBase ? 'Verified (Real)' : isDemoUser ? 'Not verified (using demo)' : 'Not Verified' },
+            { label: '=== Optimism Sepolia (Destination) ===', value: '' },
             { label: 'IdentityOApp', value: IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA, link: getBlockExplorerLink(optimismSepolia.id, IDENTITY_OAPP_ADDRESS.OPTIMISM_SEPOLIA, 'address') },
-            { label: 'Verification Status', value: isVerified ? 'Verified ✅' : 'Not Verified ❌' },
-            { label: 'Expiry Timestamp', value: expiry ? new Date(Number(expiry) * 1000).toISOString() : 'N/A' },
-            { label: 'Source Chain EID', value: sourceEid ? sourceEid.toString() : 'N/A' },
+            { label: 'Optimism Verification', value: isVerifiedOnOptimism ? 'Verified (Real)' : isDemoUser ? 'Not verified (using demo)' : 'Not Verified' },
+            { label: 'LayerZero Source EID', value: sourceEid ? sourceEid.toString() : 'N/A' },
+            { label: '=== Overall Status ===', value: '' },
+            { label: 'Can Access dApp?', value: isVerified ? 'YES' : 'NO' },
+            { label: 'Verification Source', value: verificationSource },
+            { label: 'Expiry', value: expiry ? new Date(Number(expiry) * 1000).toISOString() : 'N/A' },
           ]}
         />
       </div>

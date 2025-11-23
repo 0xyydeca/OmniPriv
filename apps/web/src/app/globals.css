@@ -168,3 +168,15 @@ div:has(> [role="dialog"])::before {
   z-index: -1 !important;
 }
 
+/* ============================================
+   CDP Auth Button Styling
+   ============================================ */
+/* Make Sign In / Sign Out button text white */
+.cdp-auth-button-wrapper button {
+  color: white !important;
+}
+
+.cdp-auth-button-wrapper button span {
+  color: white !important;
+}
+

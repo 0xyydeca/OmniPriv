@@ -204,7 +204,7 @@ export function CrossChainStepper({
       {isVerifiedOnOptimism && destExpiry && (
         <div className="mt-4 p-3 bg-green-900/20 border border-green-700/50 rounded-lg">
           <p className="text-xs text-green-400">
-            ✅ Verified on Optimism Sepolia
+            Verified on Optimism Sepolia
           </p>
           <p className="text-xs text-gray-400 mt-1">
             Expiry: {new Date(Number(destExpiry) * 1000).toLocaleString()}

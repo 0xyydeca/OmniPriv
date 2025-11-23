@@ -92,7 +92,7 @@ export function FundingGuide() {
       {needsFunding ? (
         <div className="space-y-3">
           <div className="flex items-start gap-2 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded">
-            <span className="text-xl">⚠️</span>
+            <span className="text-xl font-bold text-yellow-500">!</span>
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
                 Funding Required
@@ -105,7 +105,7 @@ export function FundingGuide() {
 
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              💰 Get Free Testnet ETH:
+              Get Free Testnet ETH:
             </h4>
             
             {/* Faucet Options */}
@@ -170,7 +170,7 @@ export function FundingGuide() {
 
             {/* Instructions */}
             <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-gray-100">📝 Instructions:</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">Instructions:</p>
               <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
                 <li>Copy your wallet address above</li>
                 <li>Click on any faucet link</li>
@@ -183,7 +183,7 @@ export function FundingGuide() {
         </div>
       ) : (
         <div className="flex items-start gap-2 p-3 bg-green-100 dark:bg-green-900/30 rounded">
-          <span className="text-xl">✅</span>
+          <span className="text-xl font-bold text-green-500">✓</span>
           <div className="flex-1">
             <p className="text-sm font-medium text-green-900 dark:text-green-100">
               Wallet Funded!

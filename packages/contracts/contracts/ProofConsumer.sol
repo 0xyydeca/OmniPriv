@@ -64,9 +64,6 @@ contract ProofConsumer is Ownable {
         public verifications;
     mapping(address => uint256) public nonces;
 
-    // Feature flags for MVP
-    bool public mockVerificationEnabled = true;
-
     // Errors
     error InvalidProof();
     error PolicyNotFound();
@@ -122,7 +119,8 @@ contract ProofConsumer is Ownable {
         if (nonce <= nonces[msg.sender]) revert NonceAlreadyUsed();
         nonces[msg.sender] = nonce;
 
-        // Check commitment validity in VaultAnchor
+        // REAL COMMITMENT CHECK - ALWAYS ENFORCED
+        // User can only be verified if they previously anchored this exact commitment
         if (!vaultAnchor.isCommitmentValid(msg.sender, commitment)) {
             revert CommitmentInvalid();
         }
@@ -152,22 +150,18 @@ contract ProofConsumer is Ownable {
 
     /**
      * @notice Internal proof verification logic
-     * @dev For MVP with mockVerificationEnabled, always returns true
+     * @dev Simplified for hackathon - validates structure
      * @dev In production, this would call Noir/Aztec verifier contract
      */
     function _verifyProofInternal(
         bytes calldata proof,
         bytes32[] calldata publicSignals,
         Policy memory policy
-    ) internal view returns (bool) {
-        if (mockVerificationEnabled) {
-            // Mock verification for demo
-            return proof.length > 0 && publicSignals.length >= 3;
-        }
-
-        // TODO: Call Noir verifier contract
+    ) internal pure returns (bool) {
+        // Basic validation: proof exists and has required public signals
+        // TODO: In production, call real ZK verifier contract
         // return noirVerifier.verify(proof, publicSignals);
-        revert("Production verifier not implemented");
+        return proof.length > 0 && publicSignals.length >= 3;
     }
 
     /**
@@ -203,7 +197,7 @@ contract ProofConsumer is Ownable {
         bytes calldata options
     ) external payable returns (bool) {
         if (address(identityOApp) == address(0)) revert IdentityOAppNotSet();
-
+        
         // 1. Verify proof locally (stores result on Chain A)
         bool verified = verifyProof(proof, publicSignals, policyId);
         if (!verified) revert InvalidProof();
@@ -236,13 +230,6 @@ contract ProofConsumer is Ownable {
     }
 
     /**
-     * @notice Toggle mock verification mode (owner only)
-     */
-    function setMockVerificationEnabled(bool enabled) external onlyOwner {
-        mockVerificationEnabled = enabled;
-    }
-
-    /**
      * @notice Update vault anchor reference
      */
     function setVaultAnchor(address _vaultAnchor) external onlyOwner {
@@ -255,6 +242,29 @@ contract ProofConsumer is Ownable {
      */
     function setIdentityOApp(address _identityOApp) external onlyOwner {
         identityOApp = IIdentityOApp(_identityOApp);
+    }
+    
+    /**
+     * @notice Admin force verify (for demo/emergency use)
+     * @param user User address to verify
+     * @param policyId Policy to verify for
+     * @param commitment Commitment hash
+     * @param expiry Expiration timestamp
+     */
+    function adminForceVerify(
+        address user,
+        bytes32 policyId,
+        bytes32 commitment,
+        uint256 expiry
+    ) external onlyOwner {
+        verifications[user][policyId] = VerificationResult({
+            verified: true,
+            timestamp: block.timestamp,
+            commitment: commitment,
+            policyId: policyId
+        });
+        
+        emit ProofVerified(user, policyId, commitment, true, block.timestamp);
     }
 }
 

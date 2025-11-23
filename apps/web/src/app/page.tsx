@@ -4,70 +4,9 @@ import { useAccount, useConnect } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { LockClosedIcon, GlobeAltIcon, BoltIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { CredentialFlowAnimation } from '@/components/CredentialFlowAnimation';
 import { Navbar } from '@/components/Navbar';
 import { ParticleBackground } from '@/components/ParticleBackground';
-
-// StepItem component with tooltip
-function StepItem({
-  step,
-  text,
-  tooltip,
-  isLast,
-}: {
-  step: number;
-  text: string;
-  tooltip: string;
-  isLast: boolean;
-}) {
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  return (
-    <div className="relative flex items-start gap-4">
-      {/* Stepper Line */}
-      {!isLast && (
-        <div className="absolute left-5 top-10 w-0.5 h-full max-h-24 bg-gradient-to-b from-blue-300 to-blue-200 dark:from-blue-600 dark:to-blue-700" />
-      )}
-
-      {/* Step Circle with Checkmark */}
-      <div className="relative flex-shrink-0 z-10">
-        <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/50 transition-transform hover:scale-110">
-          <CheckCircleIcon className="w-6 h-6 text-white" />
-        </div>
-        {/* Step Number Badge */}
-        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-gray-800 border-2 border-blue-500 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400">
-          {step}
-        </div>
-      </div>
-
-      {/* Step Content */}
-      <div className="flex-1 pt-2 relative">
-        <p
-          className="text-gray-700 dark:text-gray-300 font-medium cursor-help hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
-          {text}
-        </p>
-
-        {/* Tooltip */}
-        {showTooltip && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 top-10 z-20 w-64 sm:w-72 p-3 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-xl border border-gray-700 pointer-events-none"
-          >
-            <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 border-l border-t border-gray-700" />
-            <p className="relative z-10 leading-relaxed">{tooltip}</p>
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -128,196 +67,158 @@ export default function Home() {
       <ParticleBackground />
       <Navbar />
       <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-[1]">
-      <div className="max-w-4xl w-full space-y-6 sm:space-y-8 text-center">
+      <div className="max-w-6xl w-full space-y-8 sm:space-y-12 text-center">
         {/* Hero Section */}
-        <header className="space-y-4">
+        <header className="space-y-6">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-purple-600 bg-clip-text text-transparent leading-tight tracking-tight"
           >
-            OmniPriv – Privacy-First Cross-Chain Identity Vault
+            OmniPriv
           </motion.h1>
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent leading-tight"
+          >
+            Privacy-First Cross-Chain Identity Vault
+          </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-200 font-medium"
+            className="text-xl sm:text-2xl text-white/90 font-light max-w-4xl mx-auto leading-relaxed"
           >
             Verify age, country, or rep privately across any chain
           </motion.p>
         </header>
 
-        {/* Problem Statement */}
+        {/* Video/Demo Section */}
         <section
-          id="about"
-          className="scroll-mt-20"
+          id="demo"
+          className="scroll-mt-20 w-full"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
-            className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-700"
+            className="relative w-full max-w-4xl mx-auto rounded-2xl overflow-hidden border-2 border-purple-500/30 shadow-2xl shadow-purple-500/20"
+            style={{ aspectRatio: '16/9' }}
           >
-            <p className="text-base sm:text-lg text-gray-200 font-medium">
-              Verify age, country, or rep privately across any chain.
-            </p>
+            {/* Video Placeholder - Replace with actual video/demo */}
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 flex items-center justify-center">
+              <CredentialFlowAnimation />
+            </div>
           </motion.div>
         </section>
 
-        {/* Credential Flow Demo Animation */}
-        <section
-          id="demo"
-          className="scroll-mt-20"
-        >
+        {/* Feature Cards */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mt-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
-            className="flex justify-center w-full px-4"
-            aria-label="Credential verification flow demonstration"
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="p-8 bg-gradient-to-br from-blue-900/40 to-blue-800/20 backdrop-blur-sm border border-blue-500/30 rounded-2xl shadow-lg"
           >
-            <CredentialFlowAnimation />
+            <svg className="w-12 h-12 mb-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+            </svg>
+            <h3 className="text-2xl font-bold text-white mb-4">Zero-Knowledge Proofs</h3>
+            <p className="text-gray-300 mb-4">Prove attributes without revealing personal data</p>
+            <p className="text-sm text-blue-400">Powered by Aztec Noir for unbreakable privacy</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="p-8 bg-gradient-to-br from-purple-900/40 to-pink-800/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl shadow-lg"
+          >
+            <svg className="w-12 h-12 mb-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+            </svg>
+            <h3 className="text-2xl font-bold text-white mb-4">Cross-Chain Ready</h3>
+            <p className="text-gray-300 mb-4">One identity, verified everywhere via LayerZero</p>
+            <p className="text-sm text-purple-400">Built with LayerZero v2 OApp for seamless bridging</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="p-8 bg-gradient-to-br from-green-900/40 to-emerald-800/20 backdrop-blur-sm border border-green-500/30 rounded-2xl shadow-lg"
+          >
+            <svg className="w-12 h-12 mb-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+            </svg>
+            <h3 className="text-2xl font-bold text-white mb-4">Gasless Onboarding</h3>
+            <p className="text-gray-300 mb-4">Embedded wallets with sponsored transactions</p>
+            <p className="text-sm text-green-400">Powered by Coinbase Wallet for seamless onboarding</p>
           </motion.div>
         </section>
 
-        {/* Features Grid */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 w-full">
-          {/* Zero-Knowledge Proofs Card */}
+        {/* How It Works */}
+        <section className="max-w-4xl mx-auto mt-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 p-6 rounded-xl border border-primary-200 dark:border-primary-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
+            className="p-12 bg-gray-900/60 backdrop-blur-sm border border-gray-700/50 rounded-3xl shadow-2xl"
           >
-            <div className="mb-4">
-              <LockClosedIcon className="w-12 h-12 text-primary-600 dark:text-primary-400" />
+            <h2 className="text-4xl font-bold text-white text-center mb-12">How It Works</h2>
+            <div className="space-y-8">
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">1</div>
+                <div className="flex-1 pt-2">
+                  <p className="text-xl text-gray-200">Sign in with Coinbase Wallet (email login, no seed phrase needed)</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">2</div>
+                <div className="flex-1 pt-2">
+                  <p className="text-xl text-gray-200">Add credentials from trusted issuers</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">3</div>
+                <div className="flex-1 pt-2">
+                  <p className="text-xl text-gray-200">Generate zero-knowledge proofs for any dApp</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">4</div>
+                <div className="flex-1 pt-2">
+                  <p className="text-xl text-gray-200">Reuse verification across any chain</p>
+                </div>
+              </div>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
-              Zero-Knowledge Proofs
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-3">
-              Prove attributes without revealing personal data
-            </p>
-            <p className="text-xs text-primary-700 dark:text-primary-400 font-medium">
-              Powered by Aztec Noir for unbreakable privacy
-            </p>
-          </motion.div>
-
-          {/* Cross-Chain Ready Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 rounded-xl border border-accent-200 dark:border-accent-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
-          >
-            <div className="mb-4">
-              <GlobeAltIcon className="w-12 h-12 text-accent-600 dark:text-accent-400" />
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
-              Cross-Chain Ready
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-3">
-              One identity, verified everywhere via LayerZero
-            </p>
-            <p className="text-xs text-accent-700 dark:text-accent-400 font-medium">
-              Built with LayerZero v2 OApp for seamless bridging
-            </p>
-          </motion.div>
-
-          {/* Gasless Onboarding Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-xl border border-green-200 dark:border-green-700 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
-          >
-            <div className="mb-4">
-              <BoltIcon className="w-12 h-12 text-green-600 dark:text-green-400" />
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
-              Gasless Onboarding
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-3">
-              Embedded wallets with sponsored transactions
-            </p>
-            <p className="text-xs text-green-700 dark:text-green-400 font-medium">
-              Powered by Coinbase Wallet for seamless onboarding
-            </p>
           </motion.div>
         </section>
 
-        {/* User Journey - Stepper Layout */}
-        <section>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
-            className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-700"
-          >
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center text-gray-100">
-            How It Works
-          </h2>
-          <div className="space-y-6">
-            {[
-              {
-                step: 1,
-                text: 'Connect your wallet (Coinbase Wallet, MetaMask, or others)',
-                tooltip: 'Step 1: Connect with Coinbase Wallet, MetaMask, or any Web3 wallet. Instant connection, no signup required.',
-              },
-              {
-                step: 2,
-                text: 'Add credentials from trusted issuers',
-                tooltip: 'Step 2: Import KYC, age verification, or other credentials from verified issuers. All data encrypted locally.',
-              },
-              {
-                step: 3,
-                text: 'Generate zero-knowledge proofs for any dApp',
-                tooltip: 'Step 3: Instantly create a ZK proof for seamless DeFi compliance',
-              },
-              {
-                step: 4,
-                text: 'Reuse verification across any chain',
-                tooltip: 'Step 4: Verify once, use everywhere. Your identity follows you across Base, Celo, and more via LayerZero.',
-              },
-            ].map(({ step, text, tooltip }, index) => (
-              <StepItem
-                key={step}
-                step={step}
-                text={text}
-                tooltip={tooltip}
-                isLast={index === 3}
-              />
-            ))}
-          </div>
-          </motion.div>
-        </section>
-
-        {/* CTA Button */}
+        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.6 }}
+          transition={{ duration: 0.6, delay: 1.0 }}
           className="pt-8"
         >
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => router.push('/vault')}
-              className="px-8 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 pulse-on-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-              aria-label="Go to Vault"
+              className="px-10 sm:px-14 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg shadow-purple-500/30 transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+              aria-label="Launch Vault"
             >
-              Go to Vault →
+              Launch Vault →
             </button>
             <button
               onClick={() => router.push('/dapp')}
-              className="px-8 sm:px-12 py-3 sm:py-4 bg-gray-700 hover:bg-gray-600 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-              aria-label="Open Demo dApp"
+              className="px-10 sm:px-14 py-4 bg-gray-800/80 hover:bg-gray-700/80 backdrop-blur-sm border border-gray-600 text-white text-base sm:text-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+              aria-label="Try Demo"
             >
-              Open Demo dApp →
+              Try Demo →
             </button>
           </div>
         </motion.div>
@@ -326,103 +227,32 @@ export default function Home() {
         <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.8 }}
-          className="pt-12 pb-8 w-full"
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="pt-16 pb-8 w-full"
         >
-          <div className="space-y-6">
-            {/* Sponsor Logos Row */}
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 px-4" role="list" aria-label="Technology sponsors">
-              {/* Aztec Network */}
-              <a
-                href="https://aztec.network"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-                aria-label="Visit Aztec Network website"
-                role="listitem"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                    <span className="text-white font-bold text-lg">A</span>
-                  </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Aztec</span>
+          <div className="space-y-8">
+            {/* Sponsor Logos */}
+            <div className="flex flex-wrap items-center justify-center gap-8 px-4">
+              <a href="https://aztec.network" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400">Aztec</div>
                 </div>
               </a>
-              
-              {/* LayerZero */}
-              <a
-                href="https://layerzero.network"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-                aria-label="Visit LayerZero website"
-                role="listitem"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#06B6D4] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                    <span className="text-white font-bold text-xs">LZ</span>
-                  </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">LayerZero</span>
+              <a href="https://layerzero.network" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-400">LayerZero</div>
                 </div>
               </a>
-              
-              {/* Coinbase Wallet */}
-              <a
-                href="https://www.coinbase.com/wallet"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-                aria-label="Visit Coinbase Wallet website"
-                role="listitem"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0052FF] to-[#1B8FFF] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm-1.048-5.5l4-8 4 8h-8zm4.096-9L9 17.5h6.096L15 9.5z"/>
-                    </svg>
-                  </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Coinbase Wallet</span>
+              <a href="https://coinbase.com/developer-platform" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-500">CDP</div>
                 </div>
               </a>
-              
-              {/* Coinbase */}
-              <a
-                href="https://www.coinbase.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
-                aria-label="Visit Coinbase website"
-                role="listitem"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0052FF] to-[#1B8FFF] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm-1.048-5.5l4-8 4 8h-8zm4.096-9L9 17.5h6.096L15 9.5z"/>
-                    </svg>
-                  </div>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Coinbase</span>
-                </div>
-              </a>
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center justify-center py-4">
-              <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
-            </div>
-
-            {/* ETHGlobal Badge */}
-            <div className="flex items-center justify-center">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#3B82F6] text-white text-xs font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow cursor-default">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-                <span>ETHGlobal Buenos Aires 2025</span>
-              </div>
             </div>
 
             {/* Copyright */}
-            <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-              Built with ❤️ for privacy-preserving identity
+            <p className="text-center text-sm text-gray-500">
+              Built for ETHGlobal Buenos Aires 2025
             </p>
           </div>
         </motion.footer>

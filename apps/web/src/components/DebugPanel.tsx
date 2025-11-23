@@ -28,7 +28,7 @@ export function DebugPanel({ title = 'Technical Details (for judges)', items, de
       >
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-300">
-            🔍 {title}
+            {title}
           </span>
         </div>
         {isOpen ? (

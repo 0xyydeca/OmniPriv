@@ -6,6 +6,7 @@
  * Production: Would integrate @noir-lang/noir_js for real browser proving
  */
 
+import { ethers } from 'ethers';
 import { NoirPublicInputs, NoirPrivateInputs } from './publicInputs';
 import { CURRENT_YEAR, BLOCKED_COUNTRIES } from './constants';
 
@@ -48,22 +49,51 @@ function stringToHex(str: string): string {
 }
 
 /**
- * Hash credential to compute commitment (Production-ready version)
- * Uses keccak256 with proper encoding for security
+ * Compute commitment hash (canonical implementation)
+ * @dev MUST match VaultAnchor.computeCommitment() exactly!
  * 
- * @param dob_year - Birth year
- * @param country_code - Country code  
- * @param salt - Secret salt (should be cryptographically random)
- * @param issuer - Issuer address (optional, defaults to zero address for self-attested)
- * @param schema - Schema ID (optional, defaults to "kyc_v1")
- * @returns Commitment as bigint
+ * @param dobYear - Birth year (uint16)
+ * @param countryCode - Country code (uint8)
+ * @param salt - Random salt (uint256)
+ * @param issuer - Issuer address (defaults to zero address for self-attested)
+ * @param schema - Schema identifier (defaults to "kyc_v1")
+ * @returns Commitment hash as hex string
  * 
  * @example
  * ```typescript
- * const salt = generateRandomSalt(); // Cryptographically secure random
- * const commitment = hashCredential(1995, 1, salt);
- * // Store commitment on-chain, keep private data off-chain
+ * const salt = generateRandomSalt();
+ * const commitment = computeCommitment(2000, 1, salt);
+ * // This EXACTLY matches: VaultAnchor.computeCommitment(2000, 1, salt, 0x0, keccak256("kyc_v1"))
  * ```
+ */
+export function computeCommitment(
+  dobYear: number,
+  countryCode: number,
+  salt: bigint,
+  issuer: `0x${string}` = '0x0000000000000000000000000000000000000000',
+  schema: string = 'kyc_v1'
+): `0x${string}` {
+  // Schema is hashed first (matches Solidity: keccak256("kyc_v1"))
+  const schemaHash = ethers.id(schema) as `0x${string}`;
+  
+  // Pack exactly like Solidity: uint16, uint8, uint256, address, bytes32
+  const packed = ethers.solidityPacked(
+    ['uint16', 'uint8', 'uint256', 'address', 'bytes32'],
+    [
+      dobYear,      // uint16 (matches Solidity)
+      countryCode,  // uint8 (matches Solidity)
+      salt,         // uint256 (matches Solidity)
+      issuer,       // address (matches Solidity)
+      schemaHash    // bytes32 (matches Solidity)
+    ]
+  );
+  
+  // keccak256 hash (matches Solidity)
+  return ethers.keccak256(packed) as `0x${string}`;
+}
+
+/**
+ * @deprecated Use computeCommitment instead (legacy compatibility)
  */
 export function hashCredential(
   dob_year: number,
@@ -72,34 +102,8 @@ export function hashCredential(
   issuer: string = '0x0000000000000000000000000000000000000000',
   schema: string = 'kyc_v1'
 ): bigint {
-  // Production-ready: Use keccak256 for one-way cryptographic hash
-  // This prevents reverse-engineering of inputs from commitment
-  
-  // Encode data for hashing (mimics Solidity's abi.encode)
-  const data = JSON.stringify({
-    issuer: issuer.toLowerCase(),
-    schema,
-    dob_year,
-    country_code,
-    salt: salt.toString()
-  });
-  
-  // Use keccak256 from noble/hashes (production-ready)
-  const encoder = new TextEncoder();
-  const bytes = encoder.encode(data);
-  
-  // Compute hash (deterministic, one-way, collision-resistant)
-  let hash = 0n;
-  for (let i = 0; i < bytes.length; i++) {
-    // Prime number mixing for better distribution
-    hash = ((hash * 31n) + BigInt(bytes[i])) & ((1n << 256n) - 1n);
-  }
-  
-  // Mix in the salt more explicitly to ensure it affects all bits
-  const saltHash = salt % ((1n << 128n) - 1n);
-  hash = (hash ^ (saltHash << 128n)) & ((1n << 256n) - 1n);
-  
-  return hash;
+  const hash = computeCommitment(dob_year, country_code, salt, issuer as `0x${string}`, schema);
+  return BigInt(hash);
 }
 
 /**
@@ -115,8 +119,8 @@ export function buildPublicInputsForProof(
   policyConfig: PolicyConfig,
   nonce: bigint | number
 ): NoirPublicInputs {
-  // Compute commitment (hash of private inputs)
-  const commitment = hashCredential(
+  // Compute commitment using canonical function (matches VaultAnchor.computeCommitment)
+  const commitment = computeCommitment(
     credential.dob_year,
     credential.country_code,
     typeof credential.secret_salt === 'bigint' 
@@ -133,7 +137,7 @@ export function buildPublicInputsForProof(
   
   // Build public inputs matching NoirPublicInputs interface
   return {
-    commitment: '0x' + commitment.toString(16).padStart(64, '0'),
+    commitment: commitment, // Already a hex string from computeCommitment
     policy_id: '0x' + policyIdHex,
     current_year: CURRENT_YEAR,
     expiry: expiryTimestamp,

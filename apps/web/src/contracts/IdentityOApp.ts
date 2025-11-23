@@ -88,6 +88,28 @@ export const IDENTITY_OAPP_ABI = [
     ],
     name: 'VerificationReceived',
     type: 'event'
+  },
+  {
+    inputs: [
+      { internalType: 'uint32', name: 'dstEid', type: 'uint32' },
+      { internalType: 'bytes', name: 'message', type: 'bytes' },
+      { internalType: 'bytes', name: 'options', type: 'bytes' },
+      { internalType: 'bool', name: 'payInLzToken', type: 'bool' }
+    ],
+    name: 'quote',
+    outputs: [
+      {
+        components: [
+          { internalType: 'uint256', name: 'nativeFee', type: 'uint256' },
+          { internalType: 'uint256', name: 'lzTokenFee', type: 'uint256' }
+        ],
+        internalType: 'struct MessagingFee',
+        name: 'fee',
+        type: 'tuple'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
   }
 ] as const;
 

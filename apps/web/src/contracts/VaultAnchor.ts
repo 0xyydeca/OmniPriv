@@ -3,7 +3,7 @@
  * Base Sepolia: 0x6DB3992C31AFc84E442621fff00511e9f26335d1
  */
 
-export const VAULT_ANCHOR_ADDRESS = '0x6DB3992C31AFc84E442621fff00511e9f26335d1' as const;
+export const VAULT_ANCHOR_ADDRESS = '0x4DefEaA00297a3E2D501e3d8459C67118A0783E5' as const;
 
 export const VAULT_ANCHOR_ABI = [
   {
@@ -46,6 +46,30 @@ export const VAULT_ANCHOR_ABI = [
     ],
     "name": "CommitmentAdded",
     "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint16", "name": "dobYear", "type": "uint16" },
+      { "internalType": "uint8", "name": "countryCode", "type": "uint8" },
+      { "internalType": "uint256", "name": "salt", "type": "uint256" }
+    ],
+    "name": "addKycCommitment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint16", "name": "dobYear", "type": "uint16" },
+      { "internalType": "uint8", "name": "countryCode", "type": "uint8" },
+      { "internalType": "uint256", "name": "salt", "type": "uint256" },
+      { "internalType": "address", "name": "issuer", "type": "address" },
+      { "internalType": "bytes32", "name": "schema", "type": "bytes32" }
+    ],
+    "name": "computeCommitment",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "pure",
+    "type": "function"
   },
   {
     "inputs": [

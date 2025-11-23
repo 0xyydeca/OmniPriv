@@ -35,9 +35,6 @@ export function Navbar() {
             <span className="text-xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
               OmniPriv
             </span>
-            <span className="hidden sm:inline text-xs text-gray-400 font-normal">
-              Privacy-first cross-chain identity
-            </span>
           </Link>
 
           <div className="flex items-center gap-4 sm:gap-6">
