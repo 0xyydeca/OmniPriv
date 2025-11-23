@@ -26,7 +26,6 @@ export function CDPProvider({ children }: CDPProviderProps) {
   if (typeof window !== 'undefined') {
     console.log('[CDPProvider] Initializing with projectId:', projectId ? `${projectId.substring(0, 10)}...` : 'NOT SET');
     console.log('[CDPProvider] Current origin:', window.location.origin);
-    console.log('[CDPProvider] Expected Project ID:', 'a60a3d96-581a-4f46-af98-280f344d2ff1');
     
     // Warn if origin might not be whitelisted
     if (window.location.origin.includes('localhost')) {
@@ -48,14 +47,6 @@ export function CDPProvider({ children }: CDPProviderProps) {
   if (projectId.length < 10) {
     console.error('[CDPProvider] CDP_APP_ID appears to be invalid. Expected a longer string from CDP Portal.');
     return <>{children}</>;
-  }
-
-  // Verify Project ID matches expected value (for debugging)
-  const expectedProjectId = 'a60a3d96-581a-4f46-af98-280f344d2ff1';
-  if (projectId !== expectedProjectId) {
-    console.warn('[CDPProvider] Project ID mismatch! Expected:', expectedProjectId);
-    console.warn('[CDPProvider] Got:', projectId);
-    console.warn('[CDPProvider] This may cause CORS errors if wrong project is configured in CDP Portal.');
   }
 
   // Render CDPReactProvider with valid projectId
