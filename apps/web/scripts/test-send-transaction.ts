@@ -114,18 +114,22 @@ async function sendTestTransaction() {
   const checksummedTo = getAddress(toAddress);
   
   console.log('\n📤 Sending test transaction...');
-  console.log(`   From (checksummed): ${checksummedFrom}`);
-  console.log(`   To (checksummed): ${checksummedTo} (sending to yourself)`);
+  console.log(`   Address (from): ${checksummedFrom}`);
+  console.log(`   To: ${checksummedTo} (sending to yourself)`);
   console.log(`   Value: 0 ETH`);
-  console.log(`   Chain: base-sepolia`);
+  console.log(`   Network: base-sepolia`);
 
-  // Try with checksummed addresses
-  const hash = await cdp.evm.sendTransaction({
-    from: checksummedFrom,
-    to: checksummedTo,
-    value: 0n,
-    chain: "base-sepolia"
+  // SDK expects: address (not 'from'), transaction object, and network (not 'chain')
+  const result = await cdp.evm.sendTransaction({
+    address: checksummedFrom, // Use 'address' not 'from'
+    transaction: {
+      to: checksummedTo,
+      value: 0n,
+    },
+    network: "base-sepolia" // Use 'network' not 'chain'
   });
+  
+  const hash = result.transactionHash;
 
   console.log('\n✅ Transaction sent successfully!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

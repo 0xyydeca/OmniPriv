@@ -9,7 +9,11 @@
     "deploy:baseSepolia": "hardhat deploy --network baseSepolia",
     "deploy:celoSepolia": "hardhat deploy --network celoSepolia",
     "setPeers:baseSepolia": "hardhat run scripts/setPeers.ts --network baseSepolia",
+    "setPeers:optimismSepolia": "hardhat run scripts/setPeers.ts --network optimismSepolia",
     "setPeers:celoSepolia": "hardhat run scripts/setPeers.ts --network celoSepolia",
+    "redeploy:baseSepolia": "hardhat run scripts/redeploy-identity-oapp.ts --network baseSepolia",
+    "redeploy:optimismSepolia": "hardhat run scripts/redeploy-identity-oapp.ts --network optimismSepolia",
+    "verify:endpoint": "hardhat run scripts/verify-endpoint.ts",
     "verify": "hardhat verify",
     "clean": "hardhat clean && rm -rf cache artifacts typechain-types",
     "format": "prettier --write 'contracts/**/*.sol'"

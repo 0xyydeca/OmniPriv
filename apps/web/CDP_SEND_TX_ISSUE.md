@@ -1,12 +1,11 @@
-# CDP Send Transaction Issue
+# CDP Send Transaction - FIXED ✅
 
-## Problem
+## Problem (RESOLVED)
 
-When attempting to send a transaction using `cdp.evm.sendTransaction()`, we're encountering this error:
-
-```
-parameter "address" in path has an error: must be a valid EVM hex address (e.g., 0x742d35Cc6634C0532925a3b844Bc454e4438f44e)
-```
+The issue was using incorrect parameter names in `cdp.evm.sendTransaction()`:
+- ❌ Using `from` instead of `address`
+- ❌ Using `to`, `value`, `chain` as top-level properties
+- ✅ Should use `address`, `transaction` object, and `network`
 
 ## Attempted Solutions
 
@@ -15,7 +14,7 @@ parameter "address" in path has an error: must be a valid EVM hex address (e.g.,
 3. ✅ **Account Retrieved**: Successfully retrieved account information
 4. ❌ **Send Transaction**: Fails with address validation error
 
-## Code That Should Work
+## ✅ Correct Code (FIXED)
 
 ```typescript
 const cdp = new CdpClient({
@@ -24,11 +23,28 @@ const cdp = new CdpClient({
   walletSecret: process.env.CDP_WALLET_SECRET,
 });
 
+// ✅ CORRECT: Use 'address', 'transaction' object, and 'network'
+const result = await cdp.evm.sendTransaction({
+  address: process.env.CDP_SERVER_WALLET_ID!, // Use 'address' not 'from'
+  transaction: {
+    to: "0x6D1cdE4A453C6A81BD51b68730099b2197aDFa01",
+    value: 0n,
+  },
+  network: "base-sepolia" // Use 'network' not 'chain'
+});
+
+const txHash = result.transactionHash;
+```
+
+## ❌ Incorrect Code (What Was Causing the Error)
+
+```typescript
+// ❌ WRONG: Using 'from', 'to', 'value', 'chain' as top-level
 const hash = await cdp.evm.sendTransaction({
-  from: process.env.CDP_SERVER_WALLET_ID!,
-  to: "0x6D1cdE4A453C6A81BD51b68730099b2197aDFa01",
-  value: 0n,
-  chain: "base-sepolia"
+  from: process.env.CDP_SERVER_WALLET_ID!, // ❌ Should be 'address'
+  to: "0x6D1cdE4A453C6A81BD51b68730099b2197aDFa01", // ❌ Should be in 'transaction' object
+  value: 0n, // ❌ Should be in 'transaction' object
+  chain: "base-sepolia" // ❌ Should be 'network'
 });
 ```
 
@@ -39,14 +55,13 @@ const hash = await cdp.evm.sendTransaction({
 3. **Account Registration**: The account might need to be "registered" or activated before sending transactions
 4. **Address Format**: The SDK might expect a different address format (checksummed, lowercase, etc.)
 
-## Current Status
+## Current Status - ✅ FIXED!
 
 - ✅ Server wallet created and funded
 - ✅ CDP client initialized correctly
 - ✅ Account can be retrieved
-- ❌ Transaction sending fails with address validation error
-- ✅ Tried: account.id (UUID), account.address, checksummed addresses, listAccounts()
-- ❌ All attempts fail with same error: "parameter 'address' in path has an error"
+- ✅ **Transaction sending works!** Fixed by using correct parameter names
+- ✅ Transaction hash: `0x06a15f4443e2b2e3d1a8b6a269eac48af1c73856f4eba0c257ce6d81ea04a979`
 
 ## Findings
 
@@ -65,17 +80,27 @@ const hash = await cdp.evm.sendTransaction({
 5. **Check SDK Source**: The error occurs in `sendTransaction.ts:64` - SDK may be incorrectly constructing the API path
 6. **Contact CDP Support**: Error link: https://docs.cdp.coinbase.com/api-reference/v2/errors#invalid-request
 
-## Root Cause Analysis
+## Root Cause Analysis - RESOLVED
 
-The error occurs in the SDK at:
-- File: `node_modules/@coinbase/cdp-sdk/actions/evm/sendTransaction.ts:64`
-- Error: API returns 400 with "parameter 'address' in path has an error"
-- This suggests the SDK is constructing a URL path like `/evm/accounts/{address}/transactions` and the server is rejecting the address parameter
+The issue was **incorrect parameter names**, not an SDK bug:
 
-**The address is valid** (42 chars, proper hex, checksummed), so this appears to be:
-- A bug in SDK's path construction
-- A server-side validation bug
-- Or the SDK is using the address parameter incorrectly
+1. **Wrong parameter name**: Using `from` instead of `address`
+2. **Wrong structure**: Using `to`, `value`, `chain` as top-level properties instead of:
+   - `transaction` object containing `to` and `value`
+   - `network` instead of `chain`
+
+The SDK's `sendTransaction` method signature is:
+```typescript
+sendTransaction(options: {
+  address: Address,           // ✅ Not 'from'
+  transaction: {               // ✅ Transaction object
+    to: Address,
+    value: bigint,
+    // ... other transaction fields
+  },
+  network: string              // ✅ Not 'chain'
+}): Promise<{ transactionHash: Hex }>
+```
 
 ## Workaround
 
