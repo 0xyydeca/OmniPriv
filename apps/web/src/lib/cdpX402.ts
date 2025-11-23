@@ -59,7 +59,7 @@ export async function delegateCredential(
 
     // Verify with CDP facilitator
     // Note: CORS is handled by CDP Portal domain whitelisting
-    // If CORS errors occur, ensure http://localhost:3001 is whitelisted in CDP Portal
+    // If CORS errors occur, ensure your current origin (e.g., http://localhost:3000) is whitelisted in CDP Portal
     const response = await axios.post(
       `${FACILITATOR_URL}/verify`,
       signedPayload,
@@ -83,8 +83,9 @@ export async function delegateCredential(
   } catch (error: any) {
     // Enhanced error handling for CORS and network issues
     if (error.code === 'ERR_NETWORK' || error.message?.includes('CORS')) {
-      console.error('CORS Error: Ensure http://localhost:3001 is whitelisted in CDP Portal');
-      throw new Error('CORS error: Domain not whitelisted in CDP Portal. Add http://localhost:3001 to allowed domains.');
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'your domain';
+      console.error(`CORS Error: Ensure ${currentOrigin} is whitelisted in CDP Portal`);
+      throw new Error(`CORS error: Domain not whitelisted in CDP Portal. Add ${currentOrigin} to allowed domains.`);
     }
     console.error('Failed to delegate credential:', error);
     throw new Error(error.response?.data?.message || 'Delegation failed');
