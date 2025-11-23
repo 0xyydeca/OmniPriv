@@ -21,11 +21,11 @@ export function CopyButton({ text, label, successMessage = 'Copied to clipboard!
     
     if (success) {
       setCopied(true);
-      showToast(successMessage, 'success');
+      showToast({ message: successMessage, type: 'success' });
       
       setTimeout(() => setCopied(false), 2000);
     } else {
-      showToast('Failed to copy to clipboard', 'error');
+      showToast({ message: 'Failed to copy to clipboard', type: 'error' });
     }
   };
 

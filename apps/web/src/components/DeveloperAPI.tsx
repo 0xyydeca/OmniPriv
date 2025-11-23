@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CodeIcon, PlayIcon, DocumentDuplicateIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { CodeBracketIcon, PlayIcon, DocumentDuplicateIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 /**
  * DeveloperAPI Component
@@ -96,7 +96,7 @@ print(f"Verification triggered: {result['txHash']}")`;
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-lg text-white">
         <div className="flex items-center gap-3 mb-2">
-          <CodeIcon className="w-8 h-8" />
+          <CodeBracketIcon className="w-8 h-8" />
           <h2 className="text-2xl font-bold">Developer API</h2>
         </div>
         <p className="text-blue-100">

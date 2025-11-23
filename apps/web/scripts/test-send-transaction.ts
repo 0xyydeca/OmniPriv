@@ -63,10 +63,11 @@ async function sendTestTransaction() {
   let fromAccountId: string | undefined;
   
   try {
-    const accounts = await cdp.evm.listAccounts();
-    console.log(`   Found ${accounts?.length || 0} account(s)`);
+    const accountsResult = await cdp.evm.listAccounts();
+    const accounts = Array.isArray(accountsResult) ? accountsResult : (accountsResult as any)?.data || [];
+    console.log(`   Found ${accounts.length} account(s)`);
     
-    if (accounts && accounts.length > 0) {
+    if (accounts.length > 0) {
       // Find account matching our address, or use the first one
       const accountAddress = serverWalletId.trim().toLowerCase();
       const foundAccount = accounts.find((acc: any) => 
@@ -95,9 +96,9 @@ async function sendTestTransaction() {
     console.warn(`   listAccounts failed: ${error.message}`);
     // Fallback: try getAccount
     try {
-      account = await cdp.evm.getAccount({ address: serverWalletId.trim() });
+      account = await cdp.evm.getAccount({ address: serverWalletId.trim() as `0x${string}` });
       console.log(`   Account from getAccount:`, JSON.stringify(account, null, 2));
-      fromAccountId = account.id || account.address;
+      fromAccountId = (account as any).id || account.address;
     } catch (getError: any) {
       throw new Error(`Could not get account: ${getError.message}`);
     }

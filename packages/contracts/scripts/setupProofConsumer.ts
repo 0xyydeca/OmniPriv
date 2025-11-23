@@ -17,7 +17,7 @@ async function main() {
   // Contract addresses (Base Sepolia)
   const PROOF_CONSUMER_ADDRESS = '0xdC98b38F092413fedc31ef42667C71907fc5350A';
   const VAULT_ANCHOR_ADDRESS = '0x6DB3992C31AFc84E442621fff00511e9f26335d1';
-  const IDENTITY_OAPP_ADDRESS = '0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48';
+  const IDENTITY_OAPP_ADDRESS = '0x89C6d0D3782a2E5556EfaDE40361D2864a6b3275'; // Updated to match deployments.json
   
   console.log('\nProofConsumer:', PROOF_CONSUMER_ADDRESS);
   console.log('VaultAnchor:', VAULT_ANCHOR_ADDRESS);

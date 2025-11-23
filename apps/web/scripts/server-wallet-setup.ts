@@ -98,15 +98,11 @@ async function setupServerWallet() {
 
   // Create EOA on Base Sepolia (returns address as ID)
   console.log('📝 Creating EVM account on Base Sepolia...');
-  const account = await cdp.evm.createAccount({
-    chain: "base-sepolia"  // Targets Sepolia testnet
-  });
+  const account = await cdp.evm.createAccount();
   console.log("\n✅ Server Wallet created!");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("Full account object:", JSON.stringify(account, null, 2));
   console.log("Wallet Address:", account.address);
-  console.log("Account ID:", account.id || account.address);
-  console.log("Network:", account.network || "base-sepolia");
+  console.log("Network:", "base-sepolia");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
   // Fund with test ETH via CDP faucet (0.01-0.1 ETH, rate-limited but instant for small amounts)

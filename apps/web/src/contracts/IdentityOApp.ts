@@ -2,8 +2,8 @@
  * IdentityOApp Contract ABI and Address
  * This is the contract that ACTUALLY receives cross-chain verification messages!
  * 
- * Base Sepolia: 0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
- * Optimism Sepolia: 0x5BB995757E8Be755967160C256eF2F8e07a3e579
+ * Base Sepolia: 0x89C6d0D3782a2E5556EfaDE40361D2864a6b3275
+ * Optimism Sepolia: 0x591A2902FB1853A0fca20b163a63720b7579B473
  */
 
 export const IDENTITY_OAPP_ABI = [
@@ -93,11 +93,7 @@ export const IDENTITY_OAPP_ABI = [
 
 // Contract addresses
 export const IDENTITY_OAPP_ADDRESS = {
-  BASE_SEPOLIA: '0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48' as const,
-  OPTIMISM_SEPOLIA: '0x5BB995757E8Be755967160C256eF2F8e07a3e579' as const,
+  BASE_SEPOLIA: '0x89C6d0D3782a2E5556EfaDE40361D2864a6b3275' as const,
+  OPTIMISM_SEPOLIA: '0x591A2902FB1853A0fca20b163a63720b7579B473' as const,
 } as const;
-
-// Chain IDs
-export const BASE_SEPOLIA_CHAIN_ID = 84532;
-export const OPTIMISM_SEPOLIA_CHAIN_ID = 11155420;
 

@@ -56,6 +56,7 @@ export default function DAppPage() {
   // Extract data from verification
   const expiry = verification ? verification.expiry : undefined;
   const sourceEid = verification ? verification.sourceEid : undefined;
+  const timestamp = verification ? verification.timestamp : undefined;
 
   // Mock badge minting (would be real contract call in production)
   const [mintingBadge, setMintingBadge] = useState(false);
@@ -144,7 +145,7 @@ export default function DAppPage() {
             <div className="space-y-2 text-sm text-gray-300">
               <p><strong>Policy:</strong> AGE18_ALLOWED_COUNTRIES_V1</p>
               <p><strong>Expiry:</strong> {expiry ? new Date(Number(expiry) * 1000).toLocaleString() : 'N/A'}</p>
-              <p><strong>Nonce:</strong> {nonce ? nonce.toString() : 'N/A'}</p>
+              <p><strong>Verified:</strong> {timestamp ? new Date(Number(timestamp) * 1000).toLocaleString() : 'N/A'}</p>
             </div>
           </StatusCard>
         ) : (

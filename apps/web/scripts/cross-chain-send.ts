@@ -197,10 +197,10 @@ async function sendCrossChainVerification() {
         functionName: "quote",
         args: [dstEid, encodedPayload, options, false],
       });
-      layerZeroFee = fee.nativeFee;
+      layerZeroFee = fee[0];  // First element is nativeFee
       console.log(`   ✅ LayerZero fee quoted: ${layerZeroFee.toString()} wei`);
       console.log(`      Native Fee: ${Number(layerZeroFee) / 1e18} ETH`);
-      console.log(`      LZ Token Fee: ${Number(fee.lzTokenFee) / 1e18} ETH`);
+      console.log(`      LZ Token Fee: ${Number(fee[1]) / 1e18} ETH`);  // Second element is lzTokenFee
       
       // Add 10% buffer for safety
       layerZeroFee = (layerZeroFee * BigInt(110)) / BigInt(100);
@@ -233,7 +233,34 @@ async function sendCrossChainVerification() {
       network: "base-sepolia",
     });
     
-    return result;
+    console.log("\n✅ Cross-chain transaction sent!");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("Transaction Hash:", result.transactionHash);
+    console.log("Explorer:", `https://sepolia.basescan.org/tx/${result.transactionHash}`);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("\n🔍 What to check:");
+    console.log("1. Base Sepolia transaction:", `https://sepolia.basescan.org/tx/${result.transactionHash}`);
+    console.log("2. Look for 'VerificationSent' event in the transaction logs");
+    console.log("3. Check LayerZero Endpoint interactions (0x... endpoint contract)");
+    console.log("4. Wait for LayerZero to relay (usually 1-2 minutes)");
+    console.log("5. Check Optimism Sepolia for 'VerificationReceived' event");
+    console.log("   Contract:", IDENTITY_OAPP_ADDRESSES.optimismSepolia);
+    console.log("   Explorer:", `https://sepolia-optimism.etherscan.io/address/${IDENTITY_OAPP_ADDRESSES.optimismSepolia}`);
+
+    return {
+      success: true,
+      txHash: result.transactionHash,
+      fromChain: "base-sepolia",
+      toChain: "optimism-sepolia",
+      explorer: `https://sepolia.basescan.org/tx/${result.transactionHash}`,
+      layerZeroMessage: {
+        fromEid: LAYERZERO_EIDS.baseSepolia,
+        toEid: dstEid,
+        user,
+        policyId,
+        commitment,
+      },
+    };
   } catch (error: any) {
     // If gas estimation fails, the issue might be with the contract call itself
     console.error("\n❌ Detailed error:", error);
@@ -246,35 +273,6 @@ async function sendCrossChainVerification() {
     }
     throw error;
   }
-
-  console.log("\n✅ Cross-chain transaction sent!");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("Transaction Hash:", result.transactionHash);
-  console.log("Explorer:", `https://sepolia.basescan.org/tx/${result.transactionHash}`);
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("\n🔍 What to check:");
-  console.log("1. Base Sepolia transaction:", `https://sepolia.basescan.org/tx/${result.transactionHash}`);
-  console.log("2. Look for 'VerificationSent' event in the transaction logs");
-  console.log("3. Check LayerZero Endpoint interactions (0x... endpoint contract)");
-  console.log("4. Wait for LayerZero to relay (usually 1-2 minutes)");
-  console.log("5. Check Optimism Sepolia for 'VerificationReceived' event");
-  console.log("   Contract:", IDENTITY_OAPP_ADDRESSES.optimismSepolia);
-  console.log("   Explorer:", `https://sepolia-optimism.etherscan.io/address/${IDENTITY_OAPP_ADDRESSES.optimismSepolia}`);
-
-  return {
-    success: true,
-    txHash: result.transactionHash,
-    fromChain: "base-sepolia",
-    toChain: "optimism-sepolia",
-    explorer: `https://sepolia.basescan.org/tx/${result.transactionHash}`,
-    layerZeroMessage: {
-      fromEid: LAYERZERO_EIDS.baseSepolia,
-      toEid: dstEid,
-      user,
-      policyId,
-      commitment,
-    },
-  };
 }
 
 // Run the script

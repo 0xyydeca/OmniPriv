@@ -22,9 +22,9 @@ async function test() {
 
   // SDK expects: address, transaction (object with to/value), and network
   const result = await cdp.evm.sendTransaction({
-    address: process.env.CDP_SERVER_WALLET_ID!, // Use 'address' not 'from'
+    address: process.env.CDP_SERVER_WALLET_ID! as `0x${string}`, // Use 'address' not 'from'
     transaction: {
-      to: "0x6D1cdE4A453C6A81BD51b68730099b2197aDFa01", // send to yourself
+      to: "0x6D1cdE4A453C6A81BD51b68730099b2197aDFa01" as `0x${string}`, // send to yourself
       value: 0n,
     },
     network: "base-sepolia" // Use 'network' not 'chain'

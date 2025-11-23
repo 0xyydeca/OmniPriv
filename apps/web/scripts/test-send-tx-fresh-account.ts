@@ -24,43 +24,27 @@ async function testFreshAccount() {
   const cdp = new CdpClient({ apiKeyId, apiKeySecret, walletSecret });
 
   console.log('📝 Creating fresh account...');
-  const account = await cdp.evm.createAccount({ chain: "base-sepolia" });
+  const account = await cdp.evm.createAccount();
   console.log('✅ Account created:', JSON.stringify(account, null, 2));
   
   // Try sending transaction immediately with the fresh account
   console.log('\n📤 Attempting to send transaction with fresh account...');
-  console.log(`   Using account.address as 'from': ${account.address}`);
+  console.log(`   Using account.address: ${account.address}`);
   
   try {
-    const hash = await cdp.evm.sendTransaction({
-      from: account.address, // Try using the address directly from createAccount
-      to: account.address,
-      value: 0n,
-      chain: "base-sepolia"
+    const result = await cdp.evm.sendTransaction({
+      address: account.address as `0x${string}`, // SDK uses 'address' not 'from'
+      transaction: {
+        to: account.address as `0x${string}`,
+        value: 0n,
+      },
+      network: "base-sepolia" // SDK uses 'network' not 'chain'
     });
     
-    console.log('✅ SUCCESS! Transaction hash:', hash);
-    return hash;
+    console.log('✅ SUCCESS! Transaction hash:', result.transactionHash);
+    return result.transactionHash;
   } catch (error: any) {
     console.error('❌ Failed with fresh account:', error.message);
-    
-    // Try with account.id if it exists
-    if (account.id && account.id !== account.address) {
-      console.log('\n🔄 Trying with account.id instead...');
-      try {
-        const hash = await cdp.evm.sendTransaction({
-          from: account.id,
-          to: account.address,
-          value: 0n,
-          chain: "base-sepolia"
-        });
-        console.log('✅ SUCCESS with account.id! Transaction hash:', hash);
-        return hash;
-      } catch (error2: any) {
-        console.error('❌ Also failed with account.id:', error2.message);
-      }
-    }
-    
     throw error;
   }
 }

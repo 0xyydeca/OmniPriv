@@ -1,254 +1,535 @@
-# OmniPriv 2.0
+# OmniPriv
 
-**Privacy-first omnichain identity router powered by Aztec, LayerZero, and Coinbase Developer Platform.**
+**Private Identity Verification Across Chains**
 
-> 🎯 **ETHGlobal Buenos Aires 2025 Hackathon Project**
+> **The one-sentence pitch:** OmniPriv is like a private digital passport locker that lets you prove "I'm allowed to use this app" on any supported blockchain, without ever showing your actual passport details to the apps or putting them on-chain.
 
-## Overview
+---
 
-OmniPriv enables users to prove attributes (age, KYC, country, reputation) across any blockchain without revealing personal data. Users ingest credentials into an encrypted vault, generate zero-knowledge proofs with Noir, anchor commitments on Chain A, then propagate minimal "verified claim" flags to Chain B via LayerZero.
+## 🎯 The Vision
 
-**In one sentence:** *On‑chain apps need to verify user attributes across chains without doxxing users or re‑implementing KYC on every chain/dApp.*
+You have a **privacy passport** that lives in a **locked box you control**, and dApps on different chains can just ask, "**Is this person allowed in?**" and get a **yes/no answer** without ever seeing what's inside the passport.
+
+**No personal data on-chain. No PII shared with dApps. Just permission flags that travel across chains.**
+
+---
+
+## 📖 The User Story
+
+### 1. You arrive at OmniPriv (the Vault UI)
+
+- Open the web app at `/vault`
+- Log in with an **embedded wallet** (created by Coinbase Developer Platform)
+  - No seed phrase, no MetaMask setup
+  - Just: **"Sign in → you now have an onchain account"**
+
+### 2. You add a "credential" – your private details
+
+OmniPriv asks for basic info (for the demo):
+- **Date of birth**
+- **Country**
+
+Instead of sending this to a server, OmniPriv:
+1. **Encrypts it in your browser** using your wallet key
+2. **Stores it locally** in a small "vault" only your device + wallet can unlock
+3. **On-chain**, it only records a **scrambled fingerprint** (a hash/commitment), **not the actual data**
+
+```
+┌─────────────────────────────────────┐
+│  Your Browser (Local Vault)         │
+│  ┌────────────────────────────────┐ │
+│  │ DOB: 1995-03-15                │ │  ← Encrypted, stays local
+│  │ Country: US                    │ │
+│  │ Secret salt: 12345             │ │
+│  └────────────────────────────────┘ │
+└─────────────────────────────────────┘
+              ↓
+    On-chain: 0x7a3b9f2e...  ← Just a hash/commitment
+```
+
+### 3. You prove something about yourself without revealing the raw data
+
+You click: **"Prove I'm over 18 and from an allowed country"**
+
+In the background:
+1. A **zero-knowledge proof circuit** (Noir / Aztec) checks your encrypted data
+2. It answers: **"Yes, this person is ≥ 18 and from an allowed country"**
+   - Without revealing your date of birth
+   - Without revealing your country
+3. The smart contract on **Chain A** (Base Sepolia – your "home" identity chain) only sees:
+   - ✅ A proof that passes or fails
+   - 🔑 A policy ID (e.g., `AGE18_ALLOWED_COUNTRIES_V1`)
+   - ⏰ An expiry time
+4. If it passes, the contract marks:
+   - **"This wallet satisfies policy X until time Y"**
+   - Again, **no PII (Personally Identifiable Information)**
+
+### 4. That "verified" status is sent to another chain
+
+Now we use **LayerZero**.
+
+A special cross-chain contract (an **OApp**) sends a tiny message from **Chain A → Chain B** that says:
+
+> "Wallet `0x123` is verified for policy `X` until time `Y`."
+
+LayerZero handles the messaging; OmniPriv adds:
+- ✅ Replay protection (nonce)
+- ✅ Trusted sender checks
+- ✅ Simple expiry rules
+
+So now, on **Chain B** (Optimism Sepolia), a contract can say:
+
+> "I don't know who this person is, but I know they passed the check on Chain A and the approval is still valid."
+
+### 5. You visit the Demo dApp and use your verification
+
+In the same website, you go to the **Demo dApp** page (`/dapp`).
+
+It's just a normal-looking dApp:
+- **"Only verified users can mint this badge / claim this reward / open this position."**
+
+When you click the action:
+1. The dApp calls a contract on **Chain B** that simply checks:
+   - `isVerified(wallet, policyId)` → returns `true` or `false`
+2. If **yes** → The action succeeds (badge minted, access granted, etc.)
+3. If **no** → It fails with: "You must verify via OmniPriv first"
+
+**Importantly:**
+- ✅ The Demo dApp **never sees your DOB or country**
+- ✅ It only sees the **yes/no + expiry**, which was propagated via LayerZero
+
+---
+
+## 🏗️ How All the Pieces Connect
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        YOUR BROWSER                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ Encrypted Credential Vault (Local Storage + IndexedDB)   │   │
+│  │ • DOB: 1995-03-15                                        │   │
+│  │ • Country: US                                            │   │
+│  │ • Secret salt: 12345                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                         ↓                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ Noir ZK Circuit (runs in browser via WASM)              │   │
+│  │ • Proves: age ≥ 18, country allowed                     │   │
+│  │ • Outputs: proof + public signals (commitment, policy)   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                          ↓ ZK Proof
+                          
+┌─────────────────────────────────────────────────────────────────┐
+│                   CHAIN A: BASE SEPOLIA                          │
+│  ┌────────────────────────┐    ┌─────────────────────────────┐ │
+│  │  VaultAnchor           │    │  ProofConsumer              │ │
+│  │  • Stores commitments  │    │  • Verifies ZK proofs       │ │
+│  │  • No PII on-chain     │ ──▶│  • Marks wallet as verified │ │
+│  └────────────────────────┘    └─────────────────────────────┘ │
+│                                           ↓                      │
+│                                 ┌─────────────────────────────┐ │
+│                                 │  IdentityOApp               │ │
+│                                 │  • Sends verification msg   │ │
+│                                 │    via LayerZero            │ │
+│                                 └─────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                          ↓ LayerZero Message
+                          
+┌─────────────────────────────────────────────────────────────────┐
+│                CHAIN B: OPTIMISM SEPOLIA                         │
+│  ┌────────────────────────┐    ┌─────────────────────────────┐ │
+│  │  IdentityOApp          │    │  OmniPrivVerifier           │ │
+│  │  • Receives LZ message │ ──▶│  • Stores verification      │ │
+│  │  • Validates sender    │    │  • isVerified(addr, policy) │ │
+│  └────────────────────────┘    └─────────────────────────────┘ │
+│                                           ↑                      │
+│                                 ┌─────────────────────────────┐ │
+│                                 │  Demo dApp / KycAirdrop     │ │
+│                                 │  • Checks verification      │ │
+│                                 │  • Gates access to features │ │
+│                                 └─────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│             COINBASE DEVELOPER PLATFORM (CDP)                    │
+│  • Embedded Wallets (one-click onboarding)                      │
+│  • Server Wallets (gas subsidization)                           │
+│  • Auth infrastructure (no MetaMask required)                   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Component Breakdown
+
+| Component | What It Does | Think Of It As |
+|-----------|-------------|----------------|
+| **Your Browser** | Holds encrypted credential vault, runs ZK proof generation | "My secrets stay on my device; I only send mathematical proofs" |
+| **Aztec / Noir (ZK Circuits)** | Takes private info, outputs a "yes they qualify" proof | "Math check that proves I'm old enough, without showing my birthday" |
+| **Identity Contracts (Chain A)** | Receive proof, record verified flag with expiry | "This address has been cleared for policy X until date Y" |
+| **LayerZero OApp** | Ships privacy-safe message from Chain A to Chain B | "Let's tell other chains this address is good, without telling them why" |
+| **Identity Contracts (Chain B)** | Receive message, store verification flag | "Other chains can trust the result without redoing KYC or seeing PII" |
+| **Demo dApp (Chain B)** | Checks verification flag before allowing actions | "No PII, no forms – just a gate that opens if OmniPriv says yes" |
+| **CDP Embedded/Server Wallets** | Smooth onboarding, gas subsidization | "Hidden plumbing that makes it feel like a normal app, not a crypto experiment" |
+
+---
+
+## 🛠️ Technical Architecture
+
+### Chains
+
+- **Origin Chain (Chain A):** Base Sepolia (Chain ID: 84532)
+  - Where identity verification happens
+  - Where commitments and proofs are stored
+  - LayerZero Endpoint ID: 40245
+
+- **Destination Chain (Chain B):** Optimism Sepolia (Chain ID: 11155420)
+  - Where dApps consume verification status
+  - Where cross-chain messages arrive
+  - LayerZero Endpoint ID: 40232
+
+### Smart Contracts
+
+#### Base Sepolia (Origin)
+```
+VaultAnchor:     0x6DB3992C31AFc84E442621fff00511e9f26335d1
+  ↳ Stores credential commitments (hashes only)
+
+ProofConsumer:   0xdC98b38F092413fedc31ef42667C71907fc5350A
+  ↳ Verifies ZK proofs, marks wallets as verified
+
+IdentityOApp:    0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
+  ↳ Sends verification messages via LayerZero
+```
+
+#### Optimism Sepolia (Destination)
+```
+OmniPrivVerifier: 0xcf1a9522FB166a1E79564b5081940a271ab5A187
+  ↳ Stores verification status from Chain A
+
+IdentityOApp:     0x5BB995757E8Be755967160C256eF2F8e07a3e579
+  ↳ Receives verification messages from Chain A
+```
+
+### Policy System
+
+**Policy ID:** `AGE18_ALLOWED_COUNTRIES_V1`
+- Computed as: `keccak256("kyc_policy")`
+- Result: `0xdb2b18d284dcabfc3d45854d417582301554587c5b0daac21c62e70357d32db5`
+
+**Policy Logic:**
+```
+✅ Age ≥ 18 years
+✅ Country NOT in blocked list: {North Korea, Iran, Syria}
+✅ Credential not expired
+✅ Commitment anchored on-chain
+```
+
+### Zero-Knowledge Proof System
+
+**Circuit:** Noir (Aztec)
+
+**Private Inputs** (never revealed):
+```rust
+dob_year: Field       // User's birth year
+country_code: Field   // User's country code (1=US, etc.)
+secret_salt: Field    // Random salt for commitment
+```
+
+**Public Inputs** (verified on-chain):
+```rust
+commitment: Field       // Hash of private inputs
+policy_id: Field        // Which policy to check
+current_year: Field     // For age calculation
+expiry: Field           // When verification expires
+nonce: Field            // Replay protection
+blocked_countries: [Field; 3]  // Countries not allowed
+```
+
+**Commitment Formula:**
+```javascript
+commitment = dob_year + (country_code * 1000) + (secret_salt * 1000000)
+```
+
+This ensures the proof can only pass if the commitment matches what was stored in VaultAnchor.
+
+---
+
+## 💰 CDP (Coinbase Developer Platform) Integration
+
+### Who Pays for Gas/Infra?
+
+**For Users:**
+- User wallets are **CDP Embedded Wallets**
+  - One-click onboarding (feels like web2)
+  - No seed phrases, no MetaMask setup
+  - Users can be onboarded in seconds
+
+**For Operations:**
+- **CDP Server Wallet** acts as a "compliance budget"
+  - Pays for gas on proof verification
+  - Subsidizes cross-chain messaging costs
+  - Covers LayerZero fees
+
+**For Judges:**
+> "Users don't need to care about gas or complex flows – CDP infrastructure lets us subsidize and automate the identity operations. We can show metrics like 'average cost per verified user' using CDP's data APIs."
+
+### CDP Features Used
+
+| Feature | Usage |
+|---------|-------|
+| **Embedded Wallets** | One-click user onboarding |
+| **Server Wallets** | Gas subsidization for proof verification |
+| **Auth API** | Seamless authentication flow |
+| **Data APIs** | Track costs, usage, verification metrics |
+| **Network Support** | Base Sepolia + Optimism Sepolia support |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Node.js**: 20.11.0 or higher (LTS)
-- **pnpm**: 8.15.0 (exact version)
-- **Nargo**: 1.0.0-beta.15 (optional, for ZK circuit development)
-
 ```bash
-# Check versions
-node --version   # v20.11.0+
-pnpm --version   # 8.15.0
-nargo --version  # 1.0.0-beta.15 (optional)
+Node.js >= 18
+pnpm >= 8
 ```
 
 ### Installation
 
 ```bash
+# Clone the repo
+git clone https://github.com/yourusername/OmniPriv.git
+cd OmniPriv
+
 # Install dependencies
 pnpm install
-
-# Start development server
-pnpm dev
-
-# Visit http://localhost:3000
 ```
 
-**For ZK circuit development:**
+### Environment Setup
+
+Create `apps/web/.env.local`:
+
 ```bash
-# Install Nargo (Noir compiler)
-curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
-source ~/.zshrc
-noirup
+# Coinbase Developer Platform
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
+NEXT_PUBLIC_CDP_API_KEY_NAME=your_api_key_name
 
-# Test circuits
-cd packages/circuits && nargo test
+# WalletConnect (optional)
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_id
+
+# Contract Addresses (already configured)
+NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS=0x6DB3992C31AFc84E442621fff00511e9f26335d1
+NEXT_PUBLIC_PROOF_CONSUMER_ADDRESS=0xdC98b38F092413fedc31ef42667C71907fc5350A
+NEXT_PUBLIC_OMNIPRIV_VERIFIER_ADDRESS=0xcf1a9522FB166a1E79564b5081940a271ab5A187
 ```
 
-See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
+### Run Development Server
 
-## 🏗️ Architecture
-
-```
-User Journey:
-1. Land on omnipriv.app → "Prove you qualify once, reuse privately across chains"
-2. Click "Continue" → Sign in with CDP Embedded Wallet (gasless onboarding)
-3. Add credential → Encrypt & store locally → Anchor commitment on Chain A
-4. Generate proof → Noir circuit proves age ≥ 18 and country ∉ {blocked}
-5. Bridge verification → LayerZero sends flag to Chain B
-6. Use on dApp → Chain B dApp checks isVerified(userHash, policyId) → ✅
+```bash
+pnpm dev
 ```
 
-### Components
+Open http://localhost:3000
 
-- **Frontend**: Next.js 14 + React 18 + wagmi/viem
-- **Contracts** (Solidity ^0.8.24):
-  - `VaultAnchor`: Commitment storage on Chain A
-  - `ProofConsumer`: ZK proof verification on Chain A
-  - `IdentityOApp`: LayerZero OApp for cross-chain messaging
-  - `OmniPrivVerifier`: Verification receiver on Chain B
-  - `KycAirdrop`: Demo dApp with gated access
-- **ZK Circuits**: Noir (Aztec Devnet)
-  - `identity_claim`: Age ≥ 18 + country allowlist proof
-- **Agent**: CDP x402-gated endpoint for automated refresh
-- **SDK**: TypeScript utilities for vault, crypto, proof generation
+### Try the Demo
 
-## 🌟 Sponsor Integration
+1. **Go to `/vault`**
+   - Sign in with embedded wallet
+   - Add a credential (DOB + Country)
+   - Click "Prove and verify across chains"
+   - Watch the cross-chain stepper:
+     - ✅ ZK Proof Generated
+     - ✅ Base Sepolia Verified
+     - ✅ LayerZero Message Sent
+     - ✅ Optimism Sepolia Verified
 
-### Aztec Network
-- **Noir circuits** (`packages/circuits/`) for zero-knowledge proof generation
-- Proves age ≥ 18 and country compliance without revealing PII
-- Noir 1.0 with nargo 1.0.0-beta.15
-- 6 comprehensive circuit tests (all passing ✅)
-- Compiled artifacts: `target/omnipriv_circuits.json`
+2. **Go to `/dapp`**
+   - See your verification status
+   - Mint a badge (only if verified)
+   - Experience gated features without sharing PII
 
-### LayerZero (Best Omnichain Implementation)
-- **Integrate LayerZero v2 OApps and Endpoint contracts** to propagate a minimal, privacy-preserving "verified identity marker" across chains
-- **Extend base OApp logic** with custom replay protection, per-policy nonces, and expiry semantics
-- **dApps on any LZ-connected chain** can query `isVerified(user, policyId)` without touching PII
-- **Working cross-chain demo** with detailed feedback on SDK and docs
-- Minimal payload design (< 1KB) for gas efficiency
+---
 
-### Coinbase Developer Platform (CDP)
-- **CDP Embedded Wallets** for end-user onboarding and gasless UX
-- **CDP Server Wallets** for agent operations and treasury management
-- **x402-gated endpoints** for automated verification refresh
-- Email/social login → instant wallet creation (no MetaMask, no seed phrases)
-- Pays for identity-related on-chain actions via HTTP API
-
-## 📂 Project Structure
+## 📦 Monorepo Structure
 
 ```
-omnipriv/
+OmniPriv/
 ├── apps/
 │   └── web/                    # Next.js frontend
-│       ├── src/app/
-│       │   ├── page.tsx        # Landing + onboarding
-│       │   ├── dashboard/      # Vault + proof + bridge
-│       │   ├── demo-dapp/      # KYC airdrop demo
-│       │   └── api/
-│       │       └── refresh-claim/  # CDP x402 agent
-│       └── src/components/
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── vault/      # Vault UI (Chain A)
+│       │   │   └── dapp/       # Demo dApp (Chain B)
+│       │   ├── components/     # React components
+│       │   ├── contracts/      # Contract ABIs + addresses
+│       │   └── lib/            # Utilities
+│       └── .env.local          # Environment variables
+│
 ├── packages/
-│   ├── contracts/              # Solidity contracts
+│   ├── contracts/              # Solidity smart contracts
 │   │   ├── contracts/
 │   │   │   ├── VaultAnchor.sol
 │   │   │   ├── ProofConsumer.sol
 │   │   │   ├── IdentityOApp.sol
-│   │   │   ├── OmniPrivVerifier.sol
-│   │   │   └── KycAirdrop.sol
-│   │   └── deploy/
+│   │   │   └── OmniPrivVerifier.sol
+│   │   ├── deploy/             # Deployment scripts
+│   │   ├── scripts/            # Setup scripts
+│   │   └── deployments/        # Deployed addresses
+│   │
 │   ├── circuits/               # Noir ZK circuits
-│   │   └── src/main.nr
+│   │   └── src/
+│   │       └── main.nr         # Identity verification circuit
+│   │
 │   └── sdk/                    # TypeScript SDK
 │       └── src/
-└── docs/                       # Documentation
+│           ├── vault.ts        # Local credential vault
+│           ├── proof.ts        # Proof generation
+│           └── constants.ts    # Chain/contract constants
+│
+└── docs/                       # Architecture Decision Records
+    ├── ADR-000-chains-and-constants.md
+    └── ARCHITECTURE.md
 ```
 
-## 🎯 Key Features
+---
 
-### Privacy-Preserving
-- ✅ No DOB, country, or PII on-chain
-- ✅ Only commitments and policy IDs stored
-- ✅ Zero-knowledge proofs reveal nothing beyond policy compliance
+## 🔐 Security Model
 
-### Cross-Chain Native
-- ✅ Verify once, use everywhere
-- ✅ LayerZero v2 OApp for reliable messaging
-- ✅ Support for Base Sepolia, Celo Sepolia, and more
+### Privacy Guarantees
 
-### Developer-Friendly
-- ✅ Gasless onboarding via CDP Embedded Wallets
-- ✅ Simple `isVerified(userHash, policyId)` API for dApps
-- ✅ CDP Server Wallets for automated operations
+✅ **Your private data never leaves your browser**
+- DOB, country stored encrypted locally
+- Only commitments (hashes) go on-chain
+
+✅ **Zero-knowledge proofs reveal nothing**
+- Proof shows "meets requirements" not "what the requirements are met with"
+- No DOB, no country code in proof outputs
+
+✅ **dApps see only permission flags**
+- `isVerified(address, policyId)` → `true/false`
+- Expiry timestamp
+- **No PII ever shared**
+
+### Trust Model
+
+**What you must trust:**
+1. **Your browser** - It runs the encryption and proof generation
+2. **The circuit logic** - It correctly enforces policies
+3. **Chain A contracts** - They correctly verify proofs
+4. **LayerZero** - They correctly relay messages
+5. **Chain B contracts** - They correctly validate received messages
+
+**What you don't need to trust:**
+- ❌ The dApp (it never sees your data)
+- ❌ The frontend server (data never sent to server)
+- ❌ Third-party validators (everything is on-chain)
+
+---
+
+## 🎬 Demo Scenarios
+
+### Scenario 1: Age-Gated Content
+
+**Problem:** A dApp wants to restrict access to 18+ users without collecting birth dates.
+
+**Solution:**
+1. User verifies with policy `AGE18_ALLOWED_COUNTRIES_V1` on Chain A
+2. Verification propagates to Chain B via LayerZero
+3. dApp checks `isVerified(user, policyId)` before showing content
+4. **Result:** Age gate without PII
+
+### Scenario 2: KYC Airdrop
+
+**Problem:** An airdrop needs basic KYC but wants to respect user privacy.
+
+**Solution:**
+1. Users verify their identity once on Chain A
+2. Multiple projects on Chain B can check the same verification
+3. No need to re-submit documents to each project
+4. **Result:** One verification, many uses, zero PII leakage
+
+### Scenario 3: Cross-Chain Reputation
+
+**Problem:** User has reputation on Chain A, wants to use it on Chain B.
+
+**Solution:**
+1. OmniPriv can send "verified" status as a form of reputation
+2. dApps on any chain can trust the verification
+3. User doesn't need to rebuild reputation on each chain
+4. **Result:** Portable, privacy-preserving reputation
+
+---
 
 ## 🧪 Testing
 
 ```bash
-# Unit tests
-pnpm test
+# Test smart contracts
+pnpm contracts:test
 
-# Contract tests
-pnpm -F @omnipriv/contracts test
+# Test Noir circuits
+pnpm circuits:test
 
-# Noir circuit tests
-cd packages/circuits && nargo test
-
-# E2E tests
-pnpm -F web test:e2e
+# Run end-to-end tests
+pnpm test:e2e
 ```
-
-## 📊 Deployed Contracts
-
-### Base Sepolia (Chain ID: 84532)
-- VaultAnchor: `0x6DB3992C31AFc84E442621fff00511e9f26335d1`
-- ProofConsumer: `0x5BB995757E8Be755967160C256eF2F8e07a3e579`
-- IdentityOApp: `0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48`
-
-### Celo Sepolia (Chain ID: 11142220)
-- VaultAnchor: `0xcf1a9522FB166a1E79564b5081940a271ab5A187`
-- ProofConsumer: `0x6DB3992C31AFc84E442621fff00511e9f26335d1`
-
-## 🔧 Environment Setup
-
-Create `.env.local` in `apps/web/`:
-
-```bash
-# CDP (required for wallet functionality)
-# Get from: https://portal.cdp.coinbase.com
-NEXT_PUBLIC_CDP_APP_ID=your_cdp_app_id
-
-# Contract addresses
-NEXT_PUBLIC_VAULT_ANCHOR_ADDRESS_BASE_SEPOLIA=0x6DB3992C31AFc84E442621fff00511e9f26335d1
-NEXT_PUBLIC_PROOF_CONSUMER_ADDRESS_BASE_SEPOLIA=0x5BB995757E8Be755967160C256eF2F8e07a3e579
-NEXT_PUBLIC_IDENTITY_OAPP_ADDRESS_BASE_SEPOLIA=0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48
-
-# CDP (for agent)
-CDP_API_KEY=your_cdp_api_key
-CDP_SERVER_WALLET_ID=your_wallet_id
-
-# RPC URLs (optional)
-BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
-CELO_SEPOLIA_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
-```
-
-## 📖 Documentation
-
-- [Architecture](./docs/ARCHITECTURE.md) - Technical architecture overview
-- [Setup Guide](./SETUP.md) - Detailed setup instructions
-- [Quick Start](./QUICKSTART.md) - 5-minute setup guide
-- [ADR: LayerZero v2](./docs/ADR-001-layerzero-v2.md) - Architecture decision record
-
-## 🎭 Demo Flow
-
-1. **Onboard**: Sign in with email → CDP creates embedded wallet (< 20s)
-2. **Add Credential**: Mock KYC form (DOB, country) → Encrypted vault → Commitment on-chain
-3. **Prove**: Generate Noir proof (< 7s) → Verify on Chain A
-4. **Bridge**: Send verification flag to Chain B via LayerZero (< 60s)
-5. **Use**: Demo dApp checks verification → Grant access to airdrop
-
-## 🏆 Hackathon Success Criteria
-
-### Functional
-- ✅ Complete user journey from credential to cross-chain verification
-- ✅ One commitment on Chain A
-- ✅ One Noir proof generation
-- ✅ One LayerZero message
-- ✅ Chain B dApp shows "Verified via OmniPriv"
-
-### Sponsor-Specific
-- ✅ **Aztec**: Noir circuit + Devnet integration for proof generation
-- ✅ **LayerZero**: Custom OApp with replay protection, per-policy nonces, and cross-chain demo
-- ✅ **CDP**: Embedded Wallets for users + Server Wallets for agents + x402 workflow
-
-### UX
-- ✅ Onboarding ≤ 20 seconds
-- ✅ Proof generation ≤ 7 seconds (laptop), ≤ 10 seconds (mobile)
-- ✅ Cross-chain delivery ≤ 60 seconds
-
-### Privacy
-- ✅ No PII in logs or on-chain
-- ✅ Only commitments and policy IDs visible
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-## 📜 License
-
-MIT License - see [LICENSE](./LICENSE)
-
-## 🌐 Links
-
-- **Website**: [omnipriv.app](https://omnipriv.app)
-- **Demo Video**: Coming soon
-- **Slides**: Coming soon
 
 ---
 
-**Built with ❤️ for ETHGlobal Buenos Aires 2025**
+## 📚 Learn More
 
-*Powered by Aztec • LayerZero • Coinbase Developer Platform*
+- **LayerZero V2:** [docs.layerzero.network](https://docs.layerzero.network)
+- **Aztec / Noir:** [noir-lang.org](https://noir-lang.org)
+- **Coinbase Developer Platform:** [docs.cdp.coinbase.com](https://docs.cdp.coinbase.com)
+- **Base Sepolia:** [docs.base.org](https://docs.base.org)
+- **Optimism Sepolia:** [docs.optimism.io](https://docs.optimism.io)
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
+- Code standards
+- Pull request process
+- Testing requirements
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](./LICENSE) for details.
+
+---
+
+## 🏆 Built For
+
+**ETHGlobal Buenos Aires 2025**
+
+**Prizes:**
+- 🎯 Coinbase Developer Platform - Best Use of Embedded Wallets
+- 🔗 LayerZero - Best Cross-Chain Application
+- 🔐 Aztec - Best Use of Noir ZK Circuits
+
+---
+
+## 👥 Team
+
+Built with ❤️ by the OmniPriv team.
+
+**Contact:**
+- Twitter: [@OmniPriv](https://twitter.com/OmniPriv)
+- GitHub: [github.com/OmniPriv](https://github.com/OmniPriv)
+
+---
+
+## 🙏 Acknowledgments
+
+Special thanks to:
+- **Coinbase** for CDP infrastructure
+- **LayerZero** for cross-chain messaging
+- **Aztec** for Noir ZK toolkit
+- **Base** for reliable testnet infrastructure
+- **Optimism** for L2 support
+
+---
+
+**Remember:** Privacy is a right, not a privilege. OmniPriv makes it easier to exercise that right across the entire blockchain ecosystem. 🔐✨

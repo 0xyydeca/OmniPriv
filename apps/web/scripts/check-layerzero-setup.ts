@@ -73,17 +73,18 @@ async function checkSetup() {
     }
 
     // Try to quote a fee
-    const payload = "0x" + "0".repeat(128); // Mock payload
+    const payload: `0x${string}` = ("0x" + "0".repeat(128)) as `0x${string}`; // Mock payload
+    const emptyBytes: `0x${string}` = "0x";
     try {
       const fee = await client.readContract({
         address: IDENTITY_OAPP_ADDRESS,
         abi: IDENTITY_OAPP_ABI,
         functionName: "quote",
-        args: [OPTIMISM_SEPOLIA_EID, payload, "0x", false],
+        args: [OPTIMISM_SEPOLIA_EID, payload, emptyBytes, false],
       });
       console.log(`   ✅ Fee quote successful:`);
-      console.log(`      Native Fee: ${fee.nativeFee.toString()}`);
-      console.log(`      LZ Token Fee: ${fee.lzTokenFee.toString()}`);
+      console.log(`      Native Fee: ${fee[0].toString()}`);
+      console.log(`      LZ Token Fee: ${fee[1].toString()}`);
     } catch (error: any) {
       console.log(`   ⚠️  Fee quote failed: ${error.message}`);
     }

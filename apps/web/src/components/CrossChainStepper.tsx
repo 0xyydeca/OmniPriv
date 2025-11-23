@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { CheckCircleIcon, ArrowPathIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useReadContract } from 'wagmi';
 import { getBlockExplorerLink } from '@/lib/utils';
-import { IDENTITY_OAPP_ADDRESS, IDENTITY_OAPP_ABI, OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/IdentityOApp';
+import { IDENTITY_OAPP_ADDRESS, IDENTITY_OAPP_ABI } from '@/contracts/IdentityOApp';
+import { OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/OmniPrivVerifier';
 
 export type StepState = 'idle' | 'in-progress' | 'done' | 'error';
 

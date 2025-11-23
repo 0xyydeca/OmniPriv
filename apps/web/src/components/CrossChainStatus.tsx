@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useReadContract } from 'wagmi';
-import { IDENTITY_OAPP_ADDRESS, IDENTITY_OAPP_ABI, OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/IdentityOApp';
+import { IDENTITY_OAPP_ADDRESS, IDENTITY_OAPP_ABI } from '@/contracts/IdentityOApp';
+import { OMNIPRIV_VERIFIER_ADDRESS, OPTIMISM_SEPOLIA_CHAIN_ID } from '@/contracts/OmniPrivVerifier';
 import { CheckCircleIcon, ClockIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 interface CrossChainStatusProps {

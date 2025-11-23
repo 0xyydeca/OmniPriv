@@ -73,6 +73,12 @@ export default function Home() {
   const { isConnected } = useAccount();
   const { connect, connectors, error: connectError } = useConnect();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering client-specific content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isConnected) {
@@ -102,15 +108,15 @@ export default function Home() {
     }
   };
 
-  // Show loading state if connectors aren't ready
-  if (connectors.length === 0) {
+  // Show loading state if not mounted yet or if connectors aren't ready
+  if (!mounted || connectors.length === 0) {
     return (
       <>
         <Navbar />
         <main className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 pt-20 sm:pt-24 md:pt-32 z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading wallet connectors...</p>
+            <p className="text-gray-400">Loading...</p>
           </div>
         </main>
       </>

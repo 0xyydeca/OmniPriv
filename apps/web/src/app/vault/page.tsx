@@ -19,6 +19,10 @@ import { getBlockExplorerLink, formatAddress } from '@/lib/utils';
 import { ethers } from 'ethers';
 import type { Hash } from 'viem';
 
+// Note: CDP's sendEvmTransaction types require chainId, but the API actually
+// determines chain from the 'network' parameter and ignores chainId if provided.
+// Using 'as any' to bypass this type mismatch between API and TypeScript definitions.
+
 type StepId = 'proof_generated' | 'base_verified' | 'lz_message_sent' | 'optimism_verified';
 
 export default function VaultPage() {
@@ -287,14 +291,17 @@ export default function VaultPage() {
       });
       
       // Send transaction using CDP's native hook
-      // CDP automatically handles transaction type, nonce, and gas estimation
+      // CDP hooks want transaction objects, not serialized strings
       const result = await sendEvmTransaction({
         evmAccount: address as `0x${string}`,
-        network: 'base-sepolia', // CDP network identifier
+        network: 'base-sepolia',
         transaction: {
           to: VAULT_ANCHOR_ADDRESS,
           data,
-        } as any, // Type assertion: CDP API docs say chainId is optional/ignored
+          chainId: baseSepolia.id,
+          type: 'eip1559', // Explicitly set transaction type for viem
+          // CDP handles gas estimation (maxFeePerGas, maxPriorityFeePerGas, nonce)
+        } as any,
       });
 
       const hash = result.transactionHash as `0x${string}`;
@@ -384,7 +391,16 @@ export default function VaultPage() {
         expiry_days: 30,
       };
 
-      const proofResponse = await generateProof(noirCredential, policyConfig, Date.now());
+      // 🎯 PHASE 1: Proof Generation (instrumented)
+      console.log('📍 PHASE 1/3: Generating ZK Proof...');
+      let proofResponse;
+      try {
+        proofResponse = await generateProof(noirCredential, policyConfig, Date.now());
+        console.log('✅ PHASE 1 SUCCESS: ZK Proof generated locally');
+      } catch (proofGenError: any) {
+        console.error('❌ PHASE 1 FAILED: Proof generation error:', proofGenError);
+        throw new Error(`Proof generation failed: ${proofGenError.message}`);
+      }
 
       const proofHex = '0x' + Array.from(proofResponse.proof)
         .map(b => b.toString(16).padStart(2, '0'))
@@ -411,74 +427,141 @@ export default function VaultPage() {
         publicSignals: publicSignalsBytes32,
       });
 
-      // Submit proof using CDP wallet
-      console.log('🔍 Submitting proof with CDP wallet:', {
-        userAddress,
-        isSignedIn,
-        contract: PROOF_CONSUMER_ADDRESS,
-      });
-      
-      updateStep('base_verified', 'in-progress');
-      
-      if (!sendEvmTransaction) {
-        throw new Error('CDP transaction hook not available - please ensure you are signed in');
+      // 🎯 PHASE 2: Transaction Preparation (instrumented)
+      console.log('📍 PHASE 2/3: Preparing transaction...');
+      let data: `0x${string}`;
+      try {
+        // Check CDP wallet state
+        console.log('🔍 CDP Wallet State:', {
+          userAddress,
+          isSignedIn,
+          hasSendEvmTransaction: !!sendEvmTransaction,
+          contract: PROOF_CONSUMER_ADDRESS,
+        });
+        
+        if (!sendEvmTransaction) {
+          throw new Error('CDP transaction hook not available - please ensure you are signed in');
+        }
+        
+        // Encode the contract call
+        data = encodeFunctionData({
+          abi: PROOF_CONSUMER_ABI,
+          functionName: 'submitProofAndBridge',
+          args: [
+            proofHex as `0x${string}`,
+            publicSignalsBytes32 as `0x${string}`[],
+            policyId as `0x${string}`,
+            40232, // LayerZero Endpoint ID for Optimism Sepolia
+            '0x' as `0x${string}`, // Empty options bytes
+          ],
+        });
+        console.log('✅ PHASE 2 SUCCESS: Transaction data encoded');
+      } catch (encodeError: any) {
+        console.error('❌ PHASE 2 FAILED: Transaction encoding error:', encodeError);
+        throw new Error(`Transaction preparation failed: ${encodeError.message}`);
       }
       
+      updateStep('base_verified', 'in-progress');
       setIsProofPending(true);
       
-      // Encode the contract call
-      const data = encodeFunctionData({
-        abi: PROOF_CONSUMER_ABI,
-        functionName: 'submitProofAndBridge',
-        args: [
-          proofHex as `0x${string}`,
-          publicSignalsBytes32 as `0x${string}`[],
-          policyId as `0x${string}`,
-          40232, // LayerZero Endpoint ID for Optimism Sepolia
-          '0x' as `0x${string}`, // Empty options bytes
-        ],
-      });
-      
-      // Send transaction using CDP's native hook
-      // CDP automatically handles transaction type, nonce, and gas estimation
-      const result = await sendEvmTransaction({
-        evmAccount: userAddress as `0x${string}`,
-        network: 'base-sepolia', // CDP network identifier
-        transaction: {
-          to: PROOF_CONSUMER_ADDRESS,
-          data,
-          value: BigInt('100000000000000'), // 0.0001 ETH for LayerZero gas
-        } as any, // Type assertion: CDP API docs say chainId is optional/ignored
-      });
+      // 🎯 PHASE 3: Transaction Submission (instrumented)
+      console.log('📍 PHASE 3/3: Submitting transaction to Base Sepolia...');
+      let hash: `0x${string}`;
+      try {
+        // Send transaction using CDP's native hook
+        // CDP hooks want transaction objects, not serialized strings
+        const result = await sendEvmTransaction({
+          evmAccount: userAddress as `0x${string}`,
+          network: 'base-sepolia',
+          transaction: {
+            to: PROOF_CONSUMER_ADDRESS,
+            data,
+            value: BigInt('100000000000000'), // 0.0001 ETH for LayerZero gas
+            chainId: baseSepolia.id,
+            type: 'eip1559', // Explicitly set transaction type for viem
+            // CDP handles gas estimation (maxFeePerGas, maxPriorityFeePerGas, nonce)
+          } as any,
+        });
 
-      const hash = result.transactionHash as `0x${string}`;
-      setProofHash(hash);
-      setIsProofPending(false);
-      setIsProofConfirming(true);
-      
-      showToast({
-        message: 'Transaction sent to Base Sepolia!',
-        type: 'success',
-        link: getBlockExplorerLink(84532, hash, 'transaction'),
-      });
+        hash = result.transactionHash as `0x${string}`;
+        setProofHash(hash);
+        setIsProofPending(false);
+        setIsProofConfirming(true);
+        
+        console.log('✅ PHASE 3a SUCCESS: Transaction sent!', {
+          hash,
+          explorer: getBlockExplorerLink(84532, hash, 'transaction'),
+        });
+        
+        showToast({
+          message: 'Transaction sent to Base Sepolia!',
+          type: 'success',
+          link: getBlockExplorerLink(84532, hash, 'transaction'),
+        });
+      } catch (txError: any) {
+        console.error('❌ PHASE 3 FAILED: Transaction submission error:', txError);
+        console.error('Error details:', {
+          message: txError.message,
+          code: txError.code,
+          data: txError.data,
+        });
+        setIsProofPending(false);
+        throw new Error(`Transaction submission failed: ${txError.message}`);
+      }
       
       // Wait for confirmation
-      const publicClient = getPublicClient();
-      await publicClient.waitForTransactionReceipt({ hash });
-      
-      setIsProofConfirming(false);
-      setIsProofSuccess(true);
-      
-      updateStep('base_verified', 'done');
-      showToast({ message: 'Proof verified on Base Sepolia!', type: 'success' });
+      console.log('📍 PHASE 3b: Waiting for transaction confirmation...');
+      try {
+        const publicClient = getPublicClient();
+        await publicClient.waitForTransactionReceipt({ hash });
+        
+        setIsProofConfirming(false);
+        setIsProofSuccess(true);
+        
+        console.log('✅ PHASE 3b SUCCESS: Transaction confirmed on-chain!');
+        
+        updateStep('base_verified', 'done');
+        showToast({ message: 'Proof verified on Base Sepolia!', type: 'success' });
+      } catch (confirmError: any) {
+        console.error('❌ PHASE 3b FAILED: Transaction confirmation error:', confirmError);
+        setIsProofConfirming(false);
+        throw new Error(`Transaction confirmation failed: ${confirmError.message}`);
+      }
 
     } catch (error: any) {
-      console.error('Verification failed:', error);
-      updateStep('proof_generated', 'error');
+      console.error('');
+      console.error('❌ VERIFICATION FAILED:');
+      console.error('Error:', error.message);
+      console.error('Stack:', error.stack);
+      console.error('');
+      
+      // Determine which phase failed for better error reporting
+      let errorPhase = 'Unknown phase';
+      if (error.message.includes('Proof generation failed')) {
+        errorPhase = 'Phase 1: Proof Generation';
+        updateStep('proof_generated', 'error');
+      } else if (error.message.includes('Transaction preparation failed')) {
+        errorPhase = 'Phase 2: Transaction Preparation';
+        updateStep('proof_generated', 'error');
+      } else if (error.message.includes('Transaction submission failed')) {
+        errorPhase = 'Phase 3: Transaction Submission';
+        updateStep('base_verified', 'error');
+      } else if (error.message.includes('Transaction confirmation failed')) {
+        errorPhase = 'Phase 3b: Transaction Confirmation';
+        updateStep('base_verified', 'error');
+      } else {
+        updateStep('proof_generated', 'error');
+      }
+      
+      console.error(`Failed at: ${errorPhase}`);
+      
       setIsProofPending(false);
       setIsProofConfirming(false);
       setProofError(error);
-      showToast({ message: error.message || 'Verification failed', type: 'error' });
+      showToast({ 
+        message: `${errorPhase}: ${error.message}`, 
+        type: 'error' 
+      });
     } finally {
       setLoading(false);
     }
