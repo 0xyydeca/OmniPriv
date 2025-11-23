@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 The Vision
+##  The Vision
 
 You have a **privacy passport** that lives in a **locked box you control**, and dApps on different chains can just ask, "**Is this person allowed in?**" and get a **yes/no answer** without ever seeing what's inside the passport.
 
@@ -14,7 +14,7 @@ You have a **privacy passport** that lives in a **locked box you control**, and 
 
 ---
 
-## 📖 The User Story
+##  The User Story
 
 ### 1. You arrive at OmniPriv (the Vault UI)
 
@@ -58,7 +58,7 @@ In the background:
    - Without revealing your country
 3. The smart contract on **Chain A** (Base Sepolia – your "home" identity chain) only sees:
    - ✅ A proof that passes or fails
-   - 🔑 A policy ID (e.g., `AGE18_ALLOWED_COUNTRIES_V1`)
+   -  A policy ID (e.g., `AGE18_ALLOWED_COUNTRIES_V1`)
    - ⏰ An expiry time
 4. If it passes, the contract marks:
    - **"This wallet satisfies policy X until time Y"**
@@ -100,7 +100,7 @@ When you click the action:
 
 ---
 
-## 🏗️ How All the Pieces Connect
+## ️ How All the Pieces Connect
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -173,7 +173,7 @@ When you click the action:
 
 ---
 
-## 🛠️ Technical Architecture
+## ️ Technical Architecture
 
 ### Chains
 
@@ -254,7 +254,7 @@ This ensures the proof can only pass if the commitment matches what was stored i
 
 ---
 
-## 💰 CDP (Coinbase Developer Platform) Integration
+##  CDP (Coinbase Developer Platform) Integration
 
 ### Who Pays for Gas/Infra?
 
@@ -285,7 +285,7 @@ This ensures the proof can only pass if the commitment matches what was stored i
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -360,7 +360,7 @@ Open http://localhost:3000
 
 ---
 
-## 📦 Monorepo Structure
+##  Monorepo Structure
 
 ```
 OmniPriv/
@@ -403,7 +403,7 @@ OmniPriv/
 
 ---
 
-## 🔐 Security Model
+##  Security Model
 
 ### Privacy Guarantees
 
@@ -436,7 +436,7 @@ OmniPriv/
 
 ---
 
-## 🎬 Demo Scenarios
+##  Demo Scenarios
 
 ### Scenario 1: Age-Gated Content
 
@@ -470,7 +470,7 @@ OmniPriv/
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Test smart contracts
@@ -485,7 +485,7 @@ pnpm test:e2e
 
 ---
 
-## 📚 Learn More
+##  Learn More
 
 - **LayerZero V2:** [docs.layerzero.network](https://docs.layerzero.network)
 - **Aztec / Noir:** [noir-lang.org](https://noir-lang.org)
@@ -495,7 +495,7 @@ pnpm test:e2e
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
 - Code standards
@@ -504,26 +504,26 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
 
 ---
 
-## 📄 License
+##  License
 
 MIT License - see [LICENSE](./LICENSE) for details.
 
 ---
 
-## 🏆 Built For
+##  Built For
 
 **ETHGlobal Buenos Aires 2025**
 
 **Prizes:**
-- 🎯 Coinbase Developer Platform - Best Use of Embedded Wallets
-- 🔗 LayerZero - Best Cross-Chain Application
-- 🔐 Aztec - Best Use of Noir ZK Circuits
+-  Coinbase Developer Platform - Best Use of Embedded Wallets
+-  LayerZero - Best Cross-Chain Application
+-  Aztec - Best Use of Noir ZK Circuits
 
 ---
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 Special thanks to:
 - **Coinbase** for CDP infrastructure
@@ -534,4 +534,4 @@ Special thanks to:
 
 ---
 
-**Remember:** Privacy is a right, not a privilege. OmniPriv makes it easier to exercise that right across the entire blockchain ecosystem. 🔐✨
+**Remember:** Privacy is a right, not a privilege. OmniPriv makes it easier to exercise that right across the entire blockchain ecosystem. ✨
