@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "setup:server-wallet": "tsx scripts/server-wallet-setup.ts",
+    "convert:wallet-secret": "tsx scripts/convert-wallet-secret.ts",
+    "test:send-tx": "tsx scripts/test-send-transaction.ts"
   },
   "dependencies": {
     "@coinbase/cdp-core": "^0.0.67",
@@ -40,10 +43,12 @@
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.17",
+    "dotenv": "^16.4.5",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.2.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.3.3",
     "vitest": "^1.2.1"
   }
