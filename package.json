@@ -7,8 +7,6 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "node scripts/preinstall.js",
-    "postinstall": "node scripts/postinstall.js",
     "setup": "pnpm install && pnpm build",
     "verify": "node scripts/verify-setup.js",
     "dev": "pnpm -F web dev",
