@@ -521,14 +521,6 @@ MIT License - see [LICENSE](./LICENSE) for details.
 
 ---
 
-## 👥 Team
-
-Built with ❤️ by the OmniPriv team.
-
-**Contact:**
-- Twitter: [@OmniPriv](https://twitter.com/OmniPriv)
-- GitHub: [github.com/OmniPriv](https://github.com/OmniPriv)
-
 ---
 
 ## 🙏 Acknowledgments
