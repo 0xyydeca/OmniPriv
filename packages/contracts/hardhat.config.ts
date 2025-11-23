@@ -2,7 +2,33 @@ import { HardhatUserConfig } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-viem';
 import 'hardhat-deploy';
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load .env file from packages/contracts directory
+// This ensures it works regardless of where the command is run from
+// Try to get the directory where this config file is located
+let contractsDir: string;
+try {
+  // CommonJS context (when running from contracts directory)
+  contractsDir = typeof __dirname !== 'undefined' ? __dirname : path.dirname(__filename);
+} catch {
+  // ES module context or when __dirname is not available
+  // Fall back to process.cwd() and look for packages/contracts
+  const cwd = process.cwd();
+  if (cwd.endsWith('packages/contracts')) {
+    contractsDir = cwd;
+  } else {
+    contractsDir = path.resolve(cwd, 'packages/contracts');
+  }
+}
+
+const envPath = path.resolve(contractsDir, '.env');
+dotenv.config({ path: envPath });
+
+// Also try to load from root .env.local (for shared variables)
+const rootEnvPath = path.resolve(contractsDir, '../../.env.local');
+dotenv.config({ path: rootEnvPath, override: false }); // Don't override, just add missing vars
 
 const config: HardhatUserConfig = {
   solidity: {
