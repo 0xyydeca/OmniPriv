@@ -59,7 +59,7 @@ In the background:
 3. The smart contract on **Chain A** (Base Sepolia – your "home" identity chain) only sees:
    - A proof that passes or fails
    -  A policy ID (e.g., `AGE18_ALLOWED_COUNTRIES_V1`)
-   - ⏰ An expiry time
+   - An expiry time
 4. If it passes, the contract marks:
    - **"This wallet satisfies policy X until time Y"**
    - Again, **no PII (Personally Identifiable Information)**
@@ -504,20 +504,11 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
 
 ---
 
-##  License
-
-MIT License - see [LICENSE](./LICENSE) for details.
-
----
 
 ##  Built For
 
 **ETHGlobal Buenos Aires 2025**
 
-**Prizes:**
--  Coinbase Developer Platform - Best Use of Embedded Wallets
--  LayerZero - Best Cross-Chain Application
--  Aztec - Best Use of Noir ZK Circuits
 
 ---
 
