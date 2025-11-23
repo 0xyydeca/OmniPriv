@@ -29,10 +29,10 @@ const LAYERZERO_EIDS = {
   optimismSepolia: 40232,
 } as const;
 
-// Deployed IdentityOApp addresses
+// Deployed IdentityOApp addresses (updated after redeployment with correct endpoint)
 const IDENTITY_OAPP_ADDRESSES = {
-  baseSepolia: "0xD1Ab25FE84f796A73A4357cA3B90Ce68aF863A48",
-  optimismSepolia: "0x5BB995757E8Be755967160C256eF2F8e07a3e579",
+  baseSepolia: "0x89C6d0D3782a2E5556EfaDE40361D2864a6b3275",
+  optimismSepolia: "0x591A2902FB1853A0fca20b163a63720b7579B473",
 } as const;
 
 // IdentityOApp ABI - sendVerification function
@@ -131,13 +131,11 @@ async function sendCrossChainVerification() {
       functionName: "endpoint",
     });
     console.log(`   📍 LayerZero Endpoint: ${endpoint}`);
-    const expectedEndpoint = "0x6edce65403992e310a9a90612852c3b42d1a5e11";
-    if (endpoint.toLowerCase() !== expectedEndpoint.toLowerCase()) {
-      console.log(`   ⚠️  WARNING: Endpoint mismatch!`);
-      console.log(`      Expected: ${expectedEndpoint}`);
-      console.log(`      Actual:   ${endpoint}`);
+    const expectedEndpoint = "0x6EDCE65403992e310A62460808c4b910D972f10f";
+    if (endpoint.toLowerCase() === expectedEndpoint.toLowerCase()) {
+      console.log(`   ✅ Endpoint address verified (correct)`);
     } else {
-      console.log(`   ✅ Endpoint address verified`);
+      console.log(`   ⚠️  Endpoint: ${endpoint}`);
     }
 
     // Check peer configuration

@@ -2,11 +2,13 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 // LayerZero v2 Endpoint addresses for testnets
-// Verified: 0x6EDCE65403992e310A62460808c4b910D972f10f has code on Base Sepolia (verified on-chain)
-// The address 0x6edce65403992e310a9a90612852c3b42d1a5e11 has no code (invalid)
+// Verified on-chain: 0x6EDCE65403992e310A62460808c4b910D972f10f has code on both Base Sepolia and Optimism Sepolia
+// Base Sepolia EID: 40245
+// Optimism Sepolia EID: 40232
+// Both testnets use the same endpoint address (verified on-chain)
 const LZ_ENDPOINTS: Record<string, string> = {
-  baseSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Base Sepolia testnet (verified)
-  optimismSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Optimism Sepolia - verify separately
+  baseSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Base Sepolia testnet (verified - has code)
+  optimismSepolia: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Optimism Sepolia testnet (verified - has code)
   hardhat: '0x6EDCE65403992e310A62460808c4b910D972f10f', // Mock for local testing
 };
 
