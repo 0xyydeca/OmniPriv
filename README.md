@@ -57,7 +57,7 @@ In the background:
    - Without revealing your date of birth
    - Without revealing your country
 3. The smart contract on **Chain A** (Base Sepolia – your "home" identity chain) only sees:
-   - ✅ A proof that passes or fails
+   - A proof that passes or fails
    -  A policy ID (e.g., `AGE18_ALLOWED_COUNTRIES_V1`)
    - ⏰ An expiry time
 4. If it passes, the contract marks:
@@ -73,9 +73,9 @@ A special cross-chain contract (an **OApp**) sends a tiny message from **Chain A
 > "Wallet `0x123` is verified for policy `X` until time `Y`."
 
 LayerZero handles the messaging; OmniPriv adds:
-- ✅ Replay protection (nonce)
-- ✅ Trusted sender checks
-- ✅ Simple expiry rules
+- Replay protection (nonce)
+- Trusted sender checks
+- Simple expiry rules
 
 So now, on **Chain B** (Optimism Sepolia), a contract can say:
 
@@ -95,8 +95,8 @@ When you click the action:
 3. If **no** → It fails with: "You must verify via OmniPriv first"
 
 **Importantly:**
-- ✅ The Demo dApp **never sees your DOB or country**
-- ✅ It only sees the **yes/no + expiry**, which was propagated via LayerZero
+- The Demo dApp **never sees your DOB or country**
+- It only sees the **yes/no + expiry**, which was propagated via LayerZero
 
 ---
 
@@ -218,10 +218,10 @@ IdentityOApp:     0x591A2902FB1853A0fca20b163a63720b7579B473
 
 **Policy Logic:**
 ```
-✅ Age ≥ 18 years
-✅ Country NOT in blocked list: {North Korea, Iran, Syria}
-✅ Credential not expired
-✅ Commitment anchored on-chain
+Age ≥ 18 years
+Country NOT in blocked list: {North Korea, Iran, Syria}
+Credential not expired
+Commitment anchored on-chain
 ```
 
 ### Zero-Knowledge Proof System
@@ -348,10 +348,10 @@ Open http://localhost:3000
    - Add a credential (DOB + Country)
    - Click "Prove and verify across chains"
    - Watch the cross-chain stepper:
-     - ✅ ZK Proof Generated
-     - ✅ Base Sepolia Verified
-     - ✅ LayerZero Message Sent
-     - ✅ Optimism Sepolia Verified
+     - ZK Proof Generated
+     - Base Sepolia Verified
+     - LayerZero Message Sent
+     - Optimism Sepolia Verified
 
 2. **Go to `/dapp`**
    - See your verification status
@@ -407,15 +407,15 @@ OmniPriv/
 
 ### Privacy Guarantees
 
-✅ **Your private data never leaves your browser**
+**Your private data never leaves your browser**
 - DOB, country stored encrypted locally
 - Only commitments (hashes) go on-chain
 
-✅ **Zero-knowledge proofs reveal nothing**
+**Zero-knowledge proofs reveal nothing**
 - Proof shows "meets requirements" not "what the requirements are met with"
 - No DOB, no country code in proof outputs
 
-✅ **dApps see only permission flags**
+**dApps see only permission flags**
 - `isVerified(address, policyId)` → `true/false`
 - Expiry timestamp
 - **No PII ever shared**
@@ -430,9 +430,9 @@ OmniPriv/
 5. **Chain B contracts** - They correctly validate received messages
 
 **What you don't need to trust:**
-- ❌ The dApp (it never sees your data)
-- ❌ The frontend server (data never sent to server)
-- ❌ Third-party validators (everything is on-chain)
+- The dApp (it never sees your data)
+- The frontend server (data never sent to server)
+- Third-party validators (everything is on-chain)
 
 ---
 
