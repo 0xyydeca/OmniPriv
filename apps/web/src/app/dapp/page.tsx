@@ -44,18 +44,6 @@ export default function DAppPage() {
       refetchInterval: 5000, // Refresh every 5 seconds
     },
   });
-
-  // Get Base verification details
-  const { data: baseVerification } = useReadContract({
-    address: PROOF_CONSUMER_ADDRESS,
-    abi: PROOF_CONSUMER_ABI,
-    functionName: 'verifiedUntil',
-    args: address && policyId ? [address as `0x${string}`, policyId] : undefined,
-    chainId: baseSepolia.id,
-    query: {
-      enabled: !!address && !!policyId,
-    },
-  });
   
   // Check verification status on Optimism Sepolia (destination chain)
   const { data: isVerifiedOnOptimism, isLoading: isLoadingOptimism, refetch: refetchOptimism } = useReadContract({
